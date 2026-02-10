@@ -105,6 +105,31 @@
                     >
                 </div>
 
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-3">
+                        Account type
+                    </label>
+                    <div class="grid grid-cols-2 gap-4">
+                        <button 
+                            type="button"
+                            id="account-job-seeker"
+                            onclick="selectAccountType('job_seeker')"
+                            class="account-type-btn px-4 py-3 border-2 border-blue-600 bg-blue-600 text-white rounded-lg font-medium transition hover:bg-blue-700 hover:border-blue-700"
+                        >
+                            Looking for a job
+                        </button>
+                        <button 
+                            type="button"
+                            id="account-employer"
+                            onclick="selectAccountType('employer')"
+                            class="account-type-btn px-4 py-3 border-2 border-gray-300 bg-white text-gray-700 rounded-lg font-medium transition hover:border-gray-400"
+                        >
+                            I'm an employer
+                        </button>
+                    </div>
+                    <input type="hidden" id="account_type" name="account_type" value="job_seeker" required>
+                </div>
+
                 <div class="flex items-start">
                     <input 
                         type="checkbox" 
@@ -115,9 +140,9 @@
                     >
                     <label for="terms" class="ml-2 block text-sm text-gray-700">
                         Accept
-                        <a href="#" class="text-blue-600 hover:text-blue-700 transition">Terms of Service</a>
+                        <a href="/tos" class="text-blue-600 hover:text-blue-700 transition">Terms of Service</a>
                         and
-                        <a href="#" class="text-blue-600 hover:text-blue-700 transition">Privacy Policy</a>
+                        <a href="/privacy" class="text-blue-600 hover:text-blue-700 transition">Privacy Policy</a>
                     </label>
                 </div>
 
@@ -174,6 +199,22 @@
 </div>
 
 <script>
+function selectAccountType(type) {
+    const jobSeekerBtn = document.getElementById('account-job-seeker');
+    const employerBtn = document.getElementById('account-employer');
+    const hiddenInput = document.getElementById('account_type');
+    
+    if (type === 'job_seeker') {
+        jobSeekerBtn.className = 'account-type-btn px-4 py-3 border-2 border-blue-600 bg-blue-600 text-white rounded-lg font-medium transition hover:bg-blue-700 hover:border-blue-700';
+        employerBtn.className = 'account-type-btn px-4 py-3 border-2 border-gray-300 bg-white text-gray-700 rounded-lg font-medium transition hover:border-gray-400';
+        hiddenInput.value = 'job_seeker';
+    } else {
+        jobSeekerBtn.className = 'account-type-btn px-4 py-3 border-2 border-gray-300 bg-white text-gray-700 rounded-lg font-medium transition hover:border-gray-400';
+        employerBtn.className = 'account-type-btn px-4 py-3 border-2 border-blue-600 bg-blue-600 text-white rounded-lg font-medium transition hover:bg-blue-700 hover:border-blue-700';
+        hiddenInput.value = 'employer';
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     const container = document.getElementById('mouse-bg');
     const gradient = document.getElementById('radial-gradient');
