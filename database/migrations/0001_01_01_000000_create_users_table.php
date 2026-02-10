@@ -13,12 +13,22 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('username')->unique();
+            $table->string('first_name');
+            $table->string('last_name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->date('date_of_birth')->nullable();
+            $table->string('country')->default('Poland');
+            $table->boolean('is_student')->default(false);
+            $table->enum('account_type', ['job_seeker', 'employer'])->default('job_seeker');
+            $table->string('cv_path')->nullable();
             $table->rememberToken();
             $table->timestamps();
+            
+            $table->index('account_type');
+            $table->index('is_student');
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {

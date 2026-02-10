@@ -7,10 +7,10 @@ Route::get('/', function () {
 });
 
 Route::get('/login', function () {
-    return 'Strona logowania (w przygotowaniu)';
+    return view('login');
 })->name('login');
 
 Route::get('/register', function () {
-    return 'Strona rejestracji (w przygotowaniu)';
+    return view('register');
 })->name('register');
 
