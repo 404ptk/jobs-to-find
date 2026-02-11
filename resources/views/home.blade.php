@@ -106,12 +106,13 @@
                 <div class="pt-2">
                     <button 
                         type="submit"
-                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-6 rounded-lg transition shadow-md hover:shadow-lg flex items-center justify-center gap-2"
+                        class="group relative w-full bg-blue-600 text-white font-semibold py-4 px-6 rounded-lg shadow-md hover:shadow-lg flex items-center justify-center gap-2 overflow-hidden cursor-pointer transition-shadow duration-300"
                     >
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <span class="absolute inset-0 bg-blue-700 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-out origin-center blur-md"></span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 relative z-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
-                        Search jobs
+                        <span class="relative z-10">Search jobs</span>
                     </button>
                 </div>
             </form>
