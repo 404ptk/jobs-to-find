@@ -60,10 +60,10 @@ class JobOfferController extends Controller
                 $query->orderBy('created_at', 'asc');
                 break;
             case 'salary_high':
-                $query->orderByRaw('CAST(SUBSTRING_INDEX(salary_range, " ", 1) AS UNSIGNED) DESC');
+                $query->orderBy('salary_min', 'desc');
                 break;
             case 'salary_low':
-                $query->orderByRaw('CAST(SUBSTRING_INDEX(salary_range, " ", 1) AS UNSIGNED) ASC');
+                $query->orderBy('salary_min', 'asc');
                 break;
             case 'newest':
             default:
@@ -133,7 +133,8 @@ class JobOfferController extends Controller
             'description' => ['required', 'string', 'max:5000'],
             'requirements' => ['required', 'string', 'max:5000'],
             'company_name' => ['required', 'string', 'max:96', 'regex:/^[a-zA-Z0-9\s\-]+$/'],
-            'salary_range' => ['required', 'string', 'max:64'],
+            'salary_min' => ['nullable', 'numeric', 'min:0'],
+            'salary_max' => ['nullable', 'numeric', 'min:0', 'gte:salary_min'],
             'employment_type' => ['required', 'string', 'in:full-time,part-time,contract,internship'],
             'category_id' => ['required', 'exists:categories,id'],
             'location_id' => ['required', 'exists:locations,id'],
@@ -141,10 +142,12 @@ class JobOfferController extends Controller
         ], [
             'title.regex' => 'Title can only contain letters, numbers, spaces, and hyphens.',
             'company_name.regex' => 'Company name can only contain letters, numbers, spaces, and hyphens.',
+            'salary_max.gte' => 'Maximum salary must be greater than or equal to minimum salary.',
         ]);
 
         $validated['user_id'] = Auth::id();
         $validated['is_active'] = true;
+        $validated['currency'] = 'EUR';
 
         JobOffer::create($validated);
 

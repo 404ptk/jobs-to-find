@@ -37,12 +37,18 @@
                                 {{ ucfirst(str_replace('-', ' ', $jobOffer->employment_type)) }}
                             </div>
                             
-                            @if($jobOffer->salary_range)
+                            @if($jobOffer->salary_min || $jobOffer->salary_max)
                                 <div class="flex items-center">
                                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                     </svg>
-                                    {{ $jobOffer->salary_range }}
+                                    @if($jobOffer->salary_min && $jobOffer->salary_max)
+                                        {{ number_format($jobOffer->salary_min, 0) }} - {{ number_format($jobOffer->salary_max, 0) }} {{ $jobOffer->currency }}
+                                    @elseif($jobOffer->salary_min)
+                                        From {{ number_format($jobOffer->salary_min, 0) }} {{ $jobOffer->currency }}
+                                    @else
+                                        Up to {{ number_format($jobOffer->salary_max, 0) }} {{ $jobOffer->currency }}
+                                    @endif
                                 </div>
                             @endif
                         </div>
@@ -140,10 +146,18 @@
                                     <p class="font-medium text-gray-900">{{ ucfirst(str_replace('-', ' ', $jobOffer->employment_type)) }}</p>
                                 </div>
                                 
-                                @if($jobOffer->salary_range)
+                                @if($jobOffer->salary_min || $jobOffer->salary_max)
                                     <div class="border-t border-gray-200 pt-4">
                                         <p class="text-sm text-gray-600 mb-1">Salary Range</p>
-                                        <p class="font-medium text-gray-900">{{ $jobOffer->salary_range }}</p>
+                                        <p class="font-medium text-gray-900">
+                                            @if($jobOffer->salary_min && $jobOffer->salary_max)
+                                                {{ number_format($jobOffer->salary_min, 0) }} - {{ number_format($jobOffer->salary_max, 0) }} {{ $jobOffer->currency }}
+                                            @elseif($jobOffer->salary_min)
+                                                From {{ number_format($jobOffer->salary_min, 0) }} {{ $jobOffer->currency }}
+                                            @else
+                                                Up to {{ number_format($jobOffer->salary_max, 0) }} {{ $jobOffer->currency }}
+                                            @endif
+                                        </p>
                                     </div>
                                 @endif
                                 

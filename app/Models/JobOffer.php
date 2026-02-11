@@ -13,7 +13,9 @@ class JobOffer extends Model
         'description',
         'requirements',
         'company_name',
-        'salary_range',
+        'salary_min',
+        'salary_max',
+        'currency',
         'employment_type',
         'category_id',
         'location_id',
@@ -24,6 +26,8 @@ class JobOffer extends Model
     protected $casts = [
         'is_active' => 'boolean',
         'expires_at' => 'date',
+        'salary_min' => 'decimal:2',
+        'salary_max' => 'decimal:2',
     ];
 
     public function user(): BelongsTo

@@ -126,22 +126,62 @@
                     </div>
 
                     <div>
-                        <label for="salary_range" class="block text-sm font-medium text-gray-700 mb-2">
-                            Salary Range <span class="text-red-500">*</span>
+                        <label for="expires_at" class="block text-sm font-medium text-gray-700 mb-2">
+                            Offer Expiration Date <span class="text-red-500">*</span>
                         </label>
                         <input 
-                            type="text" 
-                            id="salary_range" 
-                            name="salary_range" 
-                            value="{{ old('salary_range') }}"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('salary_range') border-red-500 @enderror"
-                            placeholder="e.g. 5000 - 8000 PLN"
+                            type="date" 
+                            id="expires_at" 
+                            name="expires_at" 
+                            value="{{ old('expires_at') }}"
+                            min="{{ date('Y-m-d', strtotime('+1 day')) }}"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('expires_at') border-red-500 @enderror"
                             required
                         >
-                        @error('salary_range')
+                        @error('expires_at')
                             <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                         @enderror
                     </div>
+                </div>
+
+                <!-- Salary Range -->
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Salary Range in EUR (optional)
+                    </label>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <input 
+                                type="number" 
+                                id="salary_min" 
+                                name="salary_min" 
+                                value="{{ old('salary_min') }}"
+                                step="0.01"
+                                min="0"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('salary_min') border-red-500 @enderror"
+                                placeholder="Minimum salary"
+                            >
+                            @error('salary_min')
+                                <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        <div>
+                            <input 
+                                type="number" 
+                                id="salary_max" 
+                                name="salary_max" 
+                                value="{{ old('salary_max') }}"
+                                step="0.01"
+                                min="0"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('salary_max') border-red-500 @enderror"
+                                placeholder="Maximum salary"
+                            >
+                            @error('salary_max')
+                                <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
+                    <p class="mt-1 text-sm text-gray-500">Leave empty if you prefer not to disclose salary information</p>
                 </div>
 
                 <div class="mb-6">
