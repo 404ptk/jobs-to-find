@@ -108,4 +108,46 @@ class JobOfferController extends Controller
         // TODO: Implement logic
         return view('my-applications');
     }
+
+    public function create()
+    {
+        if (Auth::user()->account_type !== 'employer') {
+            abort(403, 'Access denied. Only employers can create job offers.');
+        }
+
+        $categories = \App\Models\Category::orderBy('name')->get();
+        $locations = \App\Models\Location::orderBy('country')->orderBy('city')->get();
+        $employmentTypes = ['full-time', 'part-time', 'contract', 'internship'];
+
+        return view('create-offer', compact('categories', 'locations', 'employmentTypes'));
+    }
+
+    public function store(Request $request)
+    {
+        if (Auth::user()->account_type !== 'employer') {
+            abort(403, 'Access denied. Only employers can create job offers.');
+        }
+
+        $validated = $request->validate([
+            'title' => ['required', 'string', 'max:96', 'regex:/^[a-zA-Z0-9\s\-]+$/'],
+            'description' => ['required', 'string', 'max:5000'],
+            'requirements' => ['required', 'string', 'max:5000'],
+            'company_name' => ['required', 'string', 'max:96', 'regex:/^[a-zA-Z0-9\s\-]+$/'],
+            'salary_range' => ['required', 'string', 'max:64'],
+            'employment_type' => ['required', 'string', 'in:full-time,part-time,contract,internship'],
+            'category_id' => ['required', 'exists:categories,id'],
+            'location_id' => ['required', 'exists:locations,id'],
+            'expires_at' => ['required', 'date', 'after:today'],
+        ], [
+            'title.regex' => 'Title can only contain letters, numbers, spaces, and hyphens.',
+            'company_name.regex' => 'Company name can only contain letters, numbers, spaces, and hyphens.',
+        ]);
+
+        $validated['user_id'] = Auth::id();
+        $validated['is_active'] = true;
+
+        JobOffer::create($validated);
+
+        return redirect()->route('my-offers')->with('success', 'Job offer created successfully!');
+    }
 }

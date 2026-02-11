@@ -10,12 +10,12 @@
                 <h1 class="text-3xl font-bold text-gray-900">My Job Offers</h1>
                 <p class="text-gray-600 mt-1">Manage your posted job opportunities</p>
             </div>
-            <button class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium flex items-center">
+            <a href="{{ route('offer.create') }}" class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium flex items-center">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                 </svg>
                 Create New Offer
-            </button>
+            </a>
         </div>
 
         @if($jobOffers->isEmpty())

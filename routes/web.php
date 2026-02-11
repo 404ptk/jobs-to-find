@@ -70,6 +70,14 @@ Route::get('/my-offers', [JobOfferController::class, 'myOffers'])
     ->middleware('auth')
     ->name('my-offers');
 
+Route::get('/offer/create', [JobOfferController::class, 'create'])
+    ->middleware('auth')
+    ->name('offer.create');
+
+Route::post('/offer/store', [JobOfferController::class, 'store'])
+    ->middleware('auth')
+    ->name('offer.store');
+
 Route::get('/my-applications', [JobOfferController::class, 'myApplications'])
     ->middleware('auth')
     ->name('my-applications');
