@@ -40,4 +40,32 @@ class AuthController extends Controller
 
         return redirect('/');
     }
+
+    public function register(Request $request)
+    {
+        $validated = $request->validate([
+            'username' => 'required|string|max:28|unique:users',
+            'first_name' => 'required|string|max:32',
+            'last_name' => 'required|string|max:32',
+            'email' => 'required|string|email|max:48|unique:users',
+            'password' => 'required|string|min:8|confirmed',
+            'account_type' => 'required|in:job_seeker,employer',
+        ]);
+
+        $user = User::create([
+            'username' => $validated['username'],
+            'first_name' => $validated['first_name'],
+            'last_name' => $validated['last_name'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
+            'account_type' => $validated['account_type'],
+            'country' => 'Poland',
+            'is_student' => false,
+        ]);
+
+        Auth::login($user);
+        $request->session()->regenerate();
+
+        return redirect('/');
+    }
 }

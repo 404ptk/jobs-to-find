@@ -17,7 +17,19 @@
         </div>
 
         <div class="bg-white rounded-lg shadow-xl p-8">
-            <form class="space-y-5">
+            <form method="POST" action="/register" class="space-y-5">
+                @csrf
+
+                @if ($errors->any())
+                    <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+                        <ul class="text-sm space-y-1">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
                 <div>
                     <label for="username" class="block text-sm font-medium text-gray-700 mb-2">
                         Nickname
@@ -26,6 +38,7 @@
                         type="text" 
                         id="username" 
                         name="username" 
+                        value="{{ old('username') }}"
                         placeholder="yournickname"
                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
                         required
@@ -41,6 +54,7 @@
                             type="text" 
                             id="first_name" 
                             name="first_name" 
+                            value="{{ old('first_name') }}"
                             placeholder="John"
                             class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
                             required
@@ -55,6 +69,7 @@
                             type="text" 
                             id="last_name" 
                             name="last_name" 
+                            value="{{ old('last_name') }}"
                             placeholder="Doe"
                             class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
                             required
@@ -70,6 +85,7 @@
                         type="email" 
                         id="email" 
                         name="email" 
+                        value="{{ old('email') }}"
                         placeholder="your@mail.com"
                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
                         required
