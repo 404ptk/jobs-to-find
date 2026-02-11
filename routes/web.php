@@ -38,6 +38,8 @@ Route::get('/', function () {
 
 Route::get('/search', [JobOfferController::class, 'search'])->name('search');
 
+Route::get('/job/{id}', [JobOfferController::class, 'show'])->name('job.show');
+
 Route::get('/login', function () {
     return view('login');
 })->name('login');

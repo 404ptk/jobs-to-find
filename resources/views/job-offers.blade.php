@@ -78,9 +78,11 @@
                         <div class="p-6">
                             <div class="flex items-start justify-between mb-4">
                                 <div class="flex-1">
-                                    <h3 class="text-xl font-semibold text-gray-900 mb-2 hover:text-blue-600 transition cursor-pointer">
-                                        {{ $offer->title }}
-                                    </h3>
+                                    <a href="{{ route('job.show', $offer->id) }}">
+                                        <h3 class="text-xl font-semibold text-gray-900 mb-2 hover:text-blue-600 transition cursor-pointer">
+                                            {{ $offer->title }}
+                                        </h3>
+                                    </a>
                                     <p class="text-base text-gray-700 font-medium">{{ $offer->company_name }}</p>
                                 </div>
                                 <span class="ml-4 px-3 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800 whitespace-nowrap">
@@ -133,9 +135,9 @@
                             </div>
 
                             <div class="flex gap-3">
-                                <button class="flex-1 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition">
+                                <a href="{{ route('job.show', $offer->id) }}" class="flex-1 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition text-center">
                                     View Details
-                                </button>
+                                </a>
                                 @auth
                                     @if(Auth::user()->account_type === 'job_seeker')
                                         <button class="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition">
