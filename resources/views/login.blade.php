@@ -17,7 +17,15 @@
         </div>
 
         <div class="bg-white rounded-lg shadow-xl p-8">
-            <form class="space-y-6">
+            <form method="POST" action="/login" class="space-y-6">
+                @csrf
+                
+                @if ($errors->any())
+                    <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+                        <p class="text-sm">{{ $errors->first() }}</p>
+                    </div>
+                @endif
+
                 <div>
                     <label for="login" class="block text-sm font-medium text-gray-700 mb-2">
                         Login or email
@@ -26,6 +34,7 @@
                         type="text" 
                         id="login" 
                         name="login" 
+                        value="{{ old('login') }}"
                         placeholder="yournickname or your@mail.com"
                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
                         required

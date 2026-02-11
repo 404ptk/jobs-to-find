@@ -17,12 +17,24 @@
                 </div>
 
                 <div class="flex items-center space-x-4">
-                    <a href="/login" class="text-gray-700 hover:text-blue-600 px-4 py-2 rounded-md text-sm font-medium transition">
-                        Login
-                    </a>
-                    <a href="/register" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition shadow-sm">
-                        Register
-                    </a>
+                    @auth
+                        <span class="text-gray-700 px-4 py-2 text-sm font-medium">
+                            {{ Auth::user()->username }}
+                        </span>
+                        <form method="POST" action="{{ route('logout') }}" class="inline">
+                            @csrf
+                            <button type="submit" class="text-gray-700 hover:text-blue-600 px-4 py-2 rounded-md text-sm font-medium transition">
+                                Logout
+                            </button>
+                        </form>
+                    @else
+                        <a href="/login" class="text-gray-700 hover:text-blue-600 px-4 py-2 rounded-md text-sm font-medium transition">
+                            Login
+                        </a>
+                        <a href="/register" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition shadow-sm">
+                            Register
+                        </a>
+                    @endauth
                 </div>
             </div>
         </div>
