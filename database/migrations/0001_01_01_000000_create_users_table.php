@@ -22,7 +22,7 @@ return new class extends Migration
             $table->date('date_of_birth')->nullable();
             $table->string('country')->default('Poland');
             $table->boolean('is_student')->default(false);
-            $table->enum('account_type', ['job_seeker', 'employer'])->default('job_seeker');
+            $table->enum('account_type', ['job_seeker', 'employer', 'admin'])->default('job_seeker');
             $table->string('cv_path')->nullable();
             $table->rememberToken();
             $table->timestamps();

@@ -41,17 +41,32 @@
                             
                             <div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                                 <div class="py-2">
-                                    <a href="/profile" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition">
-                                        Profile
-                                    </a>
-                                    @if(Auth::user()->account_type === 'job_seeker')
-                                        <a href="/my-applications" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition">
-                                            My applications
+                                    @if(Auth::user()->account_type === 'admin')
+                                        <a href="/admin/offers" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition">
+                                            Offers
+                                        </a>
+                                        <a href="/admin/users" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition">
+                                            Users
+                                        </a>
+                                        <a href="/admin/accept-offers" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition">
+                                            Accept offers
+                                        </a>
+                                        <a href="/admin/reports" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition">
+                                            Reports
                                         </a>
                                     @else
-                                        <a href="/my-offers" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition">
-                                            My job offers
+                                        <a href="/profile" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition">
+                                            Profile
                                         </a>
+                                        @if(Auth::user()->account_type === 'job_seeker')
+                                            <a href="/my-applications" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition">
+                                                My applications
+                                            </a>
+                                        @else
+                                            <a href="/my-offers" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition">
+                                                My job offers
+                                            </a>
+                                        @endif
                                     @endif
                                     <div class="border-t border-gray-200 my-1"></div>
                                     <form method="POST" action="{{ route('logout') }}">

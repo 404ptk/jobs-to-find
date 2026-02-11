@@ -22,7 +22,7 @@ class UserSeeder extends Seeder
                 'date_of_birth' => '1990-01-01',
                 'country' => 'Poland',
                 'is_student' => false,
-                'account_type' => 'employer',
+                'account_type' => 'admin',
                 'cv_path' => null,
                 'created_at' => now(),
                 'updated_at' => now(),
