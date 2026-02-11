@@ -73,4 +73,31 @@ class AuthController extends Controller
 
         return redirect('/');
     }
+
+    public function updateProfile(Request $request)
+    {
+        $user = Auth::user();
+
+        $validated = $request->validate([
+            'first_name' => ['required', 'string', 'max:32', 'regex:/^[a-zA-Z\s]+$/'],
+            'last_name' => ['required', 'string', 'max:32', 'regex:/^[a-zA-Z\s]+$/'],
+            'country' => ['required', 'string', 'max:64'],
+            'date_of_birth' => ['nullable', 'date', 'before:today'],
+            'is_student' => ['nullable', 'boolean'],
+        ], [
+            'first_name.regex' => 'First name can only contain letters and spaces.',
+            'last_name.regex' => 'Last name can only contain letters and spaces.',
+            'date_of_birth.before' => 'Date of birth must be in the past.',
+        ]);
+
+        if ($user->account_type === 'job_seeker') {
+            $validated['is_student'] = $request->has('is_student');
+        } else {
+            unset($validated['is_student']);
+        }
+
+        $user->update($validated);
+
+        return redirect()->route('profile')->with('success', 'Profile updated successfully!');
+    }
 }

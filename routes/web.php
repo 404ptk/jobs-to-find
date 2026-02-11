@@ -66,6 +66,14 @@ Route::get('/profile', function () {
     return view('profile');
 })->middleware('auth')->name('profile');
 
+Route::get('/profile/edit', function () {
+    return view('edit-profile');
+})->middleware('auth')->name('profile.edit');
+
+Route::put('/profile/update', [AuthController::class, 'updateProfile'])
+    ->middleware('auth')
+    ->name('profile.update');
+
 Route::get('/my-offers', [JobOfferController::class, 'myOffers'])
     ->middleware('auth')
     ->name('my-offers');

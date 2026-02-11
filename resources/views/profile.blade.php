@@ -15,97 +15,238 @@
                 </span>
             </div>
 
-            <div class="space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="bg-gray-200 p-4 rounded-lg">
-                        <label class="block text-sm font-medium text-gray-500 mb-1">Username</label>
-                        <p class="text-lg text-gray-900 font-medium">{{ Auth::user()->username }}</p>
-                    </div>
-
-                    <div class="bg-gray-200 p-4 rounded-lg">
-                        <label class="block text-sm font-medium text-gray-500 mb-1">Email</label>
-                        <p class="text-lg text-gray-900">{{ Auth::user()->email }}</p>
-                    </div>
+            @if(session('success'))
+                <div class="mb-6 bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg">
+                    {{ session('success') }}
                 </div>
+            @endif
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="bg-gray-200 p-4 rounded-lg">
-                        <label class="block text-sm font-medium text-gray-500 mb-1">First Name</label>
-                        <p class="text-lg text-gray-900">{{ Auth::user()->first_name }}</p>
+            <form action="{{ route('profile.update') }}" method="POST" id="profileForm">
+                @csrf
+                @method('PUT')
+
+                <div class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-gray-200 p-4 rounded-lg">
+                            <label class="block text-sm font-medium text-gray-500 mb-1">Username</label>
+                            <p class="text-lg text-gray-900 font-medium">{{ Auth::user()->username }}</p>
+                        </div>
+
+                        <div class="bg-gray-200 p-4 rounded-lg">
+                            <label class="block text-sm font-medium text-gray-500 mb-1">Email</label>
+                            <p class="text-lg text-gray-900">{{ Auth::user()->email }}</p>
+                        </div>
                     </div>
 
-                    <div class="bg-gray-200 p-4 rounded-lg">
-                        <label class="block text-sm font-medium text-gray-500 mb-1">Last Name</label>
-                        <p class="text-lg text-gray-900">{{ Auth::user()->last_name }}</p>
-                    </div>
-                </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div id="first_name_container">
+                            <div class="bg-gray-200 p-4 rounded-lg" id="first_name_display">
+                                <label class="block text-sm font-medium text-gray-500 mb-1">First Name</label>
+                                <p class="text-lg text-gray-900">{{ Auth::user()->first_name }}</p>
+                            </div>
+                            <div class="hidden p-4 bg-gray-200 rounded-lg" id="first_name_edit">
+                                <label for="first_name" class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                                <input 
+                                    type="text" 
+                                    id="first_name" 
+                                    name="first_name" 
+                                    value="{{ old('first_name', Auth::user()->first_name) }}"
+                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('first_name') border-red-500 @enderror"
+                                    required
+                                >
+                                @error('first_name')
+                                    <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="bg-gray-200 p-4 rounded-lg">
-                        <label class="block text-sm font-medium text-gray-500 mb-1">Country</label>
-                        <p class="text-lg text-gray-900">{{ Auth::user()->country }}</p>
+                        <div id="last_name_container">
+                            <div class="bg-gray-200 p-4 rounded-lg" id="last_name_display">
+                                <label class="block text-sm font-medium text-gray-500 mb-1">Last Name</label>
+                                <p class="text-lg text-gray-900">{{ Auth::user()->last_name }}</p>
+                            </div>
+                            <div class="hidden p-4 bg-gray-200 rounded-lg" id="last_name_edit">
+                                <label for="last_name" class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                                <input 
+                                    type="text" 
+                                    id="last_name" 
+                                    name="last_name" 
+                                    value="{{ old('last_name', Auth::user()->last_name) }}"
+                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('last_name') border-red-500 @enderror"
+                                    required
+                                >
+                                @error('last_name')
+                                    <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="bg-gray-200 p-4 rounded-lg">
-                        <label class="block text-sm font-medium text-gray-500 mb-1">Date of Birth</label>
-                        <p class="text-lg text-gray-900">
-                            {{ Auth::user()->date_of_birth ? Auth::user()->date_of_birth->format('F d, Y') : 'Not provided' }}
-                        </p>
-                    </div>
-                </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div id="country_container">
+                            <div class="bg-gray-200 p-4 rounded-lg" id="country_display">
+                                <label class="block text-sm font-medium text-gray-500 mb-1">Country</label>
+                                <p class="text-lg text-gray-900">{{ Auth::user()->country }}</p>
+                            </div>
+                            <div class="hidden p-4 bg-gray-200 rounded-lg" id="country_edit">
+                                <label for="country" class="block text-sm font-medium text-gray-700 mb-1">Country</label>
+                                <input 
+                                    type="text" 
+                                    id="country" 
+                                    name="country" 
+                                    value="{{ old('country', Auth::user()->country) }}"
+                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('country') border-red-500 @enderror"
+                                    required
+                                >
+                                @error('country')
+                                    <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
 
-                @if(Auth::user()->account_type === 'job_seeker')
-                    <div class="bg-gray-200 p-4 rounded-lg">
-                        <label class="block text-sm font-medium text-gray-500 mb-1">Student Status</label>
-                        <p class="text-lg text-gray-900">
-                            @if(Auth::user()->is_student)
-                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800">
-                                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                        <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"/>
-                                    </svg>
-                                    Student
-                                </span>
-                            @else
-                                <span class="text-gray-600">Not a student</span>
-                            @endif
-                        </p>
+                        <div id="date_of_birth_container">
+                            <div class="bg-gray-200 p-4 rounded-lg" id="date_of_birth_display">
+                                <label class="block text-sm font-medium text-gray-500 mb-1">Date of Birth</label>
+                                <p class="text-lg text-gray-900">
+                                    {{ Auth::user()->date_of_birth ? Auth::user()->date_of_birth->format('F d, Y') : 'Not provided' }}
+                                </p>
+                            </div>
+                            <div class="hidden p-4 bg-gray-200 rounded-lg" id="date_of_birth_edit">
+                                <label for="date_of_birth" class="block text-sm font-medium text-gray-700 mb-1">Date of Birth</label>
+                                <input 
+                                    type="date" 
+                                    id="date_of_birth" 
+                                    name="date_of_birth" 
+                                    value="{{ old('date_of_birth', Auth::user()->date_of_birth ? Auth::user()->date_of_birth->format('Y-m-d') : '') }}"
+                                    max="{{ date('Y-m-d') }}"
+                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('date_of_birth') border-red-500 @enderror"
+                                >
+                                @error('date_of_birth')
+                                    <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
                     </div>
-                @endif
 
-                @if(Auth::user()->cv_path)
-                    <div class="bg-gray-50 p-4 rounded-lg">
-                        <label class="block text-sm font-medium text-gray-500 mb-2">CV/Resume</label>
-                        <a href="{{ Auth::user()->cv_path }}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
-                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    @if(Auth::user()->account_type === 'job_seeker')
+                        <div id="is_student_container">
+                            <div class="bg-gray-200 p-4 rounded-lg" id="is_student_display">
+                                <label class="block text-sm font-medium text-gray-500 mb-1">Student Status</label>
+                                <p class="text-lg text-gray-900">
+                                    @if(Auth::user()->is_student)
+                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800">
+                                            <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"/>
+                                            </svg>
+                                            Student
+                                        </span>
+                                    @else
+                                        <span class="text-gray-600">Not a student</span>
+                                    @endif
+                                </p>
+                            </div>
+                            <div class="hidden p-4 bg-white rounded-lg border-2 border-blue-300" id="is_student_edit">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Student Status</label>
+                                <label class="flex items-center cursor-pointer mt-2" id="student_label">
+                                    <input 
+                                        type="checkbox" 
+                                        name="is_student" 
+                                        id="is_student"
+                                        value="1"
+                                        {{ old('is_student', Auth::user()->is_student) ? 'checked' : '' }}
+                                        class="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
+                                    >
+                                    <span class="ml-3 text-sm font-medium text-gray-700">I am currently a student</span>
+                                </label>
+                            </div>
+                        </div>
+                    @endif
+
+                    @if(Auth::user()->cv_path)
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <label class="block text-sm font-medium text-gray-500 mb-2">CV/Resume</label>
+                            <a href="{{ Auth::user()->cv_path }}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                </svg>
+                                Download CV
+                            </a>
+                        </div>
+                    @endif
+
+                    <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                        <div class="flex items-start">
+                            <svg class="w-5 h-5 text-blue-600 mt-0.5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
                             </svg>
-                            Download CV
-                        </a>
+                            <div>
+                                <p class="text-sm font-medium text-blue-900">Account Information</p>
+                                <p class="text-sm text-blue-700 mt-1">
+                                    Member since {{ Auth::user()->created_at->format('F d, Y') }}
+                                </p>
+                            </div>
+                        </div>
                     </div>
-                @endif
 
-                <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                    <div class="flex items-start">
-                        <svg class="w-5 h-5 text-blue-600 mt-0.5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
-                        </svg>
-                        <div>
-                            <p class="text-sm font-medium text-blue-900">Account Information</p>
-                            <p class="text-sm text-blue-700 mt-1">
-                                Member since {{ Auth::user()->created_at->format('F d, Y') }}
-                            </p>
+                    <div class="pt-4 border-t border-gray-200">
+                        <div id="view-mode">
+                            <button type="button" onclick="enableEditMode()" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                                Edit Profile
+                            </button>
+                            <a href="/" class="ml-4 text-blue-600 hover:underline">Head back home</a>
+                        </div>
+
+                        <div id="edit-mode" class="hidden">
+                            <button type="submit" class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
+                                Save Changes
+                            </button>
+                            <button type="button" onclick="cancelEditMode()" class="ml-4 px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition">
+                                Cancel
+                            </button>
                         </div>
                     </div>
                 </div>
-
-                <div class="pt-4 border-t border-gray-200">
-                    <button class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
-                        Edit Profile
-                    </button>
-                    <a href="/" class="ml-4 text-blue-600 hover:underline">Head back home</a>
-                </div>
-            </div>
+            </form>
         </div>
     </div>
 </div>
+
+<script>
+    const editableFields = ['first_name', 'last_name', 'country', 'date_of_birth'];
+    @if(Auth::user()->account_type === 'job_seeker')
+        editableFields.push('is_student');
+    @endif
+
+    function enableEditMode() {
+        document.getElementById('view-mode').classList.add('hidden');
+        document.getElementById('edit-mode').classList.remove('hidden');
+
+        editableFields.forEach(fieldId => {
+            const displayElement = document.getElementById(fieldId + '_display');
+            const editElement = document.getElementById(fieldId + '_edit');
+            
+            if (displayElement && editElement) {
+                displayElement.classList.add('hidden');
+                editElement.classList.remove('hidden');
+            }
+        });
+    }
+
+    function cancelEditMode() {
+        document.getElementById('view-mode').classList.remove('hidden');
+        document.getElementById('edit-mode').classList.add('hidden');
+
+        document.getElementById('profileForm').reset();
+
+        editableFields.forEach(fieldId => {
+            const displayElement = document.getElementById(fieldId + '_display');
+            const editElement = document.getElementById(fieldId + '_edit');
+            
+            if (displayElement && editElement) {
+                displayElement.classList.remove('hidden');
+                editElement.classList.add('hidden');
+            }
+        });
+    }
+</script>
 @endsection
