@@ -28,7 +28,12 @@ class JobOfferSeeder extends Seeder
                 'user_id' => $employer->id,
                 'title' => 'Senior Full Stack Developer',
                 'description' => 'We are looking for an experienced Full Stack Developer to join our growing team. You will be responsible for developing and maintaining web applications using modern technologies. This is a great opportunity to work on exciting projects with a talented team in a dynamic environment.',
-                'requirements' => '- 5+ years of experience in web development\n- Strong knowledge of PHP, Laravel, JavaScript, React\n- Experience with RESTful APIs and microservices\n- Knowledge of SQL and NoSQL databases\n- Excellent problem-solving skills\n- Good communication skills in English',
+                'requirements' => '- 5+ years of experience in web development
+                - Strong knowledge of PHP, Laravel, JavaScript, React
+                - Experience with RESTful APIs and microservices
+                - Knowledge of SQL and NoSQL databases
+                - Excellent problem-solving skills
+                - Good communication skills in English',
                 'company_name' => 'TechVision Solutions',
                 'salary_min' => 12000,
                 'salary_max' => 18000,
@@ -45,7 +50,12 @@ class JobOfferSeeder extends Seeder
                 'user_id' => $employer->id,
                 'title' => 'Junior Frontend Developer',
                 'description' => 'Join our team as a Junior Frontend Developer! This is an excellent opportunity for someone starting their career in web development. You will work on creating responsive and user-friendly interfaces while learning from experienced developers.',
-                'requirements' => '- 1+ year of experience with HTML, CSS, JavaScript\n- Basic knowledge of React or Vue.js\n- Understanding of responsive design\n- Willingness to learn and grow\n- Team player attitude\n- English level: B2 or higher',
+                'requirements' => '- 1+ year of experience with HTML, CSS, JavaScript
+                - Basic knowledge of React or Vue.js
+                - Understanding of responsive design
+                - Willingness to learn and grow
+                - Team player attitude
+                - English level: B2 or higher',
                 'company_name' => 'TechVision Solutions',
                 'salary_min' => 5000,
                 'salary_max' => 7000,
@@ -62,7 +72,12 @@ class JobOfferSeeder extends Seeder
                 'user_id' => $employer->id,
                 'title' => 'Marketing Specialist - Internship',
                 'description' => 'We offer an internship position for students or recent graduates interested in digital marketing. You will have the opportunity to work on real marketing campaigns, create content, and analyze market trends under the guidance of experienced marketers.',
-                'requirements' => '- Currently studying Marketing, Business, or related field\n- Basic knowledge of social media platforms\n- Creative thinking and good writing skills\n- Proficiency in MS Office\n- Eagerness to learn digital marketing tools\n- Good English communication skills',
+                'requirements' => '- Currently studying Marketing, Business, or related field
+                - Basic knowledge of social media platforms
+                - Creative thinking and good writing skills
+                - Proficiency in MS Office
+                - Eagerness to learn digital marketing tools
+                - Good English communication skills',
                 'company_name' => 'TechVision Solutions',
                 'salary_min' => 3000,
                 'salary_max' => 4000,
