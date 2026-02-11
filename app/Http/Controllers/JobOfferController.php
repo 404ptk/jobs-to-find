@@ -50,7 +50,7 @@ class JobOfferController extends Controller
 
         $jobOffers = $query->orderBy('created_at', 'desc')->paginate(12);
 
-        return view('search', compact('jobOffers', 'validated'));
+        return view('job-offers', compact('jobOffers', 'validated'));
     }
 
     public function myOffers()
