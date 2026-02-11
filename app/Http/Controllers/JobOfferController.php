@@ -16,6 +16,7 @@ class JobOfferController extends Controller
             'city' => ['nullable', 'string', 'max:100'],
             'category' => ['nullable', 'string'],
             'employment_type' => ['nullable', 'string', 'in:full-time,part-time,contract,internship'],
+            'sort' => ['nullable', 'string', 'in:newest,oldest,salary_high,salary_low'],
         ], [
             'search.regex' => 'Search field can only contain letters, numbers, spaces, and hyphens.',
         ]);
@@ -53,7 +54,24 @@ class JobOfferController extends Controller
             $query->where('employment_type', $validated['employment_type']);
         }
 
-        $jobOffers = $query->orderBy('created_at', 'desc')->paginate(12);
+        $sort = $validated['sort'] ?? 'newest';
+        switch ($sort) {
+            case 'oldest':
+                $query->orderBy('created_at', 'asc');
+                break;
+            case 'salary_high':
+                $query->orderByRaw('CAST(SUBSTRING_INDEX(salary_range, " ", 1) AS UNSIGNED) DESC');
+                break;
+            case 'salary_low':
+                $query->orderByRaw('CAST(SUBSTRING_INDEX(salary_range, " ", 1) AS UNSIGNED) ASC');
+                break;
+            case 'newest':
+            default:
+                $query->orderBy('created_at', 'desc');
+                break;
+        }
+
+        $jobOffers = $query->paginate(12)->appends($request->except('page'));
 
         return view('job-offers', compact('jobOffers', 'validated'));
     }

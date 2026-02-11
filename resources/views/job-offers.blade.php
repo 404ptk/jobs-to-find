@@ -68,8 +68,26 @@
                 </a>
             </div>
         @else
-            <div class="mb-4 text-sm text-gray-600">
-                Found {{ $jobOffers->total() }} {{ $jobOffers->total() == 1 ? 'offer' : 'offers' }}
+            <div class="flex items-center justify-between mb-6">
+                <div class="text-sm text-gray-600">
+                    Found {{ $jobOffers->total() }} {{ $jobOffers->total() == 1 ? 'offer' : 'offers' }}
+                </div>
+                
+                <div class="flex items-center gap-4">
+                    <label class="text-sm font-medium text-gray-700">Sort by:</label>
+                    <form method="GET" action="{{ route('search') }}" id="sortForm">
+                        @foreach(request()->except(['sort', 'page']) as $key => $value)
+                            <input type="hidden" name="{{ $key }}" value="{{ $value }}">
+                        @endforeach
+                        
+                        <select name="sort" onchange="document.getElementById('sortForm').submit()" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm">
+                            <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Newest first</option>
+                            <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Oldest first</option>
+                            <option value="salary_high" {{ request('sort') == 'salary_high' ? 'selected' : '' }}>Salary: High to Low</option>
+                            <option value="salary_low" {{ request('sort') == 'salary_low' ? 'selected' : '' }}>Salary: Low to High</option>
+                        </select>
+                    </form>
+                </div>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
