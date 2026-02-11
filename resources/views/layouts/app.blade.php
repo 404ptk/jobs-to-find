@@ -20,7 +20,8 @@
                     @auth
                         <div class="relative group">
                             <button class="text-gray-700 px-4 py-2 text-sm font-medium hover:text-blue-600 transition flex items-center">
-                                {{ Auth::user()->username }}
+                                <span class="text-gray-700">{{ Auth::user()->first_name }}</span>
+                                <span class="text-blue-600 ml-1">{{ Auth::user()->last_name }}</span>
                                 <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                                 </svg>
