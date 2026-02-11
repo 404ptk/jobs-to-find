@@ -72,8 +72,8 @@
                                 </svg>
                                 Job Description
                             </h2>
-                            <div class="text-gray-700 leading-relaxed whitespace-pre-line">
-                                {{ $jobOffer->description }}
+                            <div class="text-gray-700 leading-relaxed">
+                                {!! nl2br(e($jobOffer->description)) !!}
                             </div>
                         </section>
 
@@ -85,8 +85,8 @@
                                     </svg>
                                     Requirements
                                 </h2>
-                                <div class="text-gray-700 leading-relaxed whitespace-pre-line bg-gray-50 p-6 rounded-lg">
-                                    {{ $jobOffer->requirements }}
+                                <div class="text-gray-700 leading-relaxed bg-gray-50 p-6 rounded-lg">
+                                    {!! nl2br(e($jobOffer->requirements)) !!}
                                 </div>
                             </section>
                         @endif
