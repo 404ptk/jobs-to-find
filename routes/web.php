@@ -86,6 +86,14 @@ Route::post('/offer/store', [JobOfferController::class, 'store'])
     ->middleware('auth')
     ->name('offer.store');
 
+Route::get('/offer/{id}/edit', [JobOfferController::class, 'edit'])
+    ->middleware('auth')
+    ->name('offer.edit');
+
+Route::put('/offer/{id}/update', [JobOfferController::class, 'update'])
+    ->middleware('auth')
+    ->name('offer.update');
+
 Route::get('/my-applications', [JobOfferController::class, 'myApplications'])
     ->middleware('auth')
     ->name('my-applications');

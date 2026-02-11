@@ -153,4 +153,57 @@ class JobOfferController extends Controller
 
         return redirect()->route('my-offers')->with('success', 'Job offer created successfully!');
     }
+
+    public function edit($id)
+    {
+        if (Auth::user()->account_type !== 'employer') {
+            abort(403, 'Access denied. Only employers can edit job offers.');
+        }
+
+        $jobOffer = JobOffer::findOrFail($id);
+
+        if ($jobOffer->user_id !== Auth::id()) {
+            abort(403, 'Access denied. You can only edit your own job offers.');
+        }
+
+        $categories = \App\Models\Category::orderBy('name')->get();
+        $locations = \App\Models\Location::orderBy('country')->orderBy('city')->get();
+        $employmentTypes = ['full-time', 'part-time', 'contract', 'internship'];
+
+        return view('edit-offer', compact('jobOffer', 'categories', 'locations', 'employmentTypes'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        if (Auth::user()->account_type !== 'employer') {
+            abort(403, 'Access denied. Only employers can update job offers.');
+        }
+
+        $jobOffer = JobOffer::findOrFail($id);
+
+        if ($jobOffer->user_id !== Auth::id()) {
+            abort(403, 'Access denied. You can only update your own job offers.');
+        }
+
+        $validated = $request->validate([
+            'title' => ['required', 'string', 'max:96', 'regex:/^[a-zA-Z0-9\s\-]+$/'],
+            'description' => ['required', 'string', 'max:5000'],
+            'requirements' => ['required', 'string', 'max:5000'],
+            'company_name' => ['required', 'string', 'max:96', 'regex:/^[a-zA-Z0-9\s\-]+$/'],
+            'salary_min' => ['nullable', 'numeric', 'min:0'],
+            'salary_max' => ['nullable', 'numeric', 'min:0', 'gte:salary_min'],
+            'employment_type' => ['required', 'string', 'in:full-time,part-time,contract,internship'],
+            'category_id' => ['required', 'exists:categories,id'],
+            'location_id' => ['required', 'exists:locations,id'],
+            'expires_at' => ['required', 'date', 'after:today'],
+        ], [
+            'title.regex' => 'Title can only contain letters, numbers, spaces, and hyphens.',
+            'company_name.regex' => 'Company name can only contain letters, numbers, spaces, and hyphens.',
+            'salary_max.gte' => 'Maximum salary must be greater than or equal to minimum salary.',
+        ]);
+
+        $jobOffer->update($validated);
+
+        return redirect()->route('my-offers')->with('success', 'Job offer updated successfully!');
+    }
 }
