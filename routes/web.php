@@ -28,3 +28,7 @@ Route::get('/tos', function () {
 Route::get('/privacy', function () {
     return view('privacy');
 })->name('privacy');
+
+Route::get('/profile', function () {
+    return view('profile');
+})->middleware('auth')->name('profile');
