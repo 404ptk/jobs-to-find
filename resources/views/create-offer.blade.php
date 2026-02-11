@@ -185,24 +185,6 @@
                 </div>
 
                 <div class="mb-6">
-                    <label for="expires_at" class="block text-sm font-medium text-gray-700 mb-2">
-                        Offer Expiration Date <span class="text-red-500">*</span>
-                    </label>
-                    <input 
-                        type="date" 
-                        id="expires_at" 
-                        name="expires_at" 
-                        value="{{ old('expires_at') }}"
-                        min="{{ date('Y-m-d', strtotime('+1 day')) }}"
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('expires_at') border-red-500 @enderror"
-                        required
-                    >
-                    @error('expires_at')
-                        <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <div class="mb-6">
                     <label for="description" class="block text-sm font-medium text-gray-700 mb-2">
                         Job Description <span class="text-red-500">*</span>
                     </label>
