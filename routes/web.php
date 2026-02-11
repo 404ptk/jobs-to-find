@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\JobOfferController;
 
 Route::get('/', function () {
     return view('home');
@@ -32,3 +33,7 @@ Route::get('/privacy', function () {
 Route::get('/profile', function () {
     return view('profile');
 })->middleware('auth')->name('profile');
+
+Route::get('/my-offers', [JobOfferController::class, 'myOffers'])
+    ->middleware('auth')
+    ->name('my-offers');
