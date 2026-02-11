@@ -17,7 +17,7 @@
         </div>
 
         <div class="bg-white rounded-lg shadow-xl p-6 md:p-8">
-            <form class="space-y-4">
+            <form action="/search" method="GET" class="space-y-4">
                 <div class="flex flex-col md:flex-row gap-4">
                     <div class="flex-1">
                         <label for="search" class="block text-sm font-medium text-gray-700 mb-2">
@@ -28,6 +28,8 @@
                             id="search" 
                             name="search" 
                             placeholder="e.g. Frontend Developer, Marketing Manager..."
+                            pattern="[a-zA-Z0-9\s\-]+"
+                            title="Only letters, numbers, spaces, and hyphens are allowed"
                             class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
                         >
                     </div>
@@ -41,6 +43,8 @@
                             id="location" 
                             name="location" 
                             placeholder="e.g. Warsaw, Krakow..."
+                            pattern="[a-zA-Z\s\-]+"
+                            title="Only letters, spaces, and hyphens are allowed"
                             class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
                         >
                     </div>

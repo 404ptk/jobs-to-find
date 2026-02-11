@@ -44,12 +44,17 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $validated = $request->validate([
-            'username' => 'required|string|max:28|unique:users',
-            'first_name' => 'required|string|max:32',
-            'last_name' => 'required|string|max:32',
+            'username' => ['required', 'string', 'max:28', 'unique:users', 'regex:/^[a-zA-Z0-9_]+$/'],
+            'first_name' => ['required', 'string', 'max:32', 'regex:/^[a-zA-Z\s]+$/'],
+            'last_name' => ['required', 'string', 'max:32', 'regex:/^[a-zA-Z\s]+$/'],
             'email' => 'required|string|email|max:48|unique:users',
-            'password' => 'required|string|min:8|confirmed',
+            'password' => ['required', 'string', 'min:8', 'confirmed', 'regex:/^[a-zA-Z0-9@#$%^&+=!]+$/'],
             'account_type' => 'required|in:job_seeker,employer',
+        ], [
+            'username.regex' => 'Username can only contain letters, numbers, and underscores.',
+            'first_name.regex' => 'First name can only contain letters and spaces.',
+            'last_name.regex' => 'Last name can only contain letters and spaces.',
+            'password.regex' => 'Password can only contain letters, numbers, and basic special characters (@#$%^&+=!).',
         ]);
 
         $user = User::create([

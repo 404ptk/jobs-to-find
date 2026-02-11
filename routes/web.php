@@ -8,6 +8,8 @@ Route::get('/', function () {
     return view('home');
 });
 
+Route::get('/search', [JobOfferController::class, 'search'])->name('search');
+
 Route::get('/login', function () {
     return view('login');
 })->name('login');
