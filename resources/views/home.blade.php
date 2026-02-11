@@ -35,23 +35,6 @@
                     </div>
                     
                     <div class="flex-1">
-                        <label for="location" class="block text-sm font-medium text-gray-700 mb-2">
-                            Location
-                        </label>
-                        <input 
-                            type="text" 
-                            id="location" 
-                            name="location" 
-                            placeholder="e.g. Warsaw, Krakow..."
-                            pattern="[a-zA-Z\s\-]+"
-                            title="Only letters, spaces, and hyphens are allowed"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                        >
-                    </div>
-                </div>
-
-                <div class="flex flex-col md:flex-row gap-4">
-                    <div class="flex-1">
                         <label for="category" class="block text-sm font-medium text-gray-700 mb-2">
                             Category
                         </label>
@@ -61,14 +44,48 @@
                             class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
                         >
                             <option value="">All categories</option>
-                            <option value="it">IT / Programming</option>
-                            <option value="marketing">Marketing</option>
-                            <option value="hr">HR / Recruitment</option>
-                            <option value="sales">Sales</option>
-                            <option value="finance">Finance</option>
+                            @foreach($categories as $category)
+                                <option value="{{ $category->slug }}">{{ $category->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+
+                <div class="flex flex-col md:flex-row gap-4">
+                    <div class="flex-1">
+                        <label for="country" class="block text-sm font-medium text-gray-700 mb-2">
+                            Country
+                        </label>
+                        <select 
+                            id="country" 
+                            name="country"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                        >
+                            <option value="">All countries</option>
+                            @foreach($countries as $country)
+                                <option value="{{ $country }}">{{ $country }}</option>
+                            @endforeach
                         </select>
                     </div>
 
+                    <div class="flex-1">
+                        <label for="city" class="block text-sm font-medium text-gray-700 mb-2">
+                            City
+                        </label>
+                        <select 
+                            id="city" 
+                            name="city"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                        >
+                            <option value="">All cities</option>
+                            @foreach($cities as $city)
+                                <option value="{{ $city }}">{{ $city }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+
+                <div class="flex flex-col md:flex-row gap-4">
                     <div class="flex-1">
                         <label for="employment_type" class="block text-sm font-medium text-gray-700 mb-2">
                             Employment type
@@ -79,10 +96,9 @@
                             class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
                         >
                             <option value="">All types</option>
-                            <option value="full-time">Full-time</option>
-                            <option value="part-time">Part-time</option>
-                            <option value="contract">Contract / B2B</option>
-                            <option value="internship">Internship</option>
+                            @foreach($employmentTypes as $type)
+                                <option value="{{ $type }}">{{ ucfirst(str_replace('-', ' ', $type)) }}</option>
+                            @endforeach
                         </select>
                     </div>
                 </div>
@@ -103,16 +119,16 @@
 
         <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
             <div class="bg-white p-6 rounded-lg shadow">
-                <div class="text-3xl font-bold text-blue-600 mb-2">1000+</div>
-                <div class="text-gray-600">Active jobs</div>
+                <div class="text-3xl font-bold text-blue-600 mb-2">{{ $stats['activeJobs'] }}</div>
+                <div class="text-gray-600">Active {{ $stats['activeJobs'] == 1 ? 'job' : 'jobs' }}</div>
             </div>
             <div class="bg-white p-6 rounded-lg shadow">
-                <div class="text-3xl font-bold text-blue-600 mb-2">500+</div>
-                <div class="text-gray-600">Companies</div>
+                <div class="text-3xl font-bold text-blue-600 mb-2">{{ $stats['companies'] }}</div>
+                <div class="text-gray-600">{{ $stats['companies'] == 1 ? 'Company' : 'Companies' }}</div>
             </div>
             <div class="bg-white p-6 rounded-lg shadow">
-                <div class="text-3xl font-bold text-blue-600 mb-2">50+</div>
-                <div class="text-gray-600">Categories</div>
+                <div class="text-3xl font-bold text-blue-600 mb-2">{{ $stats['categories'] }}</div>
+                <div class="text-gray-600">{{ $stats['categories'] == 1 ? 'Category' : 'Categories' }}</div>
             </div>
         </div>
     </div>

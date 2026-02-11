@@ -12,12 +12,12 @@ class JobOfferController extends Controller
     {
         $validated = $request->validate([
             'search' => ['nullable', 'string', 'max:100', 'regex:/^[a-zA-Z0-9\s\-]+$/'],
-            'location' => ['nullable', 'string', 'max:100', 'regex:/^[a-zA-Z\s\-]+$/'],
-            'category' => ['nullable', 'string', 'in:it,marketing,hr,sales,finance'],
+            'country' => ['nullable', 'string', 'max:100'],
+            'city' => ['nullable', 'string', 'max:100'],
+            'category' => ['nullable', 'string'],
             'employment_type' => ['nullable', 'string', 'in:full-time,part-time,contract,internship'],
         ], [
             'search.regex' => 'Search field can only contain letters, numbers, spaces, and hyphens.',
-            'location.regex' => 'Location field can only contain letters, spaces, and hyphens.',
         ]);
 
         $query = JobOffer::with(['category', 'location', 'user'])
@@ -31,10 +31,15 @@ class JobOfferController extends Controller
             });
         }
 
-        if (!empty($validated['location'])) {
+        if (!empty($validated['country'])) {
             $query->whereHas('location', function($q) use ($validated) {
-                $q->where('city', 'LIKE', '%' . $validated['location'] . '%')
-                  ->orWhere('region', 'LIKE', '%' . $validated['location'] . '%');
+                $q->where('country', $validated['country']);
+            });
+        }
+
+        if (!empty($validated['city'])) {
+            $query->whereHas('location', function($q) use ($validated) {
+                $q->where('city', $validated['city']);
             });
         }
 

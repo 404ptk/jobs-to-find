@@ -3,9 +3,37 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\JobOfferController;
+use App\Models\Category;
+use App\Models\Location;
 
 Route::get('/', function () {
-    return view('home');
+    $categories = Category::whereHas('jobOffers', function($q) {
+        $q->where('is_active', true);
+    })->orderBy('name')->get();
+    
+    $countries = Location::whereHas('jobOffers', function($q) {
+        $q->where('is_active', true);
+    })->select('country')->distinct()->orderBy('country')->pluck('country');
+    
+    $cities = Location::whereHas('jobOffers', function($q) {
+        $q->where('is_active', true);
+    })->select('city')->distinct()->orderBy('city')->pluck('city');
+    
+    $employmentTypes = \App\Models\JobOffer::where('is_active', true)
+        ->select('employment_type')
+        ->distinct()
+        ->orderBy('employment_type')
+        ->pluck('employment_type');
+    
+    $stats = [
+        'activeJobs' => \App\Models\JobOffer::where('is_active', true)->count(),
+        'companies' => \App\Models\JobOffer::where('is_active', true)->distinct('company_name')->count('company_name'),
+        'categories' => Category::whereHas('jobOffers', function($q) {
+            $q->where('is_active', true);
+        })->count(),
+    ];
+    
+    return view('home', compact('categories', 'countries', 'cities', 'employmentTypes', 'stats'));
 });
 
 Route::get('/search', [JobOfferController::class, 'search'])->name('search');

@@ -30,14 +30,19 @@
                                     Search: "{{ $validated['search'] }}"
                                 </span>
                             @endif
-                            @if(!empty($validated['location']))
+                            @if(!empty($validated['country']))
                                 <span class="px-3 py-1 bg-white text-blue-800 text-sm rounded-full">
-                                    Location: "{{ $validated['location'] }}"
+                                    Country: {{ $validated['country'] }}
+                                </span>
+                            @endif
+                            @if(!empty($validated['city']))
+                                <span class="px-3 py-1 bg-white text-blue-800 text-sm rounded-full">
+                                    City: {{ $validated['city'] }}
                                 </span>
                             @endif
                             @if(!empty($validated['category']))
                                 <span class="px-3 py-1 bg-white text-blue-800 text-sm rounded-full">
-                                    Category: {{ ucfirst($validated['category']) }}
+                                    Category: {{ ucfirst(str_replace('-', ' ', $validated['category'])) }}
                                 </span>
                             @endif
                             @if(!empty($validated['employment_type']))
@@ -64,7 +69,7 @@
             </div>
         @else
             <div class="mb-4 text-sm text-gray-600">
-                Found {{ $jobOffers->total() }} {{ Str::plural('offer', $jobOffers->total()) }}
+                Found {{ $jobOffers->total() }} {{ $jobOffers->total() == 1 ? 'offer' : 'offers' }}
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
