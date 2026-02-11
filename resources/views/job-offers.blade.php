@@ -74,6 +74,42 @@
                 </div>
                 
                 <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-2 border border-gray-300 rounded-lg p-1">
+                        <button 
+                            onclick="setGridLayout(1)" 
+                            id="grid-1"
+                            class="p-2 rounded hover:bg-gray-100 transition"
+                            title="1 column"
+                        >
+                            <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <rect x="3" y="3" width="18" height="18" rx="2" stroke-width="2"/>
+                            </svg>
+                        </button>
+                        <button 
+                            onclick="setGridLayout(2)" 
+                            id="grid-2"
+                            class="p-2 rounded bg-blue-100 transition"
+                            title="2 columns"
+                        >
+                            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <rect x="3" y="3" width="8" height="18" rx="2" stroke-width="2"/>
+                                <rect x="13" y="3" width="8" height="18" rx="2" stroke-width="2"/>
+                            </svg>
+                        </button>
+                        <button 
+                            onclick="setGridLayout(3)" 
+                            id="grid-3"
+                            class="p-2 rounded hover:bg-gray-100 transition"
+                            title="3 columns"
+                        >
+                            <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <rect x="2" y="3" width="5" height="18" rx="1" stroke-width="2"/>
+                                <rect x="9.5" y="3" width="5" height="18" rx="1" stroke-width="2"/>
+                                <rect x="17" y="3" width="5" height="18" rx="1" stroke-width="2"/>
+                            </svg>
+                        </button>
+                    </div>
+
                     <label class="text-sm font-medium text-gray-700">Sort by:</label>
                     <form method="GET" action="{{ route('search') }}" id="sortForm">
                         @foreach(request()->except(['sort', 'page']) as $key => $value)
@@ -90,7 +126,7 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div id="jobOffersGrid" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 @foreach($jobOffers as $offer)
                     <div class="bg-white rounded-lg shadow-sm hover:shadow-md transition border border-gray-200 hover:bg-gray-100">
                         <div class="p-6">
@@ -183,4 +219,42 @@
         @endif
     </div>
 </div>
+
+<script>
+    function setGridLayout(columns) {
+        const grid = document.getElementById('jobOffersGrid');
+        const buttons = document.querySelectorAll('[id^="grid-"]');
+        
+        buttons.forEach(btn => {
+            btn.classList.remove('bg-blue-100');
+            btn.classList.add('hover:bg-gray-100');
+            btn.querySelector('svg').classList.remove('text-blue-600');
+            btn.querySelector('svg').classList.add('text-gray-600');
+        });
+        
+        const activeBtn = document.getElementById('grid-' + columns);
+        activeBtn.classList.add('bg-blue-100');
+        activeBtn.classList.remove('hover:bg-gray-100');
+        activeBtn.querySelector('svg').classList.add('text-blue-600');
+        activeBtn.querySelector('svg').classList.remove('text-gray-600');
+        
+        grid.className = 'grid gap-6';
+        
+        if (columns === 1) {
+            grid.classList.add('grid-cols-1');
+        } else if (columns === 2) {
+            grid.classList.add('grid-cols-1', 'lg:grid-cols-2');
+        } else if (columns === 3) {
+            grid.classList.add('grid-cols-1', 'md:grid-cols-2', 'lg:grid-cols-3');
+        }
+        
+        localStorage.setItem('gridLayout', columns);
+    }
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        const savedLayout = localStorage.getItem('gridLayout') || '2';
+        setGridLayout(parseInt(savedLayout));
+    });
+</script>
+
 @endsection
