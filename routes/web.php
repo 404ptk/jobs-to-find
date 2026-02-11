@@ -39,3 +39,7 @@ Route::get('/profile', function () {
 Route::get('/my-offers', [JobOfferController::class, 'myOffers'])
     ->middleware('auth')
     ->name('my-offers');
+
+Route::get('/my-applications', [JobOfferController::class, 'myApplications'])
+    ->middleware('auth')
+    ->name('my-applications');

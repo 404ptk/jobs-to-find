@@ -66,4 +66,14 @@ class JobOfferController extends Controller
 
         return view('my-offers', compact('jobOffers'));
     }
+
+    public function myApplications()
+    {
+        if (Auth::user()->account_type !== 'job_seeker') {
+            abort(403, 'Access denied. Only job seekers can view this page.');
+        }
+
+        // TODO: Implement logic
+        return view('my-applications');
+    }
 }
