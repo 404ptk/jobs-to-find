@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\JobOffer;
+use App\Models\Category;
+use App\Models\Location;
 use Illuminate\Support\Facades\Auth;
 
 class JobOfferController extends Controller
@@ -17,6 +19,7 @@ class JobOfferController extends Controller
             'category' => ['nullable', 'string'],
             'employment_type' => ['nullable', 'string', 'in:full-time,part-time,contract,internship'],
             'sort' => ['nullable', 'string', 'in:newest,oldest,salary_high,salary_low'],
+            'per_page' => ['nullable', 'integer', 'in:10,20,30'],
         ], [
             'search.regex' => 'Search field can only contain letters, numbers, spaces, and hyphens.',
         ]);
@@ -72,9 +75,29 @@ class JobOfferController extends Controller
                 break;
         }
 
-        $jobOffers = $query->paginate(12)->appends($request->except('page'));
+        $perPage = $request->input('per_page', 10);
+        $jobOffers = $query->paginate($perPage)->appends($request->except('page'));
 
-        return view('job-offers', compact('jobOffers', 'validated'));
+        $categories = Category::whereHas('jobOffers', function($q) {
+            $q->where('is_active', true)->where('is_approved', true);
+        })->orderBy('name')->get();
+        
+        $countries = Location::whereHas('jobOffers', function($q) {
+            $q->where('is_active', true)->where('is_approved', true);
+        })->select('country')->distinct()->orderBy('country')->pluck('country');
+        
+        $cities = Location::whereHas('jobOffers', function($q) {
+            $q->where('is_active', true)->where('is_approved', true);
+        })->select('city')->distinct()->orderBy('city')->pluck('city');
+        
+        $employmentTypes = JobOffer::where('is_active', true)
+            ->where('is_approved', true)
+            ->select('employment_type')
+            ->distinct()
+            ->orderBy('employment_type')
+            ->pluck('employment_type');
+
+        return view('job-offers', compact('jobOffers', 'validated', 'categories', 'countries', 'cities', 'employmentTypes'));
     }
 
     public function show($id)

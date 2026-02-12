@@ -16,6 +16,106 @@
             </p>
         </div>
 
+        <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-semibold text-gray-900">Refine Your Search</h2>
+                <button onclick="toggleSearchForm()" class="text-blue-600 hover:text-blue-700 text-sm font-medium cursor-pointer">
+                    <span id="toggle-text">Hide filters</span>
+                </button>
+            </div>
+            
+            <form method="GET" action="{{ route('search') }}" id="search-form">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Search</label>
+                        <input 
+                            type="text" 
+                            name="search" 
+                            value="{{ request('search') }}"
+                            placeholder="Job title, company, keywords..."
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        >
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Country</label>
+                        <select name="country" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="">All countries</option>
+                            @foreach($countries as $country)
+                                <option value="{{ $country }}" {{ request('country') == $country ? 'selected' : '' }}>
+                                    {{ $country }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">City</label>
+                        <select name="city" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="">All cities</option>
+                            @foreach($cities as $city)
+                                <option value="{{ $city }}" {{ request('city') == $city ? 'selected' : '' }}>
+                                    {{ $city }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                        <select name="category" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="">All categories</option>
+                            @foreach($categories as $category)
+                                <option value="{{ $category->slug }}" {{ request('category') == $category->slug ? 'selected' : '' }}>
+                                    {{ $category->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Employment Type</label>
+                        <select name="employment_type" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="">All types</option>
+                            @foreach($employmentTypes as $type)
+                                <option value="{{ $type }}" {{ request('employment_type') == $type ? 'selected' : '' }}>
+                                    {{ ucfirst(str_replace('-', ' ', $type)) }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Sort By</label>
+                        <select name="sort" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Newest first</option>
+                            <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Oldest first</option>
+                            <option value="salary_high" {{ request('sort') == 'salary_high' ? 'selected' : '' }}>Highest salary</option>
+                            <option value="salary_low" {{ request('sort') == 'salary_low' ? 'selected' : '' }}>Lowest salary</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Results Per Page</label>
+                        <select name="per_page" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="10" {{ request('per_page', 10) == 10 ? 'selected' : '' }}>10 offers</option>
+                            <option value="20" {{ request('per_page', 10) == 20 ? 'selected' : '' }}>20 offers</option>
+                            <option value="30" {{ request('per_page', 10) == 30 ? 'selected' : '' }}>30 offers</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="flex gap-3 mt-4">
+                    <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium cursor-pointer">
+                        Apply Filters
+                    </button>
+                    <a href="{{ route('search') }}" class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium">
+                        Clear All
+                    </a>
+                </div>
+            </form>
+        </div>
+
         @if(isset($validated) && array_filter($validated))
             <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
                 <div class="flex items-start">
@@ -50,6 +150,15 @@
                                     Type: {{ ucfirst(str_replace('-', ' ', $validated['employment_type'])) }}
                                 </span>
                             @endif
+                            @if(!empty($validated['sort']) && $validated['sort'] !== 'newest')
+                                <span class="px-3 py-1 bg-white text-blue-800 text-sm rounded-full">
+                                    Sort: {{ 
+                                        $validated['sort'] === 'oldest' ? 'Oldest first' : 
+                                        ($validated['sort'] === 'salary_high' ? 'Highest salary' : 
+                                        ($validated['sort'] === 'salary_low' ? 'Lowest salary' : 'Newest first'))
+                                    }}
+                                </span>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -69,60 +178,60 @@
             </div>
         @else
             <div class="flex items-center justify-between mb-6">
-                <div class="text-sm text-gray-600">
-                    Found {{ $jobOffers->total() }} {{ $jobOffers->total() == 1 ? 'offer' : 'offers' }}
-                </div>
-                
                 <div class="flex items-center gap-4">
-                    <div class="flex items-center gap-2 border border-gray-300 rounded-lg p-1">
-                        <button 
-                            onclick="setGridLayout(1)" 
-                            id="grid-1"
-                            class="p-2 rounded hover:bg-gray-100 transition"
-                            title="1 column"
-                        >
-                            <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <rect x="3" y="3" width="18" height="18" rx="2" stroke-width="2"/>
-                            </svg>
-                        </button>
-                        <button 
-                            onclick="setGridLayout(3)" 
-                            id="grid-3"
-                            class="p-2 rounded-lg border-2 transition cursor-pointer"cursor-pointer"
-                            title="2 columns"
-                        >
-                            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <rect x="3" y="3" width="8" height="18" rx="2" stroke-width="2"/>
-                                <rect x="13" y="3" width="8" height="18" rx="2" stroke-width="2"/>
-                            </svg>
-                        </button>
-                        <button 
-                            onclick="setGridLayout(3)" 
-                            id="grid-3"
-                            class="p-2 rounded hover:bg-gray-100 transition"
-                            title="3 columns"
-                        >
-                            <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <rect x="2" y="3" width="5" height="18" rx="1" stroke-width="2"/>
-                                <rect x="9.5" y="3" width="5" height="18" rx="1" stroke-width="2"/>
-                                <rect x="17" y="3" width="5" height="18" rx="1" stroke-width="2"/>
-                            </svg>
-                        </button>
+                    <div class="text-sm text-gray-600">
+                        Found {{ $jobOffers->total() }} {{ $jobOffers->total() == 1 ? 'offer' : 'offers' }}
                     </div>
-
-                    <label class="text-sm font-medium text-gray-700">Sort by:</label>
-                    <form method="GET" action="{{ route('search') }}" id="sortForm">
-                        @foreach(request()->except(['sort', 'page']) as $key => $value)
+                    
+                    <form method="GET" action="{{ route('search') }}" id="perPageForm" class="flex items-center gap-2">
+                        @foreach(request()->except(['per_page', 'page']) as $key => $value)
                             <input type="hidden" name="{{ $key }}" value="{{ $value }}">
                         @endforeach
                         
-                        <select name="sort" onchange="document.getElementById('sortForm').submit()" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm">
-                            <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Newest first</option>
-                            <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Oldest first</option>
-                            <option value="salary_high" {{ request('sort') == 'salary_high' ? 'selected' : '' }}>Salary: High to Low</option>
-                            <option value="salary_low" {{ request('sort') == 'salary_low' ? 'selected' : '' }}>Salary: Low to High</option>
+                        <label class="text-sm font-medium text-gray-700">Show:</label>
+                        <select name="per_page" onchange="document.getElementById('perPageForm').submit()" class="px-3 py-1 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm cursor-pointer">
+                            <option value="10" {{ request('per_page', 10) == 10 ? 'selected' : '' }}>10</option>
+                            <option value="20" {{ request('per_page', 10) == 20 ? 'selected' : '' }}>20</option>
+                            <option value="30" {{ request('per_page', 10) == 30 ? 'selected' : '' }}>30</option>
                         </select>
+                        <span class="text-sm text-gray-600">per page</span>
                     </form>
+                </div>
+                
+                <div class="flex items-center gap-2 border border-gray-300 rounded-lg p-1">
+                    <button 
+                        onclick="setGridLayout(1)" 
+                        id="grid-1"
+                        class="p-2 rounded hover:bg-gray-100 transition cursor-pointer"
+                        title="1 column"
+                    >
+                        <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <rect x="3" y="3" width="18" height="18" rx="2" stroke-width="2"/>
+                        </svg>
+                    </button>
+                    <button 
+                        onclick="setGridLayout(2)" 
+                        id="grid-2"
+                        class="p-2 rounded-lg border-2 border-blue-600 bg-blue-50 transition cursor-pointer"
+                        title="2 columns"
+                    >
+                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <rect x="3" y="3" width="8" height="18" rx="2" stroke-width="2"/>
+                            <rect x="13" y="3" width="8" height="18" rx="2" stroke-width="2"/>
+                        </svg>
+                    </button>
+                    <button 
+                        onclick="setGridLayout(3)" 
+                        id="grid-3"
+                        class="p-2 rounded hover:bg-gray-100 transition cursor-pointer"
+                        title="3 columns"
+                    >
+                        <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <rect x="2" y="3" width="5" height="18" rx="1" stroke-width="2"/>
+                            <rect x="9.5" y="3" width="5" height="18" rx="1" stroke-width="2"/>
+                            <rect x="17" y="3" width="5" height="18" rx="1" stroke-width="2"/>
+                        </svg>
+                    </button>
                 </div>
             </div>
 
@@ -249,6 +358,19 @@
         }
         
         localStorage.setItem('gridLayout', columns);
+    }
+    
+    function toggleSearchForm() {
+        const form = document.getElementById('search-form');
+        const toggleText = document.getElementById('toggle-text');
+        
+        if (form.classList.contains('hidden')) {
+            form.classList.remove('hidden');
+            toggleText.textContent = 'Hide filters';
+        } else {
+            form.classList.add('hidden');
+            toggleText.textContent = 'Show filters';
+        }
     }
     
     document.addEventListener('DOMContentLoaded', function() {
