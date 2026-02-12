@@ -31,6 +31,7 @@ class AdminController extends Controller
 
         $offer = JobOffer::findOrFail($id);
         $offer->is_approved = true;
+        $offer->created_at = now();
         $offer->save();
 
         return redirect()->route('admin.accept-offers')->with('success', 'Job offer approved successfully!');
