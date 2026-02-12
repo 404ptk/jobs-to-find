@@ -1,59 +1,262 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Jobs to Find
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A web application for publishing and searching job offers, built with Laravel framework and a user interface designed with Tailwind CSS.
 
-## About Laravel
+## Technologies
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+### Backend
+- **Laravel** 12.0 - PHP framework
+- **PHP** 8.2 - programming language
+- **MySQL** - database management system
+- **Eloquent ORM** - object-relational mapping
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### Frontend
+- **Tailwind CSS** 4.1.18 - CSS framework
+- **Blade** - Laravel templating engine
+- **JavaScript** - client-side interactivity
+- **Vite** 7.0.7 - bundler and development tool
+- **Axios** 1.11.0 - HTTP client
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Development Tools
+- **PHPUnit** - unit testing
+- **Faker** - test data generation
+- **Laravel Pint** - PHP code formatting
+- **Laravel Sail** - Docker environment
 
-## Learning Laravel
+## Database Structure
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### Table: users
+Stores system user data.
+- `id` - primary key
+- `first_name` - first name
+- `last_name` - last name
+- `username` - username (unique)
+- `email` - email address (unique)
+- `password` - password (hashed)
+- `role` - role (job_seeker, employer, admin)
+- `timestamps` - created_at, updated_at
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Table: categories
+Job offer categories (e.g., IT, Marketing, Sales).
+- `id` - primary key
+- `name` - category name (unique)
+- `timestamps` - created_at, updated_at
 
-## Laravel Sponsors
+### Table: locations
+Job offer locations.
+- `id` - primary key
+- `country` - country
+- `city` - city
+- `timestamps` - created_at, updated_at
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### Table: job_offers
+Main table for job offers.
+- `id` - primary key
+- `user_id` - foreign key to users (employer)
+- `title` - offer title (indexed)
+- `description` - detailed description
+- `requirements` - requirements (optional)
+- `company_name` - company name
+- `salary_range` - salary range (optional)
+- `employment_type` - employment type (full-time, part-time, contract, internship)
+- `category_id` - foreign key to categories (indexed)
+- `location_id` - foreign key to locations (indexed)
+- `is_active` - whether the offer is active (indexed)
+- `is_approved` - whether the offer has been approved by administrator
+- `expires_at` - expiration date (optional)
+- `timestamps` - created_at (also used as approval date), updated_at
 
-### Premium Partners
+### Relations
+- `job_offers.user_id` -> `users.id` (ON DELETE CASCADE)
+- `job_offers.category_id` -> `categories.id` (ON DELETE CASCADE)
+- `job_offers.location_id` -> `locations.id` (ON DELETE CASCADE)
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## Implemented Features
 
-## Contributing
+### Users (roles)
+- **job_seeker** - person looking for a job
+- **employer** - employer publishing offers
+- **admin** - system administrator
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Authorization System
+- User registration with role selection
+- Login and logout
+- Middleware for route protection
+- User profile with data editing capability
 
-## Code of Conduct
+### Job Offers (CRUD)
+- Browse job offers (public)
+- Create offers by employers
+- Edit own offers
+- Delete offers
+- Display offer details
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Search and Filtering
+- Search by keywords in title and description
+- Filter by category
+- Filter by country and city
+- Filter by employment type
+- Sort results (newest, oldest, alphabetically)
+- Filter form on results page
+- Display active filters
 
-## Security Vulnerabilities
+### Pagination
+- Display 10/20/30 offers per page (user choice)
+- Preserve search parameters when changing pages
+- Default 10 offers per page
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### Admin Panel
+- Browse pending offers (is_approved = false)
+- Approve offers (sets is_approved = true and created_at to current date)
+- Reject offers (sets is_active = false)
+- Display employer statistics (first name, last name, username, number of active offers, number of pending offers)
+- Admin actions also available in offer details view
+- Custom confirmation dialogs for rejection actions
+
+### Employer Panel
+- List of own published offers
+- Offer status (Pending Approval / Active)
+- View count information (prepared, but not tracked in database)
+
+### User Interface
+- Responsive design (Tailwind CSS)
+- Color-coded statuses
+- Interactive elements with pointer cursor
+- Modal dialogs with confirmations
+- Clear navigation
+
+### Code Organization
+- Views divided into subfolders:
+  - `employer/` - views for employers
+  - `job-seeker/` - views for job seekers
+  - `auth/` - authorization views
+  - `public/` - public views
+  - `admin/` - administrator views
+
+## TODO
+
+### Job Application System
+- No ability for job_seekers to apply to offers
+- No applications table to store applications
+- No view with applications for employers
+- No "My Applications" view for job_seekers
+
+### Notification System
+- No email notifications
+- No in-app notifications
+- No notifications about new offers matching profile
+- No notifications about application status changes
+
+### Employer Profile
+- No dedicated companies table
+- No extended company information
+- No company logo
+- No company page with all offers
+
+### Job Seeker Profile
+- No CV/resume upload
+- No skills list
+- No employment history
+- No job alerts
+
+### Messaging System
+- No internal messaging system
+- No employer-candidate communication
+
+### User Verification
+- No email address verification
+- No password reset
+- No company/employer verification
+
+### Additional Features
+- No saving favorite offers
+- No tracking of offer view counts in database
+- No statistics for employers (number of applications, conversion rate)
+- No rating and review system for employers
+- No export offers to PDF
+- No LinkedIn integration
+- No REST API for external integrations
+
+### SEO and Marketing
+- No meta tags for offers
+- No sitemap.xml
+- No advanced robots.txt
+- No Schema.org structure for job offers
+
+## Installation
+
+### Requirements
+- PHP >= 8.2
+- Composer
+- Node.js and npm
+- MySQL
+
+### Installation Steps
+
+1. Clone the repository:
+```bash
+git clone https://github.com/your-username/jobstofind.git
+cd jobstofind
+```
+
+2. Install PHP dependencies:
+```bash
+composer install
+```
+
+3. Install JavaScript dependencies:
+```bash
+npm install
+```
+
+4. Copy the configuration file:
+```bash
+cp .env.example .env
+```
+
+5. Generate application key:
+```bash
+php artisan key:generate
+```
+
+6. Configure database in `.env` file:
+```
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=jobstofind
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+7. Run migrations and seeders:
+```bash
+php artisan migrate --seed
+```
+
+8. Build frontend assets:
+```bash
+npm run build
+```
+
+9. Start development server:
+```bash
+php artisan serve
+```
+
+10. (Optional) In a separate terminal, run Vite for hot reload:
+```bash
+npm run dev
+```
+
+The application will be available at: http://localhost:8000 or http://127.0.0.1:8000
+
+### Test Data
+After running seeders, test accounts are available:
+- Administrator: check UserSeeder
+- Employer: check UserSeeder
+- Job Seeker: check UserSeeder
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This project is an educational/demonstration application.
