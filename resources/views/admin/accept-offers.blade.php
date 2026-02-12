@@ -42,11 +42,26 @@
                             </div>
 
                             <div class="space-y-2 mb-4">
-                                <div class="flex items-center text-sm text-gray-600">
-                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                                    </svg>
-                                    {{ $offer->user->username }}
+                                <div class="bg-gray-50 rounded-lg p-3 mb-3">
+                                    <div class="flex items-center text-sm font-medium text-gray-900 mb-1">
+                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                        </svg>
+                                        {{ $offer->user->first_name }} {{ $offer->user->last_name }}
+                                    </div>
+                                    <div class="text-xs text-gray-500 ml-6">{{ '@' . $offer->user->username }}</div>
+                                    <div class="flex gap-3 mt-2 ml-6">
+                                        @php
+                                            $userActiveOffers = \App\Models\JobOffer::where('user_id', $offer->user_id)->where('is_active', true)->where('is_approved', true)->count();
+                                            $userPendingOffers = \App\Models\JobOffer::where('user_id', $offer->user_id)->where('is_active', true)->where('is_approved', false)->count();
+                                        @endphp
+                                        <span class="text-xs text-green-600 font-medium">
+                                            <span class="font-bold">{{ $userActiveOffers }}</span> active
+                                        </span>
+                                        <span class="text-xs text-yellow-600 font-medium">
+                                            <span class="font-bold">{{ $userPendingOffers }}</span> pending
+                                        </span>
+                                    </div>
                                 </div>
 
                                 <div class="flex items-center text-sm text-gray-600">
