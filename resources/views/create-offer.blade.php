@@ -229,7 +229,7 @@
                     </a>
                     <button 
                         type="submit" 
-                        class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium"
+                        class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium cursor-pointer"
                     >
                         Create Job Offer
                     </button>

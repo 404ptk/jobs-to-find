@@ -86,9 +86,9 @@
                             </svg>
                         </button>
                         <button 
-                            onclick="setGridLayout(2)" 
-                            id="grid-2"
-                            class="p-2 rounded bg-blue-100 transition"
+                            onclick="setGridLayout(3)" 
+                            id="grid-3"
+                            class="p-2 rounded-lg border-2 transition cursor-pointer"cursor-pointer"
                             title="2 columns"
                         >
                             <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -200,7 +200,7 @@
                                 </a>
                                 @auth
                                     @if(Auth::user()->account_type === 'job_seeker')
-                                        <button class="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition">
+                                        <button class="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition cursor-pointer">
                                             Apply Now
                                         </button>
                                     @endif

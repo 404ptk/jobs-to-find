@@ -79,9 +79,14 @@ class JobOfferController extends Controller
 
     public function show($id)
     {
-        $jobOffer = JobOffer::with(['category', 'location', 'user'])
-            ->where('is_active', true)
-            ->findOrFail($id);
+        $query = JobOffer::with(['category', 'location', 'user'])
+            ->where('is_active', true);
+        
+        if (!Auth::check() || Auth::user()->account_type !== 'admin') {
+            $query->where('is_approved', true);
+        }
+        
+        $jobOffer = $query->findOrFail($id);
 
         return view('job-detail', compact('jobOffer'));
     }

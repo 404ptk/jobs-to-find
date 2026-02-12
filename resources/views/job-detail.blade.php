@@ -54,9 +54,15 @@
                         </div>
                     </div>
                     
-                    <span class="ml-4 px-4 py-2 bg-white text-green-600 rounded-full text-sm font-semibold">
-                        Active
-                    </span>
+                    @if(!$jobOffer->is_approved)
+                        <span class="ml-4 px-4 py-2 bg-yellow-100 text-yellow-800 rounded-full text-sm font-semibold">
+                            Pending Approval
+                        </span>
+                    @else
+                        <span class="ml-4 px-4 py-2 bg-white text-green-600 rounded-full text-sm font-semibold">
+                            Active
+                        </span>
+                    @endif
                 </div>
 
                 <div class="flex items-center gap-3 text-sm text-blue-100">
@@ -98,11 +104,41 @@
                         @endif
 
                         @auth
-                            @if(Auth::user()->account_type === 'job_seeker')
+                            @if(Auth::user()->account_type === 'admin' && !$jobOffer->is_approved)
+                                <div class="bg-yellow-50 border-2 border-yellow-400 rounded-lg p-6">
+                                    <h3 class="text-lg font-semibold text-gray-900 mb-3 flex items-center">
+                                        <svg class="w-6 h-6 mr-2 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                                        </svg>
+                                        Admin Actions - Pending Approval
+                                    </h3>
+                                    <p class="text-gray-700 mb-4">This job offer is awaiting approval. Review and approve or reject it.</p>
+                                    <div class="flex gap-3">
+                                        <form action="{{ route('admin.approve-offer', $jobOffer->id) }}" method="POST" class="flex-1">
+                                            @csrf
+                                            <button type="submit" class="w-full px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition flex items-center justify-center cursor-pointer">
+                                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                </svg>
+                                                Approve
+                                            </button>
+                                        </form>
+                                        <form action="{{ route('admin.reject-offer', $jobOffer->id) }}" method="POST" class="flex-1" id="reject-form-{{ $jobOffer->id }}">
+                                            @csrf
+                                            <button type="button" data-action="reject" data-offer-id="{{ $jobOffer->id }}" class="w-full px-6 py-3 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition flex items-center justify-center cursor-pointer">
+                                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                                </svg>
+                                                Reject
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            @elseif(Auth::user()->account_type === 'job_seeker')
                                 <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
                                     <h3 class="text-lg font-semibold text-gray-900 mb-3">Ready to apply?</h3>
                                     <p class="text-gray-700 mb-4">Submit your application for this position and our team will get back to you soon.</p>
-                                    <button class="w-full px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition flex items-center justify-center">
+                                    <button class="w-full px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition flex items-center justify-center cursor-pointer">
                                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                         </svg>
@@ -184,7 +220,7 @@
                         <div class="bg-gray-50 rounded-lg p-6">
                             <h3 class="text-lg font-bold text-gray-900 mb-4">Share this job</h3>
                             <div class="flex gap-2">
-                                <button class="flex-1 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 transition text-sm font-medium">
+                                <button class="flex-1 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 transition text-sm font-medium cursor-pointer">
                                     Copy link
                                 </button>
                             </div>
@@ -195,4 +231,81 @@
         </div>
     </div>
 </div>
+
+<div id="reject-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
+    <div class="bg-white rounded-lg shadow-2xl max-w-md w-full p-6 transform transition-all scale-95 opacity-0 border border-gray-300 pointer-events-auto" id="modal-content">
+        <div class="flex items-center mb-4">
+            <div class="flex-shrink-0 w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
+                <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                </svg>
+            </div>
+            <h3 class="ml-4 text-xl font-bold text-gray-900">Confirm Rejection</h3>
+        </div>
+        <p class="text-gray-600 mb-6">Are you sure you want to reject this job offer? This action cannot be undone and the offer will be deactivated.</p>
+        <div class="flex gap-3">
+            <button id="modal-cancel" class="flex-1 px-4 py-2 bg-gray-200 text-gray-800 font-semibold rounded-lg hover:bg-gray-300 transition cursor-pointer">
+                No, Cancel
+            </button>
+            <button id="modal-confirm" class="flex-1 px-4 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition cursor-pointer">
+                Yes, Reject
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentFormId = null;
+    const modal = document.getElementById('reject-modal');
+    const modalContent = document.getElementById('modal-content');
+    const modalCancel = document.getElementById('modal-cancel');
+    const modalConfirm = document.getElementById('modal-confirm');
+
+    function showModal() {
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            modalContent.classList.remove('scale-95', 'opacity-0');
+            modalContent.classList.add('scale-100', 'opacity-100');
+        }, 10);
+    }
+
+    function hideModal() {
+        modalContent.classList.remove('scale-100', 'opacity-100');
+        modalContent.classList.add('scale-95', 'opacity-0');
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 200);
+        currentFormId = null;
+    }
+
+    document.querySelectorAll('[data-action="reject"]').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            const offerId = this.getAttribute('data-offer-id');
+            currentFormId = 'reject-form-' + offerId;
+            showModal();
+        });
+    });
+
+    modalCancel.addEventListener('click', hideModal);
+
+    modalConfirm.addEventListener('click', function() {
+        if (currentFormId) {
+            document.getElementById(currentFormId).submit();
+        }
+    });
+
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            hideModal();
+        }
+    });
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+            hideModal();
+        }
+    });
+</script>
+
 @endsection

@@ -52,7 +52,7 @@
                                 </svg>
                             </a>
                         @else
-                            <button class="text-gray-600 hover:text-blue-600 transition p-2 rounded-lg hover:bg-blue-50 relative" title="Notifications">
+                            <button class="text-gray-600 hover:text-blue-600 transition p-2 rounded-lg hover:bg-blue-50 relative cursor-pointer" title="Notifications">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
                                 </svg>
@@ -60,7 +60,7 @@
                         @endif
 
                         <div class="relative group">
-                            <button class="text-gray-700 px-4 py-2 text-sm font-medium hover:text-blue-600 transition flex items-center">
+                            <button class="text-gray-700 px-4 py-2 text-sm font-medium hover:text-blue-600 transition flex items-center cursor-pointer">
                                 @if(Auth::user()->account_type === 'admin')
                                     <span class="text-blue-600 font-semibold">Administrator</span>
                                 @else
@@ -107,7 +107,7 @@
                                     <div class="border-t border-gray-200 my-1"></div>
                                     <form method="POST" action="{{ route('logout') }}">
                                         @csrf
-                                        <button type="submit" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition">
+                                        <button type="submit" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition cursor-pointer">
                                             Logout
                                         </button>
                                     </form>

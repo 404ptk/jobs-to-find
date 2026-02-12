@@ -100,13 +100,13 @@
                             <div class="flex gap-2 mt-3">
                                 <form action="{{ route('admin.approve-offer', $offer->id) }}" method="POST" class="flex-1">
                                     @csrf
-                                    <button type="submit" class="w-full px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition">
+                                    <button type="submit" class="w-full px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition cursor-pointer">
                                         Approve
                                     </button>
                                 </form>
-                                <form action="{{ route('admin.reject-offer', $offer->id) }}" method="POST" class="flex-1">
+                                <form action="{{ route('admin.reject-offer', $offer->id) }}" method="POST" class="flex-1" id="reject-form-{{ $offer->id }}">
                                     @csrf
-                                    <button type="submit" class="w-full px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition" onclick="return confirm('Are you sure you want to reject this offer?')">
+                                    <button type="button" data-action="reject" data-offer-id="{{ $offer->id }}" class="w-full px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition cursor-pointer">
                                         Reject
                                     </button>
                                 </form>
@@ -124,4 +124,81 @@
         @endif
     </div>
 </div>
+
+<div id="reject-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
+    <div class="bg-white rounded-lg shadow-2xl max-w-md w-full p-6 transform transition-all scale-95 opacity-0 border border-gray-300 pointer-events-auto" id="modal-content">
+        <div class="flex items-center mb-4">
+            <div class="flex-shrink-0 w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
+                <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                </svg>
+            </div>
+            <h3 class="ml-4 text-xl font-bold text-gray-900">Confirm Rejection</h3>
+        </div>
+        <p class="text-gray-600 mb-6">Are you sure you want to reject this job offer? This action cannot be undone and the offer will be deactivated.</p>
+        <div class="flex gap-3">
+            <button id="modal-cancel" class="flex-1 px-4 py-2 bg-gray-200 text-gray-800 font-semibold rounded-lg hover:bg-gray-300 transition cursor-pointer">
+                No, Cancel
+            </button>
+            <button id="modal-confirm" class="flex-1 px-4 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition cursor-pointer">
+                Yes, Reject
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentFormId = null;
+    const modal = document.getElementById('reject-modal');
+    const modalContent = document.getElementById('modal-content');
+    const modalCancel = document.getElementById('modal-cancel');
+    const modalConfirm = document.getElementById('modal-confirm');
+
+    function showModal() {
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            modalContent.classList.remove('scale-95', 'opacity-0');
+            modalContent.classList.add('scale-100', 'opacity-100');
+        }, 10);
+    }
+
+    function hideModal() {
+        modalContent.classList.remove('scale-100', 'opacity-100');
+        modalContent.classList.add('scale-95', 'opacity-0');
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 200);
+        currentFormId = null;
+    }
+
+    document.querySelectorAll('[data-action="reject"]').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            const offerId = this.getAttribute('data-offer-id');
+            currentFormId = 'reject-form-' + offerId;
+            showModal();
+        });
+    });
+
+    modalCancel.addEventListener('click', hideModal);
+
+    modalConfirm.addEventListener('click', function() {
+        if (currentFormId) {
+            document.getElementById(currentFormId).submit();
+        }
+    });
+
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            hideModal();
+        }
+    });
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+            hideModal();
+        }
+    });
+</script>
+
 @endsection
