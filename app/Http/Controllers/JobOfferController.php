@@ -97,7 +97,7 @@ class JobOfferController extends Controller
             ->orderBy('employment_type')
             ->pluck('employment_type');
 
-        return view('job-offers', compact('jobOffers', 'validated', 'categories', 'countries', 'cities', 'employmentTypes'));
+        return view('public.job-offers', compact('jobOffers', 'validated', 'categories', 'countries', 'cities', 'employmentTypes'));
     }
 
     public function show($id)
@@ -111,7 +111,7 @@ class JobOfferController extends Controller
         
         $jobOffer = $query->findOrFail($id);
 
-        return view('job-detail', compact('jobOffer'));
+        return view('public.job-detail', compact('jobOffer'));
     }
 
     public function myOffers()
@@ -125,7 +125,7 @@ class JobOfferController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(9);
 
-        return view('my-offers', compact('jobOffers'));
+        return view('employer.my-offers', compact('jobOffers'));
     }
 
     public function myApplications()
@@ -135,7 +135,7 @@ class JobOfferController extends Controller
         }
 
         // TODO: Implement logic
-        return view('my-applications');
+        return view('job-seeker.my-applications');
     }
 
     public function create()
@@ -148,7 +148,7 @@ class JobOfferController extends Controller
         $locations = \App\Models\Location::orderBy('country')->orderBy('city')->get();
         $employmentTypes = ['full-time', 'part-time', 'contract', 'internship'];
 
-        return view('create-offer', compact('categories', 'locations', 'employmentTypes'));
+        return view('employer.create-offer', compact('categories', 'locations', 'employmentTypes'));
     }
 
     public function store(Request $request)
@@ -200,7 +200,7 @@ class JobOfferController extends Controller
         $locations = \App\Models\Location::orderBy('country')->orderBy('city')->get();
         $employmentTypes = ['full-time', 'part-time', 'contract', 'internship'];
 
-        return view('edit-offer', compact('jobOffer', 'categories', 'locations', 'employmentTypes'));
+        return view('employer.edit-offer', compact('jobOffer', 'categories', 'locations', 'employmentTypes'));
     }
 
     public function update(Request $request, $id)
