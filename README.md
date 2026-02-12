@@ -2,6 +2,23 @@
 
 A web application for publishing and searching job offers, built with Laravel framework and a user interface designed with Tailwind CSS.
 
+## Screenshots
+
+### Homepage
+![Homepage](images/jtf-homepage.png)
+
+### Search Results
+![Search Results](images/jtf-search.png)
+
+### Job Offer Details
+![Job Offer Details](images/jtf-offer-details.png)
+
+### My Offers (Employer Panel)
+![My Offers](images/jtf-myoffers.png)
+
+### Admin - Approve Offers
+![Approve Offers](images/jtf-approve-offers.png)
+
 ## Technologies
 
 ### Backend
