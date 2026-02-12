@@ -15,11 +15,11 @@ class JobOfferSeeder extends Seeder
      */
     public function run(): void
     {
-        // Get employer_anna's user ID
         $employer = User::where('username', 'employer_anna')->first();
+        $employerTom = User::where('username', 'employer_tom')->first();
         
-        if (!$employer) {
-            $this->command->error('User employer_anna not found. Please run UserSeeder first.');
+        if (!$employer || !$employerTom) {
+            $this->command->error('Users not found. Please run UserSeeder first.');
             return;
         }
 
@@ -42,6 +42,7 @@ class JobOfferSeeder extends Seeder
                 'category_id' => 1, // IT & Software
                 'location_id' => 1, // Warsaw
                 'is_active' => true,
+                'is_approved' => true,
                 'expires_at' => Carbon::now()->addMonths(2),
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -64,6 +65,7 @@ class JobOfferSeeder extends Seeder
                 'category_id' => 1, // IT & Software
                 'location_id' => 7, // Remote
                 'is_active' => true,
+                'is_approved' => true,
                 'expires_at' => Carbon::now()->addMonths(1),
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -86,6 +88,56 @@ class JobOfferSeeder extends Seeder
                 'category_id' => 2, // Marketing
                 'location_id' => 2, // Krakow
                 'is_active' => true,
+                'is_approved' => true,
+                'expires_at' => Carbon::now()->addMonths(1),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+        ];
+
+        $pendingOffers = [
+            [
+                'user_id' => $employerTom->id,
+                'title' => 'DevOps Engineer',
+                'description' => 'We are seeking a talented DevOps Engineer to join our innovative startup. You will be responsible for building and maintaining our cloud infrastructure, implementing CI/CD pipelines, and ensuring system reliability and scalability.',
+                'requirements' => '- 3+ years of experience in DevOps/SRE
+                - Strong knowledge of AWS or Azure
+                - Experience with Docker and Kubernetes
+                - Proficiency in scripting (Python, Bash)
+                - Experience with CI/CD tools (Jenkins, GitLab CI)
+                - Understanding of monitoring and logging systems',
+                'company_name' => 'CloudTech Innovations',
+                'salary_min' => 8000,
+                'salary_max' => 12000,
+                'currency' => 'EUR',
+                'employment_type' => 'full-time',
+                'category_id' => 1, // IT & Software
+                'location_id' => 7, // Remote
+                'is_active' => true,
+                'is_approved' => false,
+                'expires_at' => Carbon::now()->addMonths(2),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'user_id' => $employerTom->id,
+                'title' => 'UI/UX Designer',
+                'description' => 'Join our creative team as a UI/UX Designer! You will work on designing beautiful and intuitive user interfaces for our web and mobile applications. This is a great opportunity to shape the user experience of cutting-edge products.',
+                'requirements' => '- 2+ years of experience in UI/UX design
+                - Proficiency in Figma or Adobe XD
+                - Strong portfolio showcasing web/mobile designs
+                - Understanding of user-centered design principles
+                - Knowledge of HTML/CSS is a plus
+                - Excellent communication and collaboration skills',
+                'company_name' => 'CloudTech Innovations',
+                'salary_min' => 6000,
+                'salary_max' => 9000,
+                'currency' => 'EUR',
+                'employment_type' => 'full-time',
+                'category_id' => 3, // Design & Creative
+                'location_id' => 7, // Remote
+                'is_active' => true,
+                'is_approved' => false,
                 'expires_at' => Carbon::now()->addMonths(1),
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -93,7 +145,8 @@ class JobOfferSeeder extends Seeder
         ];
 
         DB::table('job_offers')->insert($jobOffers);
+        DB::table('job_offers')->insert($pendingOffers);
 
-        $this->command->info('Job offers created successfully for employer_anna!');
+        $this->command->info('Job offers created successfully for employer_anna and employer_tom!');
     }
 }

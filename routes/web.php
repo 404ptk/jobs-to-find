@@ -26,10 +26,10 @@ Route::get('/', function () {
         ->pluck('employment_type');
     
     $stats = [
-        'activeJobs' => \App\Models\JobOffer::where('is_active', true)->count(),
-        'companies' => \App\Models\JobOffer::where('is_active', true)->distinct('company_name')->count('company_name'),
+        'activeJobs' => \App\Models\JobOffer::where('is_active', true)->where('is_approved', true)->count(),
+        'companies' => \App\Models\JobOffer::where('is_active', true)->where('is_approved', true)->distinct('company_name')->count('company_name'),
         'categories' => Category::whereHas('jobOffers', function($q) {
-            $q->where('is_active', true);
+            $q->where('is_active', true)->where('is_approved', true);
         })->count(),
     ];
     
@@ -97,3 +97,16 @@ Route::put('/offer/{id}/update', [JobOfferController::class, 'update'])
 Route::get('/my-applications', [JobOfferController::class, 'myApplications'])
     ->middleware('auth')
     ->name('my-applications');
+
+// Admin routes
+Route::get('/admin/accept-offers', [App\Http\Controllers\AdminController::class, 'acceptOffers'])
+    ->middleware('auth')
+    ->name('admin.accept-offers');
+
+Route::post('/admin/approve-offer/{id}', [App\Http\Controllers\AdminController::class, 'approveOffer'])
+    ->middleware('auth')
+    ->name('admin.approve-offer');
+
+Route::post('/admin/reject-offer/{id}', [App\Http\Controllers\AdminController::class, 'rejectOffer'])
+    ->middleware('auth')
+    ->name('admin.reject-offer');

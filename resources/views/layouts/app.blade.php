@@ -25,10 +25,19 @@
                         </a>
                         
                         @if(Auth::user()->account_type === 'admin')
-                            <a href="/admin/accept-offers" class="text-gray-600 hover:text-green-600 transition p-2 rounded-lg hover:bg-green-50" title="Accept Offers">
+                            @php
+                                $pendingCount = \App\Models\JobOffer::where('is_approved', false)->where('is_active', true)->count();
+                            @endphp
+                            
+                            <a href="/admin/accept-offers" class="text-gray-600 hover:text-green-600 transition p-2 rounded-lg hover:bg-green-50 relative" title="Accept Offers">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                 </svg>
+                                @if($pendingCount > 0)
+                                    <span class="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold rounded-full min-w-[20px] h-5 flex items-center justify-center px-1">
+                                        {{ $pendingCount > 99 ? '+99' : $pendingCount }}
+                                    </span>
+                                @endif
                             </a>
                             
                             <a href="/admin/statistics" class="text-gray-600 hover:text-purple-600 transition p-2 rounded-lg hover:bg-purple-50" title="Statistics">

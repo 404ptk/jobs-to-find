@@ -57,6 +57,21 @@ class UserSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
+            [
+                'username' => 'employer_tom',
+                'first_name' => 'Tom',
+                'last_name' => 'Smith',
+                'email' => 'tom.employer@startup.com',
+                'email_verified_at' => now(),
+                'password' => Hash::make('password123'),
+                'date_of_birth' => '1988-07-10',
+                'country' => 'United States',
+                'is_student' => false,
+                'account_type' => 'employer',
+                'cv_path' => null,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
         ]);
     }
 }

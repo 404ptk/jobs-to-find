@@ -22,7 +22,8 @@ class JobOfferController extends Controller
         ]);
 
         $query = JobOffer::with(['category', 'location', 'user'])
-            ->where('is_active', true);
+            ->where('is_active', true)
+            ->where('is_approved', true);
 
         if (!empty($validated['search'])) {
             $query->where(function($q) use ($validated) {
@@ -147,11 +148,12 @@ class JobOfferController extends Controller
 
         $validated['user_id'] = Auth::id();
         $validated['is_active'] = true;
+        $validated['is_approved'] = false;
         $validated['currency'] = 'EUR';
 
         JobOffer::create($validated);
 
-        return redirect()->route('my-offers')->with('success', 'Job offer created successfully!');
+        return redirect()->route('my-offers')->with('success', 'Job offer created successfully! It will be visible after admin approval.');
     }
 
     public function edit($id)

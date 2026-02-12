@@ -20,11 +20,13 @@ class JobOffer extends Model
         'category_id',
         'location_id',
         'is_active',
+        'is_approved',
         'expires_at',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
+        'is_approved' => 'boolean',
         'expires_at' => 'date',
         'salary_min' => 'decimal:2',
         'salary_max' => 'decimal:2',
