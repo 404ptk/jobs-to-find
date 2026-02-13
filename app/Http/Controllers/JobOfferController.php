@@ -116,16 +116,19 @@ class JobOfferController extends Controller
         return view('public.job-detail', compact('jobOffer'));
     }
 
-    public function myOffers()
+    public function myOffers(Request $request)
     {
         if (Auth::user()->account_type !== 'employer') {
             abort(403, 'Access denied. Only employers can view this page.');
         }
 
+        $perPage = $request->input('per_page', 9);
+        
         $jobOffers = JobOffer::where('user_id', Auth::id())
             ->with(['category', 'location'])
             ->orderBy('created_at', 'desc')
-            ->paginate(9);
+            ->paginate($perPage)
+            ->appends($request->except('page'));
 
         return view('employer.my-offers', compact('jobOffers'));
     }

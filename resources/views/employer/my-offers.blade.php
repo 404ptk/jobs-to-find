@@ -38,7 +38,66 @@
                 <p class="text-gray-600">Start by creating your first job offer to attract talented candidates.</p>
             </div>
         @else
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-4">
+                    <div class="text-sm text-gray-600">
+                        Found {{ $jobOffers->total() }} {{ $jobOffers->total() == 1 ? 'offer' : 'offers' }}
+                    </div>
+                    
+                    <form method="GET" action="{{ route('my-offers') }}" id="perPageForm" class="flex items-center gap-2">
+                        @foreach(request()->except(['per_page', 'page']) as $key => $value)
+                            <input type="hidden" name="{{ $key }}" value="{{ $value }}">
+                        @endforeach
+                        
+                        <label class="text-sm font-medium text-gray-700">Show:</label>
+                        <select name="per_page" onchange="document.getElementById('perPageForm').submit()" class="px-3 py-1 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm cursor-pointer">
+                            <option value="6" {{ request('per_page', 9) == 6 ? 'selected' : '' }}>6</option>
+                            <option value="9" {{ request('per_page', 9) == 9 ? 'selected' : '' }}>9</option>
+                            <option value="12" {{ request('per_page', 9) == 12 ? 'selected' : '' }}>12</option>
+                            <option value="24" {{ request('per_page', 9) == 24 ? 'selected' : '' }}>24</option>
+                        </select>
+                        <span class="text-sm text-gray-600">per page</span>
+                    </form>
+                </div>
+                
+                <div class="flex items-center gap-2 border border-gray-300 rounded-lg p-1">
+                    <button 
+                        onclick="setGridLayout(1)" 
+                        id="grid-1"
+                        class="p-2 rounded hover:bg-gray-100 transition cursor-pointer"
+                        title="1 column"
+                    >
+                        <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <rect x="3" y="3" width="18" height="18" rx="2" stroke-width="2"/>
+                        </svg>
+                    </button>
+                    <button 
+                        onclick="setGridLayout(2)" 
+                        id="grid-2"
+                        class="p-2 rounded hover:bg-gray-100 transition cursor-pointer"
+                        title="2 columns"
+                    >
+                        <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <rect x="3" y="3" width="8" height="18" rx="2" stroke-width="2"/>
+                            <rect x="13" y="3" width="8" height="18" rx="2" stroke-width="2"/>
+                        </svg>
+                    </button>
+                    <button 
+                        onclick="setGridLayout(3)" 
+                        id="grid-3"
+                        class="p-2 rounded-lg border-2 border-blue-600 bg-blue-50 transition cursor-pointer"
+                        title="3 columns"
+                    >
+                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <rect x="2" y="3" width="5" height="18" rx="1" stroke-width="2"/>
+                            <rect x="9" y="3" width="5" height="18" rx="1" stroke-width="2"/>
+                            <rect x="16" y="3" width="5" height="18" rx="1" stroke-width="2"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
+            <div id="offers-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 @foreach($jobOffers as $offer)
                     <div class="bg-white rounded-lg shadow-sm hover:shadow-md transition border border-gray-200">
                         <div class="p-6">
@@ -226,6 +285,48 @@
             hideModal();
             currentOfferId = null;
         }
+    });
+
+    // Grid layout functionality
+    function setGridLayout(columns) {
+        const grid = document.getElementById('offers-grid');
+        const buttons = document.querySelectorAll('[id^="grid-"]');
+        
+        // Remove active classes from all buttons
+        buttons.forEach(btn => {
+            btn.classList.remove('border-2', 'border-blue-600', 'bg-blue-50');
+            btn.classList.add('hover:bg-gray-100');
+            const svg = btn.querySelector('svg');
+            svg.classList.remove('text-blue-600');
+            svg.classList.add('text-gray-600');
+        });
+        
+        // Add active class to clicked button
+        const activeButton = document.getElementById(`grid-${columns}`);
+        activeButton.classList.add('border-2', 'border-blue-600', 'bg-blue-50');
+        activeButton.classList.remove('hover:bg-gray-100');
+        const activeSvg = activeButton.querySelector('svg');
+        activeSvg.classList.add('text-blue-600');
+        activeSvg.classList.remove('text-gray-600');
+        
+        // Update grid classes
+        grid.className = 'grid gap-6';
+        if (columns === 1) {
+            grid.classList.add('grid-cols-1');
+        } else if (columns === 2) {
+            grid.classList.add('grid-cols-1', 'md:grid-cols-2');
+        } else if (columns === 3) {
+            grid.classList.add('grid-cols-1', 'md:grid-cols-2', 'lg:grid-cols-3');
+        }
+        
+        // Save preference
+        localStorage.setItem('myOffersGridLayout', columns);
+    }
+
+    // Load saved grid preference
+    document.addEventListener('DOMContentLoaded', function() {
+        const savedLayout = localStorage.getItem('myOffersGridLayout') || '3';
+        setGridLayout(parseInt(savedLayout));
     });
 </script>
 @endsection

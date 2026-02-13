@@ -335,17 +335,19 @@
         const buttons = document.querySelectorAll('[id^="grid-"]');
         
         buttons.forEach(btn => {
-            btn.classList.remove('bg-blue-100');
+            btn.classList.remove('border-2', 'border-blue-600', 'bg-blue-50', 'bg-blue-100');
             btn.classList.add('hover:bg-gray-100');
-            btn.querySelector('svg').classList.remove('text-blue-600');
-            btn.querySelector('svg').classList.add('text-gray-600');
+            const svg = btn.querySelector('svg');
+            svg.classList.remove('text-blue-600');
+            svg.classList.add('text-gray-600');
         });
         
         const activeBtn = document.getElementById('grid-' + columns);
-        activeBtn.classList.add('bg-blue-100');
+        activeBtn.classList.add('border-2', 'border-blue-600', 'bg-blue-50');
         activeBtn.classList.remove('hover:bg-gray-100');
-        activeBtn.querySelector('svg').classList.add('text-blue-600');
-        activeBtn.querySelector('svg').classList.remove('text-gray-600');
+        const activeSvg = activeBtn.querySelector('svg');
+        activeSvg.classList.add('text-blue-600');
+        activeSvg.classList.remove('text-gray-600');
         
         grid.className = 'grid gap-6';
         
