@@ -10,6 +10,13 @@
             <p class="text-gray-600 mt-1">Review and approve job offers before they go live</p>
         </div>
 
+        <x-toolbar
+            :total="$pendingOffers->total()"
+            routeName="admin.accept-offers"
+            gridId="acceptOffersGrid"
+            :defaultColumns="3"
+        />
+
         @if(session('success'))
             <div class="mb-6 bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg">
                 {{ session('success') }}
@@ -25,7 +32,7 @@
                 <p class="text-gray-600">There are no pending job offers to review at the moment.</p>
             </div>
         @else
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div id="acceptOffersGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 @foreach($pendingOffers as $offer)
                     <div class="bg-white rounded-lg shadow-sm hover:shadow-md transition border-2 border-yellow-200">
                         <div class="p-6">
