@@ -38,9 +38,15 @@
                                     </h3>
                                     <p class="text-sm text-gray-600">{{ $offer->company_name }}</p>
                                 </div>
-                                <span class="ml-2 px-2 py-1 text-xs font-medium rounded-full {{ $offer->is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' }}">
-                                    {{ $offer->is_active ? 'Active' : 'Inactive' }}
-                                </span>
+                                @if(!$offer->is_approved)
+                                    <span class="ml-2 px-2 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-800">
+                                        Pending Approval
+                                    </span>
+                                @else
+                                    <span class="ml-2 px-2 py-1 text-xs font-medium rounded-full {{ $offer->is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' }}">
+                                        {{ $offer->is_active ? 'Active' : 'Inactive' }}
+                                    </span>
+                                @endif
                             </div>
 
                             <div class="space-y-2 mb-4">

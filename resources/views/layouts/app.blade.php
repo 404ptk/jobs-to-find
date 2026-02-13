@@ -24,6 +24,14 @@
                             </svg>
                         </a>
                         
+                        @if(Auth::user()->account_type === 'employer')
+                            <a href="{{ route('offer.create') }}" class="text-gray-600 hover:text-green-600 transition p-2 rounded-lg hover:bg-green-50" title="Add New Job Offer">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                </svg>
+                            </a>
+                        @endif
+                        
                         @if(Auth::user()->account_type === 'admin')
                             @php
                                 $pendingCount = \App\Models\JobOffer::where('is_approved', false)->where('is_active', true)->count();
