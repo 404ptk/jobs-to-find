@@ -74,6 +74,53 @@
                 </div>
             </div>
 
+            @if($jobOffer->expires_at)
+                @php
+                    $now = \Carbon\Carbon::now();
+                    $expiresAt = \Carbon\Carbon::parse($jobOffer->expires_at);
+                    $totalDays = \Carbon\Carbon::parse($jobOffer->created_at)->diffInDays($expiresAt);
+                    $daysLeft = (int) $now->diffInDays($expiresAt, false);
+                    $percentage = $totalDays > 0 ? max(0, min(100, ($daysLeft / $totalDays) * 100)) : 0;
+                    
+                    if ($daysLeft < 0) {
+                        $barColor = 'bg-gray-400';
+                        $textColor = 'text-gray-700';
+                        $message = 'This offer has expired';
+                    } elseif ($daysLeft <= 3) {
+                        $barColor = 'bg-red-500';
+                        $textColor = 'text-red-700';
+                        $message = $daysLeft == 0 ? 'Expires today!' : ($daysLeft == 1 ? 'Expires tomorrow!' : "Expires in {$daysLeft} days");
+                    } elseif ($daysLeft <= 7) {
+                        $barColor = 'bg-orange-500';
+                        $textColor = 'text-orange-700';
+                        $message = "Expires in {$daysLeft} days";
+                    } elseif ($daysLeft <= 14) {
+                        $barColor = 'bg-yellow-500';
+                        $textColor = 'text-yellow-700';
+                        $message = "Expires in {$daysLeft} days";
+                    } else {
+                        $barColor = 'bg-green-500';
+                        $textColor = 'text-green-700';
+                        $message = "Expires in {$daysLeft} days";
+                    }
+                @endphp
+
+                <div class="px-8 py-4 bg-gray-50 border-t border-gray-200">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center">
+                            <svg class="w-5 h-5 mr-2 {{ $textColor }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <span class="text-sm font-medium {{ $textColor }}">{{ $message }}</span>
+                        </div>
+                        <span class="text-xs text-gray-500">{{ $expiresAt->format('M d, Y') }}</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                        <div class="{{ $barColor }} h-2 rounded-full transition-all duration-500" style="width: {{ $percentage }}%"></div>
+                    </div>
+                </div>
+            @endif
+
             <div class="p-8">
                 @if(!$jobOffer->is_approved)
                     <div class="bg-yellow-50 border-l-4 border-yellow-500 p-6 mb-6 rounded-r-lg">
