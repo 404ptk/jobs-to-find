@@ -5,6 +5,17 @@
 @section('content')
 <div class="min-h-[calc(100vh-8rem)] py-12 px-4">
     <div class="max-w-7xl mx-auto">
+        @if(session('success'))
+            <div class="mb-6 bg-green-50 border-l-4 border-green-500 p-4 rounded-r-lg">
+                <div class="flex items-center">
+                    <svg class="w-6 h-6 text-green-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <p class="text-green-700 font-medium">{{ session('success') }}</p>
+                </div>
+            </div>
+        @endif
+
         <div class="flex items-center justify-between mb-8">
             <div>
                 <h1 class="text-3xl font-bold text-gray-900">My Job Offers</h1>
@@ -104,7 +115,7 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                                     </svg>
                                 </a>
-                                <button class="px-4 py-2 bg-gray-100 text-red-600 text-sm rounded-lg hover:bg-red-50 transition">
+                                <button data-action="delete" data-offer-id="{{ $offer->id }}" data-title="{{ $offer->title }}" class="delete-btn px-4 py-2 bg-gray-100 text-red-600 text-sm rounded-lg hover:bg-red-50 transition cursor-pointer">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                                     </svg>
@@ -123,4 +134,98 @@
         @endif
     </div>
 </div>
+
+<div id="delete-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
+    <div class="bg-white rounded-lg shadow-2xl max-w-md w-full p-6 transform transition-all scale-95 opacity-0 border border-gray-300 pointer-events-auto" id="modal-content">
+        <div class="flex items-center mb-4">
+            <div class="flex-shrink-0 w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
+                <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                </svg>
+            </div>
+            <h3 class="ml-4 text-xl font-bold text-gray-900">Confirm Deletion</h3>
+        </div>
+        <p class="text-gray-600 mb-2">Are you sure you want to delete this job offer?</p>
+        <p class="text-gray-900 font-semibold mb-4" id="offer-title"></p>
+        <p class="text-gray-500 text-sm mb-6">This action cannot be undone and the offer will be permanently removed.</p>
+        <div class="flex gap-3">
+            <button id="modal-cancel" class="flex-1 px-4 py-2 bg-gray-200 text-gray-800 font-semibold rounded-lg hover:bg-gray-300 transition cursor-pointer">
+                No, Cancel
+            </button>
+            <button id="modal-confirm" class="flex-1 px-4 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition cursor-pointer">
+                Yes, Delete
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentOfferId = null;
+    const modal = document.getElementById('delete-modal');
+    const modalContent = document.getElementById('modal-content');
+    const modalCancel = document.getElementById('modal-cancel');
+    const modalConfirm = document.getElementById('modal-confirm');
+    const offerTitle = document.getElementById('offer-title');
+
+    function showModal() {
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            modalContent.classList.remove('scale-95', 'opacity-0');
+            modalContent.classList.add('scale-100', 'opacity-100');
+        }, 10);
+    }
+
+    function hideModal() {
+        modalContent.classList.remove('scale-100', 'opacity-100');
+        modalContent.classList.add('scale-95', 'opacity-0');
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 200);
+    }
+
+    document.querySelectorAll('[data-action="delete"]').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            currentOfferId = this.getAttribute('data-offer-id');
+            const title = this.getAttribute('data-title');
+            offerTitle.textContent = title;
+            showModal();
+        });
+    });
+
+    modalCancel.addEventListener('click', function() {
+        hideModal();
+        currentOfferId = null;
+    });
+
+    modalConfirm.addEventListener('click', function() {
+        if (currentOfferId) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = `/offer/${currentOfferId}/delete`;
+            
+            const csrfToken = document.createElement('input');
+            csrfToken.type = 'hidden';
+            csrfToken.name = '_token';
+            csrfToken.value = '{{ csrf_token() }}';
+            
+            const methodField = document.createElement('input');
+            methodField.type = 'hidden';
+            methodField.name = '_method';
+            methodField.value = 'DELETE';
+            
+            form.appendChild(csrfToken);
+            form.appendChild(methodField);
+            document.body.appendChild(form);
+            form.submit();
+        }
+    });
+
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            hideModal();
+            currentOfferId = null;
+        }
+    });
+</script>
 @endsection

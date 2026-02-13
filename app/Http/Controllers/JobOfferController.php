@@ -238,4 +238,21 @@ class JobOfferController extends Controller
 
         return redirect()->route('my-offers')->with('success', 'Job offer updated successfully!');
     }
+
+    public function destroy($id)
+    {
+        if (Auth::user()->account_type !== 'employer') {
+            abort(403, 'Access denied. Only employers can delete job offers.');
+        }
+
+        $jobOffer = JobOffer::findOrFail($id);
+
+        if ($jobOffer->user_id !== Auth::id()) {
+            abort(403, 'Access denied. You can only delete your own job offers.');
+        }
+
+        $jobOffer->delete();
+
+        return redirect()->route('my-offers')->with('success', 'Job offer deleted successfully!');
+    }
 }

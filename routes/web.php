@@ -94,6 +94,10 @@ Route::put('/offer/{id}/update', [JobOfferController::class, 'update'])
     ->middleware('auth')
     ->name('offer.update');
 
+Route::delete('/offer/{id}/delete', [JobOfferController::class, 'destroy'])
+    ->middleware('auth')
+    ->name('offer.delete');
+
 Route::get('/my-applications', [JobOfferController::class, 'myApplications'])
     ->middleware('auth')
     ->name('my-applications');
