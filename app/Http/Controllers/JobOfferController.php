@@ -102,14 +102,16 @@ class JobOfferController extends Controller
 
     public function show($id)
     {
-        $query = JobOffer::with(['category', 'location', 'user'])
-            ->where('is_active', true);
+        $jobOffer = JobOffer::with(['category', 'location', 'user'])
+            ->where('is_active', true)
+            ->findOrFail($id);
         
-        if (!Auth::check() || Auth::user()->account_type !== 'admin') {
-            $query->where('is_approved', true);
+        if (!$jobOffer->is_approved) {
+            if (!Auth::check() || 
+                (Auth::user()->account_type !== 'admin' && Auth::id() !== $jobOffer->user_id)) {
+                abort(403, 'This job offer is pending approval and cannot be viewed at this time.');
+            }
         }
-        
-        $jobOffer = $query->findOrFail($id);
 
         return view('public.job-detail', compact('jobOffer'));
     }

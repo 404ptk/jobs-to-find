@@ -55,7 +55,7 @@
                     </div>
                     
                     @if(!$jobOffer->is_approved)
-                        <span class="ml-4 px-4 py-2 bg-yellow-100 text-yellow-800 rounded-full text-sm font-semibold">
+                        <span class="ml-4 px-4 py-2 bg-yellow-500 text-white rounded-full text-sm font-semibold shadow-md">
                             Pending Approval
                         </span>
                     @else
@@ -75,6 +75,26 @@
             </div>
 
             <div class="p-8">
+                @if(!$jobOffer->is_approved)
+                    <div class="bg-yellow-50 border-l-4 border-yellow-500 p-6 mb-6 rounded-r-lg">
+                        <div class="flex items-start">
+                            <svg class="w-6 h-6 text-yellow-600 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                            </svg>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900 mb-1">Pending Approval</h3>
+                                <p class="text-gray-700">
+                                    @if(Auth::check() && Auth::user()->account_type === 'admin')
+                                        This job offer is awaiting admin approval. You can approve or reject it below.
+                                    @else
+                                        This job offer is currently under review by our administrators. It will be publicly visible once approved.
+                                    @endif
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <div class="lg:col-span-2 space-y-8">
                         <section>
