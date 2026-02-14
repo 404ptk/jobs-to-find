@@ -5,8 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Jobs to Find - Search for a job!')</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @yield('head')
 </head>
-<body class="bg-gray-50 min-h-screen">
+<body class="font-sans antialiased text-gray-900 bg-gray-50 flex flex-col min-h-screen">
     <nav class="bg-white shadow-lg sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">

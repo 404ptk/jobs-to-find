@@ -82,8 +82,12 @@
                 <tr class="hover:bg-gray-50">
                     <td class="px-6 py-4 whitespace-nowrap">
                         <div class="flex items-center">
-                            <div class="flex-shrink-0 h-10 w-10 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 font-bold border border-gray-300">
-                                {{ strtoupper(substr($user->first_name, 0, 1) . substr($user->last_name, 0, 1)) }}
+                            <div class="flex-shrink-0 h-10 w-10 rounded-full overflow-hidden border border-gray-300">
+                                @if($user->avatar)
+                                    <img src="{{ asset('storage/' . $user->avatar) }}" alt="{{ $user->username }}" class="h-full w-full object-cover">
+                                @else
+                                    <img src="{{ asset('images/default-avatar.svg') }}" alt="Default Avatar" class="h-full w-full object-cover">
+                                @endif
                             </div>
                             <div class="ml-4">
                                 <div class="text-sm font-medium text-gray-900">{{ $user->first_name }} {{ $user->last_name }}</div>

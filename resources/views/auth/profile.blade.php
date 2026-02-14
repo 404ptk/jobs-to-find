@@ -2,6 +2,16 @@
 
 @section('title', 'Profile - Jobs to Find')
 
+@section('head')
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" />
+    <style>
+        .cropper-view-box,
+        .cropper-face {
+            border-radius: 50%;
+        }
+    </style>
+@endsection
+
 @section('content')
 <div class="min-h-[calc(100vh-8rem)] py-12 px-4">
     <div class="max-w-4xl mx-auto">
@@ -21,9 +31,30 @@
                 </div>
             @endif
 
-            <form action="{{ route('profile.update') }}" method="POST" id="profileForm">
+            <form action="{{ route('profile.update') }}" method="POST" id="profileForm" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
+
+                <div class="flex flex-col items-center mb-8">
+                    <div class="relative group">
+                        <div class="w-32 h-32 rounded-full overflow-hidden border-4 border-gray-100 shadow-md">
+                            <img src="{{ Auth::user()->avatar ? asset('storage/' . Auth::user()->avatar) : asset('images/default-avatar.svg') }}" 
+                                 alt="Profile Avatar" 
+                                 class="w-full h-full object-cover">
+                        </div>
+                        <label for="avatar" class="absolute bottom-0 right-0 bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-full shadow-lg cursor-pointer transition-colors duration-200" title="Change Avatar">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            <input type="file" id="avatar" name="avatar" class="hidden" accept="image/*" >
+                        </label>
+                    </div>
+                    <p class="mt-2 text-xs text-gray-500">Max size 2MB. Square format recommended.</p>
+                    @error('avatar')
+                        <p class="mt-2 text-sm text-red-500">{{ $message }}</p>
+                    @enderror
+                </div>
 
                 <div class="space-y-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -211,7 +242,161 @@
     </div>
 </div>
 
+<div id="avatar-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="fixed inset-0 bg-white/10 backdrop-blur-md transition-opacity" aria-hidden="true"></div>
+
+    <div class="relative bg-white rounded-xl shadow-2xl max-w-lg w-full overflow-hidden transform transition-all scale-100">
+        <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+            <h3 class="text-lg font-semibold text-gray-900" id="modal-title">
+                Adjust Profile Picture
+            </h3>
+            <button type="button" id="close-modal-x" class="text-gray-400 hover:text-gray-500 cursor-pointer">
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+
+        <div class="p-6">
+            <div class="relative w-full h-[400px] bg-slate-100 rounded-lg overflow-hidden border border-gray-200">
+                <img id="avatar-image-preview" class="max-w-full" src="">
+            </div>
+            
+            <div class="mt-4 flex items-center justify-center space-x-4">
+                <button type="button" id="zoom-out" class="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-full transition cursor-pointer" title="Zoom Out">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM13 10H7" />
+                    </svg>
+                </button>
+                <button type="button" id="zoom-in" class="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-full transition cursor-pointer" title="Zoom In">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                    </svg>
+                </button>
+                <div class="w-px h-6 bg-gray-300 mx-2"></div>
+                <button type="button" id="rotate-left" class="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-full transition cursor-pointer" title="Rotate Left">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+                    </svg>
+                </button>
+                <button type="button" id="rotate-right" class="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-full transition cursor-pointer" title="Rotate Right">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 10h-10a8 8 0 00-8 8v2M21 10l-6 6m6-6l-6-6" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <div class="px-6 py-4 bg-gray-50 flex justify-end gap-3 border-t border-gray-100">
+            <button type="button" id="cancel-crop" class="px-4 py-2 bg-white text-gray-700 font-medium rounded-lg border border-gray-300 hover:bg-gray-50 transition shadow-sm cursor-pointer">
+                Cancel
+            </button>
+            <button type="button" id="crop-button" class="px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition shadow-sm flex items-center cursor-pointer">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                Save Avatar
+            </button>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 <script>
+    const avatarInput = document.getElementById('avatar');
+    const avatarModal = document.getElementById('avatar-modal');
+    const avatarImage = document.getElementById('avatar-image-preview');
+    let cropper = null;
+
+    function closeAvatarModal() {
+        avatarModal.classList.add('hidden');
+        avatarInput.value = '';
+        if (cropper) {
+            cropper.destroy();
+            cropper = null;
+        }
+    }
+
+    avatarInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            if (file.size > 2 * 1024 * 1024) {
+                alert('File size exceeds 2MB limit.');
+                this.value = '';
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                avatarImage.src = e.target.result;
+                avatarModal.classList.remove('hidden');
+                
+                if (cropper) {
+                    cropper.destroy();
+                }
+
+                cropper = new Cropper(avatarImage, {
+                    aspectRatio: 1,
+                    viewMode: 1,
+                    dragMode: 'move',
+                    autoCropArea: 0.8,
+                    restore: false,
+                    guides: true,
+                    center: true,
+                    highlight: false,
+                    cropBoxMovable: true,
+                    cropBoxResizable: true,
+                    toggleDragModeOnDblclick: false,
+                    background: false,
+                });
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    document.getElementById('zoom-in').addEventListener('click', function() {
+        if(cropper) cropper.zoom(0.1);
+    });
+    
+    document.getElementById('zoom-out').addEventListener('click', function() {
+        if(cropper) cropper.zoom(-0.1);
+    });
+
+    document.getElementById('rotate-left').addEventListener('click', function() {
+        if(cropper) cropper.rotate(-90);
+    });
+    
+    document.getElementById('rotate-right').addEventListener('click', function() {
+        if(cropper) cropper.rotate(90);
+    });
+
+    document.getElementById('cancel-crop').addEventListener('click', closeAvatarModal);
+    document.getElementById('close-modal-x').addEventListener('click', closeAvatarModal);
+
+    document.getElementById('crop-button').addEventListener('click', function() {
+        if (!cropper) return;
+
+        const canvas = cropper.getCroppedCanvas({
+            width: 400,
+            height: 400,
+        });
+
+        canvas.toBlob(function(blob) {
+            const file = new File([blob], "avatar.jpg", { type: "image/jpeg" });
+            
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+            avatarInput.files = dataTransfer.files;
+
+            avatarModal.classList.add('hidden');
+            
+            setTimeout(() => {
+                document.getElementById('profileForm').submit();
+            }, 100);
+
+        }, 'image/jpeg', 0.9);
+    });
+
     const editableFields = ['first_name', 'last_name', 'country', 'date_of_birth'];
     @if(Auth::user()->account_type === 'job_seeker')
         editableFields.push('is_student');

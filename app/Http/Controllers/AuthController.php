@@ -84,11 +84,23 @@ class AuthController extends Controller
             'country' => ['required', 'string', 'max:64'],
             'date_of_birth' => ['nullable', 'date', 'before:today'],
             'is_student' => ['nullable', 'boolean'],
+            'avatar' => ['nullable', 'image', 'max:2048'], // Max 2MB
         ], [
             'first_name.regex' => 'First name can only contain letters and spaces.',
             'last_name.regex' => 'Last name can only contain letters and spaces.',
             'date_of_birth.before' => 'Date of birth must be in the past.',
+            'avatar.image' => 'The file must be an image.',
+            'avatar.max' => 'The image size must not exceed 2MB.',
         ]);
+
+        if ($request->hasFile('avatar')) {
+            if ($user->avatar) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($user->avatar);
+            }
+            
+            $path = $request->file('avatar')->store('avatars', 'public');
+            $validated['avatar'] = $path;
+        }
 
         if ($user->account_type === 'job_seeker') {
             $validated['is_student'] = $request->has('is_student');
