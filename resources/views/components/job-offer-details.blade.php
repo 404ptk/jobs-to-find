@@ -156,7 +156,6 @@
                 @endif
                 
                 <div class="lg:hidden mt-8">
-                   {{-- Mobile Sidebar Content --}}
                      <div class="bg-gray-50 rounded-lg p-6 mb-6">
                         <h3 class="text-lg font-bold text-gray-900 mb-4">Job Details</h3>
                         <div class="space-y-4">
