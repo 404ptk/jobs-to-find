@@ -94,15 +94,6 @@
                             <option value="salary_low" {{ request('sort') == 'salary_low' ? 'selected' : '' }}>Lowest salary</option>
                         </select>
                     </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Results Per Page</label>
-                        <select name="per_page" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                            <option value="10" {{ request('per_page', 10) == 10 ? 'selected' : '' }}>10 offers</option>
-                            <option value="20" {{ request('per_page', 10) == 20 ? 'selected' : '' }}>20 offers</option>
-                            <option value="30" {{ request('per_page', 10) == 30 ? 'selected' : '' }}>30 offers</option>
-                        </select>
-                    </div>
                 </div>
 
                 <div class="flex gap-3 mt-4">
