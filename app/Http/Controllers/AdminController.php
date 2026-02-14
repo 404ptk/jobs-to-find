@@ -49,4 +49,31 @@ class AdminController extends Controller
 
         return redirect()->route('admin.accept-offers')->with('success', 'Job offer rejected successfully!');
     }
+
+    public function users(Request $request)
+    {
+        if (Auth::user()->account_type !== 'admin') {
+            abort(403, 'Access denied. Only administrators can perform this action.');
+        }
+
+        $query = \App\Models\User::query();
+
+        if ($request->has('search')) {
+            $search = $request->get('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('first_name', 'like', "%{$search}%")
+                  ->orWhere('last_name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('username', 'like', "%{$search}%");
+            });
+        }
+
+        $users = $query->paginate(10);
+
+        $totalUsers = \App\Models\User::count();
+        $totalJobSeekers = \App\Models\User::where('account_type', 'job_seeker')->count();
+        $totalEmployers = \App\Models\User::where('account_type', 'employer')->count();
+
+        return view('admin.users', compact('users', 'totalUsers', 'totalJobSeekers', 'totalEmployers'));
+    }
 }
