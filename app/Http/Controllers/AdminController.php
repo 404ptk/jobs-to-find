@@ -76,4 +76,29 @@ class AdminController extends Controller
 
         return view('admin.users', compact('users', 'totalUsers', 'totalJobSeekers', 'totalEmployers'));
     }
+
+    public function offers(Request $request)
+    {
+        if (Auth::user()->account_type !== 'admin') {
+            abort(403, 'Access denied. Only administrators can perform this action.');
+        }
+
+        $query = JobOffer::with(['user', 'category', 'location']);
+
+        if ($request->has('search')) {
+            $search = $request->get('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('company_name', 'like', "%{$search}%");
+            });
+        }
+
+        $offers = $query->orderBy('created_at', 'desc')->paginate(10);
+
+        $totalOffers = JobOffer::count();
+        $activeOffers = JobOffer::where('is_active', true)->where('is_approved', true)->count();
+        $pendingOffers = JobOffer::where('is_active', true)->where('is_approved', false)->count();
+
+        return view('admin.offers', compact('offers', 'totalOffers', 'activeOffers', 'pendingOffers'));
+    }
 }

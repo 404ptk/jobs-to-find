@@ -118,3 +118,7 @@ Route::post('/admin/reject-offer/{id}', [App\Http\Controllers\AdminController::c
 Route::get('/admin/users', [App\Http\Controllers\AdminController::class, 'users'])
     ->middleware('auth')
     ->name('admin.users');
+
+Route::get('/admin/offers', [App\Http\Controllers\AdminController::class, 'offers'])
+    ->middleware('auth')
+    ->name('admin.offers');
