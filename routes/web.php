@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\JobOfferController;
+use App\Http\Controllers\UserController;
 use App\Models\Category;
 use App\Models\Location;
 
@@ -124,3 +125,7 @@ Route::get('/admin/offers', [App\Http\Controllers\AdminController::class, 'offer
     ->name('admin.offers');
 
 Route::get('/admin/offer/{id}/partial', [\App\Http\Controllers\AdminController::class, 'offerPartial'])->name('admin.offer.partial');
+
+Route::get('/profile/{username}', [UserController::class, 'show'])
+    ->middleware('auth')
+    ->name('user.show');

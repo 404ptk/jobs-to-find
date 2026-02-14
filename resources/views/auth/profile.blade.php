@@ -59,12 +59,23 @@
                 <div class="space-y-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="bg-gray-200 p-4 rounded-lg">
-                            <label class="block text-sm font-medium text-gray-500 mb-1">Username</label>
+                            <label class="flex items-center text-sm font-medium text-gray-500 mb-1">
+                                Username
+                                <svg class="w-4 h-4 ml-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" title="Publicly visible">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                            </label>
                             <p class="text-lg text-gray-900 font-medium">{{ Auth::user()->username }}</p>
                         </div>
 
                         <div class="bg-gray-200 p-4 rounded-lg">
-                            <label class="block text-sm font-medium text-gray-500 mb-1">Email</label>
+                            <label class="flex items-center text-sm font-medium text-gray-500 mb-1">
+                                Email
+                                <svg class="w-4 h-4 ml-2 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" title="Private (Hidden from public profile)">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                                </svg>
+                            </label>
                             <p class="text-lg text-gray-900">{{ Auth::user()->email }}</p>
                         </div>
                     </div>
@@ -72,7 +83,13 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div id="first_name_container">
                             <div class="bg-gray-200 p-4 rounded-lg" id="first_name_display">
-                                <label class="block text-sm font-medium text-gray-500 mb-1">First Name</label>
+                                <label class="flex items-center text-sm font-medium text-gray-500 mb-1">
+                                    First Name
+                                    <svg class="w-4 h-4 ml-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" title="Publicly visible">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                    </svg>
+                                </label>
                                 <p class="text-lg text-gray-900">{{ Auth::user()->first_name }}</p>
                             </div>
                             <div class="hidden p-4 bg-gray-200 rounded-lg" id="first_name_edit">
@@ -93,7 +110,13 @@
 
                         <div id="last_name_container">
                             <div class="bg-gray-200 p-4 rounded-lg" id="last_name_display">
-                                <label class="block text-sm font-medium text-gray-500 mb-1">Last Name</label>
+                                <label class="flex items-center text-sm font-medium text-gray-500 mb-1">
+                                    Last Name
+                                    <svg class="w-4 h-4 ml-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" title="Publicly visible">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                    </svg>
+                                </label>
                                 <p class="text-lg text-gray-900">{{ Auth::user()->last_name }}</p>
                             </div>
                             <div class="hidden p-4 bg-gray-200 rounded-lg" id="last_name_edit">
@@ -116,7 +139,13 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div id="country_container">
                             <div class="bg-gray-200 p-4 rounded-lg" id="country_display">
-                                <label class="block text-sm font-medium text-gray-500 mb-1">Country</label>
+                                <label class="flex items-center text-sm font-medium text-gray-500 mb-1">
+                                    Country
+                                    <svg class="w-4 h-4 ml-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" title="Publicly visible">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                    </svg>
+                                </label>
                                 <p class="text-lg text-gray-900">{{ Auth::user()->country }}</p>
                             </div>
                             <div class="hidden p-4 bg-gray-200 rounded-lg" id="country_edit">
@@ -137,7 +166,13 @@
 
                         <div id="date_of_birth_container">
                             <div class="bg-gray-200 p-4 rounded-lg" id="date_of_birth_display">
-                                <label class="block text-sm font-medium text-gray-500 mb-1">Date of Birth</label>
+                                <label class="flex items-center text-sm font-medium text-gray-500 mb-1">
+                                    Date of Birth
+                                    <svg class="w-4 h-4 ml-2 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" title="Partially visible (Only age is shown publicly)">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                                    </svg>
+                                    <span class="ml-1 text-xs text-gray-400 font-normal">(Age is public)</span>
+                                </label>
                                 <p class="text-lg text-gray-900">
                                     {{ Auth::user()->date_of_birth ? Auth::user()->date_of_birth->format('F d, Y') : 'Not provided' }}
                                 </p>
@@ -162,7 +197,13 @@
                     @if(Auth::user()->account_type === 'job_seeker')
                         <div id="is_student_container">
                             <div class="bg-gray-200 p-4 rounded-lg" id="is_student_display">
-                                <label class="block text-sm font-medium text-gray-500 mb-1">Student Status</label>
+                                <label class="flex items-center text-sm font-medium text-gray-500 mb-1">
+                                    Student Status
+                                    <svg class="w-4 h-4 ml-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" title="Publicly visible">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                    </svg>
+                                </label>
                                 <p class="text-lg text-gray-900">
                                     @if(Auth::user()->is_student)
                                         <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800">
@@ -195,7 +236,13 @@
 
                     @if(Auth::user()->cv_path)
                         <div class="bg-gray-50 p-4 rounded-lg">
-                            <label class="block text-sm font-medium text-gray-500 mb-2">CV/Resume</label>
+                            <label class="flex items-center text-sm font-medium text-gray-500 mb-2">
+                                CV/Resume
+                                <svg class="w-4 h-4 ml-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" title="Publicly visible">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                            </label>
                             <a href="{{ Auth::user()->cv_path }}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
                                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>

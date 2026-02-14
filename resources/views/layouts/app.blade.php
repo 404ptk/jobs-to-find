@@ -100,8 +100,8 @@
                                             Reports
                                         </a>
                                     @else
-                                        <a href="/profile" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition">
-                                            Profile
+                                        <a href="{{ route('user.show', Auth::user()->username) }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition">
+                                            View Profile
                                         </a>
                                         @if(Auth::user()->account_type === 'job_seeker')
                                             <a href="/my-applications" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition">

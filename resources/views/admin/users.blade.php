@@ -90,7 +90,11 @@
                                 @endif
                             </div>
                             <div class="ml-4">
-                                <div class="text-sm font-medium text-gray-900">{{ $user->first_name }} {{ $user->last_name }}</div>
+                                <div class="text-sm font-medium text-gray-900">
+                                    <a href="{{ route('user.show', $user->username) }}" class="hover:text-blue-600 hover:underline">
+                                        {{ $user->first_name }} {{ $user->last_name }}
+                                    </a>
+                                </div>
                                 <div class="text-sm text-gray-500">{{ $user->email }}</div>
                                 <div class="text-xs text-gray-400">{{ '@' . $user->username }}</div>
                             </div>
