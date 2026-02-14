@@ -122,3 +122,5 @@ Route::get('/admin/users', [App\Http\Controllers\AdminController::class, 'users'
 Route::get('/admin/offers', [App\Http\Controllers\AdminController::class, 'offers'])
     ->middleware('auth')
     ->name('admin.offers');
+
+Route::get('/admin/offer/{id}/partial', [\App\Http\Controllers\AdminController::class, 'offerPartial'])->name('admin.offer.partial');

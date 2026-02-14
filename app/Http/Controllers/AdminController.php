@@ -101,4 +101,9 @@ class AdminController extends Controller
 
         return view('admin.offers', compact('offers', 'totalOffers', 'activeOffers', 'pendingOffers'));
     }
+
+    public function offerPartial($id) {
+        $jobOffer = JobOffer::with(['category', 'location', 'user'])->findOrFail($id);
+        return view('components.job-offer-details', compact('jobOffer'));
+    }
 }

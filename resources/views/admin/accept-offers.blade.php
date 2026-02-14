@@ -114,9 +114,9 @@
                             </div>
 
                             <div class="flex gap-2">
-                                <a href="{{ route('job.show', $offer->id) }}" class="flex-1 px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition text-center">
+                                <button onclick="openOfferModal({{ $offer->id }})" class="flex-1 px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition text-center cursor-pointer">
                                     View Details
-                                </a>
+                                </button>
                             </div>
 
                             <div class="flex gap-2 mt-3">
@@ -165,6 +165,26 @@
             <button id="modal-confirm" class="flex-1 px-4 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition cursor-pointer">
                 Yes, Reject
             </button>
+        </div>
+    </div>
+</div>
+
+<div id="offer-details-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
+    <div class="fixed inset-0 bg-transparent backdrop-blur-sm transition-opacity" onclick="hideOfferModal()"></div>
+    <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto transform transition-all scale-95 opacity-0 pointer-events-auto relative" id="offer-modal-content">
+        <button onclick="hideOfferModal()" class="absolute top-4 right-4 text-white hover:text-gray-200 z-10 cursor-pointer">
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
+        <div id="offer-modal-body">
+            <!-- Content will be loaded here -->
+            <div class="flex justify-center items-center h-64">
+                <svg class="animate-spin h-10 w-10 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+            </div>
         </div>
     </div>
 </div>
@@ -219,6 +239,54 @@
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
             hideModal();
+        }
+    });
+
+    const offerModal = document.getElementById('offer-details-modal');
+    const offerModalContent = document.getElementById('offer-modal-content');
+    const offerModalBody = document.getElementById('offer-modal-body');
+
+    function openOfferModal(offerId) {
+        offerModal.classList.remove('hidden');
+        // Reset content to loader
+        offerModalBody.innerHTML = `
+            <div class="flex justify-center items-center h-64">
+                <svg class="animate-spin h-10 w-10 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+            </div>
+        `;
+        
+        setTimeout(() => {
+            offerModalContent.classList.remove('scale-95', 'opacity-0');
+            offerModalContent.classList.add('scale-100', 'opacity-100');
+        }, 10);
+
+        // Fetch partial content
+        fetch(`/admin/offer/${offerId}/partial`)
+            .then(response => response.text())
+            .then(html => {
+                offerModalBody.innerHTML = html;
+            })
+            .catch(error => {
+                offerModalBody.innerHTML = '<p class="text-red-500 text-center">Error loading details. Please try again.</p>';
+                console.error('Error:', error);
+            });
+    }
+
+    function hideOfferModal() {
+        offerModalContent.classList.remove('scale-100', 'opacity-100');
+        offerModalContent.classList.add('scale-95', 'opacity-0');
+        setTimeout(() => {
+            offerModal.classList.add('hidden');
+        }, 200);
+    }
+    
+    // Close on escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && !offerModal.classList.contains('hidden')) {
+            hideOfferModal();
         }
     });
 </script>
