@@ -73,5 +73,13 @@ class UserSeeder extends Seeder
                 'updated_at' => now(),
             ],
         ]);
+
+        \App\Models\User::factory()->count(30)->create([
+            'account_type' => 'job_seeker',
+        ]);
+
+        \App\Models\User::factory()->count(15)->create([
+            'account_type' => 'employer',
+        ]);
     }
 }

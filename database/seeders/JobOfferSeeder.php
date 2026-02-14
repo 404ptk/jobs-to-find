@@ -148,5 +148,24 @@ class JobOfferSeeder extends Seeder
         DB::table('job_offers')->insert($pendingOffers);
 
         $this->command->info('Job offers created successfully for employer_anna and employer_tom!');
+
+        $employers = User::where('account_type', 'employer')->get();
+
+        if ($employers->count() > 0) {
+            foreach ($employers as $emp) {
+                \App\Models\JobOffer::factory()->count(rand(2, 5))->create([
+                    'user_id' => $emp->id,
+                    'is_approved' => true,
+                    'company_name' => fake()->company(),
+                ]);
+
+                \App\Models\JobOffer::factory()->count(rand(0, 2))->create([
+                    'user_id' => $emp->id,
+                    'is_approved' => false,
+                    'company_name' => fake()->company(),
+                ]);
+            }
+            $this->command->info('Additional job offers generated for other employers.');
+        }
     }
 }
