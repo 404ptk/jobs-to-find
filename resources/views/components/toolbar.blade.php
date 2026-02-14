@@ -5,13 +5,14 @@
     'routeName',
     'gridId' => 'offersGrid',
     'storageKey' => 'gridLayout',
-    'defaultColumns' => 2
+    'defaultColumns' => 2,
+    'showGridButtons' => true
 ])
 
 <div class="flex items-center justify-between mb-6">
     <div class="flex items-center gap-4">
         <div class="text-sm text-gray-600">
-            Found {{ $total }} {{ $total == 1 ? 'offer' : 'offers' }}
+            Found {{ $total }} {{ $total == 1 ? 'item' : 'items' }}
         </div>
         
         <form method="GET" action="{{ route($routeName) }}" id="perPageForm{{ $gridId }}" class="flex items-center gap-2">
@@ -29,6 +30,7 @@
         </form>
     </div>
     
+    @if($showGridButtons)
     <div class="flex items-center gap-2 border border-gray-300 rounded-lg p-1">
         <button 
             onclick="setGridLayout{{ $gridId }}(1)" 
@@ -64,8 +66,10 @@
             </svg>
         </button>
     </div>
+    @endif
 </div>
 
+@if($showGridButtons)
 @once
     @push('scripts')
     <script>
@@ -116,3 +120,4 @@
     </script>
     @endpush
 @endonce
+@endif

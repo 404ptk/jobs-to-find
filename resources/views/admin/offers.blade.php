@@ -55,7 +55,13 @@
         </div>
 
         <div class="bg-white rounded-lg shadow-sm p-4 mb-6">
-            <form action="{{ route('admin.offers') }}" method="GET" class="flex flex-col md:flex-row gap-4">
+            <x-toolbar
+                :total="$offers->total()"
+                routeName="admin.offers"
+                gridId="offersTable"
+                :showGridButtons="false"
+            />
+            <form action="{{ route('admin.offers') }}" method="GET" class="flex flex-col md:flex-row gap-4 mt-4">
                 <div class="flex-1">
                     <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by title or company..." 
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
