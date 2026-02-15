@@ -28,6 +28,7 @@ class User extends Authenticatable
         'country',
         'is_student',
         'account_type',
+        'bio',
         'avatar',
         'cv_path',
     ];

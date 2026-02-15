@@ -139,9 +139,13 @@
                                 About
                             </h2>
                             <div class="prose max-w-none text-gray-600">
-                                <p>
-                                    {{ $user->first_name }} hasn't added a bio yet.
-                                </p>
+                                @if($user->bio)
+                                    <p class="whitespace-pre-line">{{ $user->bio }}</p>
+                                @else
+                                    <p class="italic text-gray-400">
+                                        {{ $user->first_name }} has not added a bio yet.
+                                    </p>
+                                @endif
                             </div>
                         </div>
 

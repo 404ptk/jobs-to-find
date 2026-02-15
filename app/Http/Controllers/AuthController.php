@@ -84,6 +84,7 @@ class AuthController extends Controller
             'country' => ['required', 'string', 'max:64'],
             'date_of_birth' => ['nullable', 'date', 'before:today'],
             'is_student' => ['nullable', 'boolean'],
+            'bio' => ['nullable', 'string', 'max:1000'],
             'avatar' => ['nullable', 'image', 'max:2048'], // Max 2MB
         ], [
             'first_name.regex' => 'First name can only contain letters and spaces.',

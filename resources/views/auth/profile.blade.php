@@ -234,6 +234,33 @@
                         </div>
                     @endif
 
+                    <div id="bio_container">
+                        <div class="bg-gray-200 p-4 rounded-lg" id="bio_display">
+                            <label class="flex items-center text-sm font-medium text-gray-500 mb-1">
+                                Bio
+                                <svg class="w-4 h-4 ml-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" title="Publicly visible">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                            </label>
+                            <p class="text-lg text-gray-900 whitespace-pre-line">{{ Auth::user()->bio ?? 'No bio provided' }}</p>
+                        </div>
+                        <div class="hidden p-4 bg-gray-200 rounded-lg" id="bio_edit">
+                            <label for="bio" class="block text-sm font-medium text-gray-700 mb-1">Bio</label>
+                            <textarea 
+                                id="bio" 
+                                name="bio" 
+                                rows="4"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('bio') border-red-500 @enderror"
+                                maxlength="1000"
+                            >{{ old('bio', Auth::user()->bio) }}</textarea>
+                            <p class="mt-1 text-xs text-gray-500">Share a brief introduction about yourself (max 1000 characters).</p>
+                            @error('bio')
+                                <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
+
                     @if(Auth::user()->cv_path)
                         <div class="bg-gray-50 p-4 rounded-lg">
                             <label class="flex items-center text-sm font-medium text-gray-500 mb-2">
@@ -444,7 +471,7 @@
         }, 'image/jpeg', 0.9);
     });
 
-    const editableFields = ['first_name', 'last_name', 'country', 'date_of_birth'];
+    const editableFields = ['first_name', 'last_name', 'country', 'date_of_birth', 'bio'];
     @if(Auth::user()->account_type === 'job_seeker')
         editableFields.push('is_student');
     @endif
