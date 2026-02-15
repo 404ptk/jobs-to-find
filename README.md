@@ -19,6 +19,14 @@ A web application for publishing and searching job offers, built with Laravel fr
 ### Admin - Approve Offers
 ![Approve Offers](images/jtf-approve-offers.png)
 
+### Edit Profile
+![Edit Profile](images/jtf-edit-profile.png)
+
+### Avatar Change
+![Avatar Change](images/jtf-avatar-change.png)
+
+## Technologies
+
 ## Technologies
 
 ### Backend
@@ -50,7 +58,17 @@ Stores system user data.
 - `username` - username (unique)
 - `email` - email address (unique)
 - `password` - password (hashed)
-- `role` - role (job_seeker, employer, admin)
+- `account_type` - role (job_seeker, employer, admin)
+- `privacy_settings` - JSON column storing visibility preferences for profile sections
+- `avatar` - path to user's avatar image
+- `bio` - short biography
+- `github_url` - link to GitHub profile
+- `linkedin_url` - link to LinkedIn profile
+- `cv_path` - path to uploaded CV
+- `is_student` - boolean flag
+- `date_of_birth` - user's birth date
+- `country` - user's country
+- `email_verified_at` - timestamp
 - `timestamps` - created_at, updated_at
 
 ### Table: categories
