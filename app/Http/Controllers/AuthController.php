@@ -85,11 +85,19 @@ class AuthController extends Controller
             'date_of_birth' => ['nullable', 'date', 'before:today'],
             'is_student' => ['nullable', 'boolean'],
             'bio' => ['nullable', 'string', 'max:1000'],
+            'github_url' => ['nullable', 'url', 'max:255', 'regex:/^https:\/\/(www\.)?github\.com\/[a-zA-Z0-9-]+\/?$/'],
+            'linkedin_url' => ['nullable', 'url', 'max:255', 'regex:/^https:\/\/(www\.)?linkedin\.com\/in\/[a-zA-Z0-9-]+\/?$/'],
             'avatar' => ['nullable', 'image', 'max:2048'], // Max 2MB
+            'privacy_settings' => ['nullable', 'array'],
+            'privacy_settings.*' => ['nullable', 'in:0,1'],
         ], [
             'first_name.regex' => 'First name can only contain letters and spaces.',
             'last_name.regex' => 'Last name can only contain letters and spaces.',
             'date_of_birth.before' => 'Date of birth must be in the past.',
+            'github_url.url' => 'Please provide a valid GitHub profile URL.',
+            'github_url.regex' => 'The GitHub URL must be a valid GitHub profile link.',
+            'linkedin_url.url' => 'Please provide a valid LinkedIn profile URL.',
+            'linkedin_url.regex' => 'The LinkedIn URL must be a valid LinkedIn profile link.',
             'avatar.image' => 'The file must be an image.',
             'avatar.max' => 'The image size must not exceed 2MB.',
         ]);

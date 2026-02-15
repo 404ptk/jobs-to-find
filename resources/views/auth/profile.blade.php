@@ -2,7 +2,23 @@
 
 @section('title', 'Profile - Jobs to Find')
 
+@php
+    $currentUser = Auth::user();
+    $realIsOwner = Auth::check() && Auth::id() === $user->id;
+    $isAdmin = Auth::check() && $currentUser->account_type === 'admin';
+    
+    $isPreview = request()->has('preview') && request()->get('preview') == '1';
+    
+    $isOwner = $realIsOwner && !$isPreview;
+    $isAdminView = $isAdmin && !$isPreview;
+
+    $shouldShow = function($field) use ($isOwner, $isAdminView, $user) {
+        return $isOwner || $isAdminView || $user->isFieldVisible($field);
+    };
+@endphp
+
 @section('head')
+    @if($isOwner)
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" />
     <style>
         .cropper-view-box,
@@ -10,312 +26,411 @@
             border-radius: 50%;
         }
     </style>
+    @endif
 @endsection
 
 @section('content')
-<div class="min-h-[calc(100vh-8rem)] py-12 px-4">
+<div class="min-h-[calc(100vh-8rem)] py-12 px-4 sm:px-6 lg:px-8 bg-gray-50">
     <div class="max-w-4xl mx-auto">
-        <div class="bg-white rounded-lg shadow-lg p-8">
-            <div class="flex items-center justify-between mb-6">
-                <h1 class="text-3xl font-bold text-gray-900">
-                    Profile
-                </h1>
-                <span class="px-4 py-2 rounded-lg text-sm font-medium {{ Auth::user()->account_type === 'job_seeker' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800' }}">
-                    {{ Auth::user()->account_type === 'job_seeker' ? 'Job Seeker' : 'Employer' }}
-                </span>
+        
+        <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900 tracking-tight">{{ $isOwner ? 'My Profile' : $user->first_name . '\'s Profile' }}</h1>
+                <p class="mt-1 text-sm text-gray-500">
+                    {{ $isOwner ? 'Manage your personal information and account settings.' : 'View user profile details.' }}
+                </p>
             </div>
+            <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold tracking-wide uppercase {{ $user->account_type === 'job_seeker' ? 'bg-blue-100 text-blue-700' : 'bg-emerald-100 text-emerald-700' }}">
+                {{ $user->account_type === 'job_seeker' ? 'Job Seeker' : 'Employer' }}
+            </span>
+        </div>
 
-            @if(session('success'))
-                <div class="mb-6 bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg">
-                    {{ session('success') }}
-                </div>
-            @endif
+        @if(session('success'))
+            <div class="mb-6 p-4 rounded-lg bg-green-50 border border-green-200 flex items-start">
+                <svg class="w-5 h-5 text-green-600 mt-0.5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                <p class="text-green-800 font-medium">{{ session('success') }}</p>
+            </div>
+        @endif
 
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+            @if($isOwner)
             <form action="{{ route('profile.update') }}" method="POST" id="profileForm" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
+            @endif
 
-                <div class="flex flex-col items-center mb-8">
-                    <div class="relative group">
-                        <div class="w-32 h-32 rounded-full overflow-hidden border-4 border-gray-100 shadow-md">
-                            <img src="{{ Auth::user()->avatar ? asset('storage/' . Auth::user()->avatar) : asset('images/default-avatar.svg') }}" 
-                                 alt="Profile Avatar" 
-                                 class="w-full h-full object-cover">
-                        </div>
-                        <label for="avatar" class="absolute bottom-0 right-0 bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-full shadow-lg cursor-pointer transition-colors duration-200" title="Change Avatar">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-                            </svg>
-                            <input type="file" id="avatar" name="avatar" class="hidden" accept="image/*" >
-                        </label>
-                    </div>
-                    <p class="mt-2 text-xs text-gray-500">Max size 2MB. Square format recommended.</p>
-                    @error('avatar')
-                        <p class="mt-2 text-sm text-red-500">{{ $message }}</p>
-                    @enderror
+                <div class="relative bg-gradient-to-r from-blue-600 to-indigo-700 h-32 sm:h-48">
                 </div>
-
-                <div class="space-y-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="bg-gray-200 p-4 rounded-lg">
-                            <label class="flex items-center text-sm font-medium text-gray-500 mb-1">
-                                Username
-                                <svg class="w-4 h-4 ml-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" title="Publicly visible">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                
+                <div class="px-8 pb-8">
+                    <div class="relative flex flex-col sm:flex-row items-center sm:items-end -mt-16 mb-8 gap-6">
+                        <div class="relative group">
+                            <div class="w-32 h-32 sm:w-40 sm:h-40 rounded-full overflow-hidden border-4 border-white shadow-lg bg-white">
+                                <img src="{{ $user->avatar ? asset('storage/' . $user->avatar) : asset('images/default-avatar.svg') }}" 
+                                     alt="Profile Avatar" 
+                                     class="w-full h-full object-cover">
+                            </div>
+                            @if($isOwner)
+                            <label for="avatar" class="absolute bottom-1 right-1 bg-white text-gray-700 hover:text-blue-600 p-2 rounded-full shadow-md border border-gray-200 cursor-pointer transition-all duration-200 transform translate-y-1/4 sm:translate-y-0" title="Change Avatar">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
                                 </svg>
+                                <input type="file" id="avatar" name="avatar" class="hidden" accept="image/*" >
                             </label>
-                            <p class="text-lg text-gray-900 font-medium">{{ Auth::user()->username }}</p>
+                            @endif
                         </div>
-
-                        <div class="bg-gray-200 p-4 rounded-lg">
-                            <label class="flex items-center text-sm font-medium text-gray-500 mb-1">
-                                Email
-                                <svg class="w-4 h-4 ml-2 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" title="Private (Hidden from public profile)">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
-                                </svg>
-                            </label>
-                            <p class="text-lg text-gray-900">{{ Auth::user()->email }}</p>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div id="first_name_container">
-                            <div class="bg-gray-200 p-4 rounded-lg" id="first_name_display">
-                                <label class="flex items-center text-sm font-medium text-gray-500 mb-1">
-                                    First Name
-                                    <svg class="w-4 h-4 ml-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" title="Publicly visible">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                    </svg>
-                                </label>
-                                <p class="text-lg text-gray-900">{{ Auth::user()->first_name }}</p>
-                            </div>
-                            <div class="hidden p-4 bg-gray-200 rounded-lg" id="first_name_edit">
-                                <label for="first_name" class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
-                                <input 
-                                    type="text" 
-                                    id="first_name" 
-                                    name="first_name" 
-                                    value="{{ old('first_name', Auth::user()->first_name) }}"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('first_name') border-red-500 @enderror"
-                                    required
-                                >
-                                @error('first_name')
-                                    <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div id="last_name_container">
-                            <div class="bg-gray-200 p-4 rounded-lg" id="last_name_display">
-                                <label class="flex items-center text-sm font-medium text-gray-500 mb-1">
-                                    Last Name
-                                    <svg class="w-4 h-4 ml-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" title="Publicly visible">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                    </svg>
-                                </label>
-                                <p class="text-lg text-gray-900">{{ Auth::user()->last_name }}</p>
-                            </div>
-                            <div class="hidden p-4 bg-gray-200 rounded-lg" id="last_name_edit">
-                                <label for="last_name" class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
-                                <input 
-                                    type="text" 
-                                    id="last_name" 
-                                    name="last_name" 
-                                    value="{{ old('last_name', Auth::user()->last_name) }}"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('last_name') border-red-500 @enderror"
-                                    required
-                                >
-                                @error('last_name')
-                                    <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
-                                @enderror
+                        <div class="text-center sm:text-left flex-1 mt-2 sm:mt-0">
+                            <h2 class="text-2xl font-bold text-gray-900">{{ $user->first_name }} {{ $user->last_name }}</h2>
+                            <p class="text-gray-500 font-medium">@ {{ $user->username }}</p>
+                            
+                            <div class="mt-2 flex items-center justify-center sm:justify-start text-sm text-gray-600">
+                                <svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                                {{ $user->email }}
+                                @if($isOwner)
+                                <span class="mx-2 text-gray-300">|</span>
+                                <span class="flex items-center text-gray-500 text-xs" title="Private">
+                                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                                    Private
+                                </span>
+                                @endif
                             </div>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div id="country_container">
-                            <div class="bg-gray-200 p-4 rounded-lg" id="country_display">
-                                <label class="flex items-center text-sm font-medium text-gray-500 mb-1">
-                                    Country
-                                    <svg class="w-4 h-4 ml-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" title="Publicly visible">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                    </svg>
-                                </label>
-                                <p class="text-lg text-gray-900">{{ Auth::user()->country }}</p>
-                            </div>
-                            <div class="hidden p-4 bg-gray-200 rounded-lg" id="country_edit">
-                                <label for="country" class="block text-sm font-medium text-gray-700 mb-1">Country</label>
-                                <input 
-                                    type="text" 
-                                    id="country" 
-                                    name="country" 
-                                    value="{{ old('country', Auth::user()->country) }}"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('country') border-red-500 @enderror"
-                                    required
-                                >
-                                @error('country')
-                                    <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
-                                @enderror
-                            </div>
-                        </div>
+                    @error('avatar')
+                        <p class="mb-6 text-sm text-center sm:text-left text-red-500 bg-red-50 p-2 rounded">{{ $message }}</p>
+                    @enderror
 
-                        <div id="date_of_birth_container">
-                            <div class="bg-gray-200 p-4 rounded-lg" id="date_of_birth_display">
-                                <label class="flex items-center text-sm font-medium text-gray-500 mb-1">
-                                    Date of Birth
-                                    <svg class="w-4 h-4 ml-2 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" title="Partially visible (Only age is shown publicly)">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
-                                    </svg>
-                                    <span class="ml-1 text-xs text-gray-400 font-normal">(Age is public)</span>
-                                </label>
-                                <p class="text-lg text-gray-900">
-                                    {{ Auth::user()->date_of_birth ? Auth::user()->date_of_birth->format('F d, Y') : 'Not provided' }}
-                                </p>
-                            </div>
-                            <div class="hidden p-4 bg-gray-200 rounded-lg" id="date_of_birth_edit">
-                                <label for="date_of_birth" class="block text-sm font-medium text-gray-700 mb-1">Date of Birth</label>
-                                <input 
-                                    type="date" 
-                                    id="date_of_birth" 
-                                    name="date_of_birth" 
-                                    value="{{ old('date_of_birth', Auth::user()->date_of_birth ? Auth::user()->date_of_birth->format('Y-m-d') : '') }}"
-                                    max="{{ date('Y-m-d') }}"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('date_of_birth') border-red-500 @enderror"
-                                >
-                                @error('date_of_birth')
-                                    <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
-                                @enderror
-                            </div>
-                        </div>
-                    </div>
-
-                    @if(Auth::user()->account_type === 'job_seeker')
-                        <div id="is_student_container">
-                            <div class="bg-gray-200 p-4 rounded-lg" id="is_student_display">
-                                <label class="flex items-center text-sm font-medium text-gray-500 mb-1">
-                                    Student Status
-                                    <svg class="w-4 h-4 ml-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" title="Publicly visible">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                    </svg>
-                                </label>
-                                <p class="text-lg text-gray-900">
-                                    @if(Auth::user()->is_student)
-                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800">
-                                            <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                                <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"/>
-                                            </svg>
-                                            Student
-                                        </span>
-                                    @else
-                                        <span class="text-gray-600">Not a student</span>
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        
+                        <div class="lg:col-span-2 space-y-8">
+                            
+                            @if($shouldShow('bio'))
+                            <div id="bio_container" class="space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <h3 class="text-lg font-semibold text-gray-900 flex items-center">
+                                        About Me
+                                    </h3>
+                                    @if($isOwner)
+                                    <div class="flex items-center space-x-2 text-sm text-gray-500">
+                                        <input type="hidden" name="privacy_settings[bio]" value="0">
+                                        <input type="checkbox" name="privacy_settings[bio]" value="1" id="privacy_bio" {{ $user->isFieldVisible('bio') ? 'checked' : '' }} class="rounded text-blue-600 focus:ring-blue-500">
+                                        <label for="privacy_bio" class="cursor-pointer">Public</label>
+                                    </div>
                                     @endif
-                                </p>
+                                </div>
+                                
+                                <div id="bio_display" class="prose prose-sm max-w-none text-gray-600 bg-gray-50 p-4 rounded-xl border border-gray-100 min-h-[5rem]">
+                                    @if($user->bio)
+                                        <p class="whitespace-pre-line">{{ $user->bio }}</p>
+                                    @else
+                                        <p class="text-gray-400 italic">Tell us a little bit about yourself...</p>
+                                    @endif
+                                </div>
+                                @if($isOwner)
+                                <div id="bio_edit" class="hidden">
+                                    <textarea 
+                                        id="bio" 
+                                        name="bio" 
+                                        rows="5"
+                                        class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-sm @error('bio') border-red-500 @enderror"
+                                        maxlength="1000"
+                                        placeholder="I am a passionate developer..."
+                                    >{{ old('bio', $user->bio) }}</textarea>
+                                    <div class="mt-2 flex justify-between items-center">
+                                        @error('bio')
+                                            <p class="text-sm text-red-500">{{ $message }}</p>
+                                        @else
+                                            <span></span>
+                                        @enderror
+                                        <p class="text-xs text-gray-400">Max 1000 characters</p>
+                                    </div>
+                                </div>
+                                @endif
                             </div>
-                            <div class="hidden p-4 bg-white rounded-lg border-2 border-blue-300" id="is_student_edit">
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Student Status</label>
-                                <label class="flex items-center cursor-pointer mt-2" id="student_label">
-                                    <input 
-                                        type="checkbox" 
-                                        name="is_student" 
-                                        id="is_student"
-                                        value="1"
-                                        {{ old('is_student', Auth::user()->is_student) ? 'checked' : '' }}
-                                        class="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
-                                    >
-                                    <span class="ml-3 text-sm font-medium text-gray-700">I am currently a student</span>
-                                </label>
-                            </div>
-                        </div>
-                    @endif
+                            @endif
+                            
+                            <hr class="border-gray-100">
 
-                    <div id="bio_container">
-                        <div class="bg-gray-200 p-4 rounded-lg" id="bio_display">
-                            <label class="flex items-center text-sm font-medium text-gray-500 mb-1">
-                                Bio
-                                <svg class="w-4 h-4 ml-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" title="Publicly visible">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                </svg>
-                            </label>
-                            <p class="text-lg text-gray-900 whitespace-pre-line">{{ Auth::user()->bio ?? 'No bio provided' }}</p>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                @if($isOwner || $isAdminView)
+                                <div id="first_name_container">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">First Name</label>
+                                    <div id="first_name_display" class="py-2.5 px-4 bg-gray-50 rounded-lg border border-gray-200 text-gray-800 font-medium">
+                                        {{ $user->first_name }}
+                                    </div>
+                                    @if($isOwner)
+                                    <div id="first_name_edit" class="hidden">
+                                        <input type="text" id="first_name" name="first_name" value="{{ old('first_name', $user->first_name) }}" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm @error('first_name') border-red-500 @enderror" required>
+                                    </div>
+                                    @endif
+                                </div>
+
+                                <div id="last_name_container">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
+                                    <div id="last_name_display" class="py-2.5 px-4 bg-gray-50 rounded-lg border border-gray-200 text-gray-800 font-medium">
+                                        {{ $user->last_name }}
+                                    </div>
+                                    @if($isOwner)
+                                    <div id="last_name_edit" class="hidden">
+                                        <input type="text" id="last_name" name="last_name" value="{{ old('last_name', $user->last_name) }}" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm @error('last_name') border-red-500 @enderror" required>
+                                    </div>
+                                    @endif
+                                </div>
+                                @endif
+
+                                @if($shouldShow('country'))
+                                <div id="country_container">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <label class="block text-sm font-medium text-gray-700">Country</label>
+                                        @if($isOwner)
+                                        <div class="flex items-center space-x-2 text-xs text-gray-500">
+                                            <input type="hidden" name="privacy_settings[country]" value="0">
+                                            <input type="checkbox" name="privacy_settings[country]" value="1" id="privacy_country" {{ $user->isFieldVisible('country') ? 'checked' : '' }} class="rounded text-blue-600 focus:ring-blue-500">
+                                            <label for="privacy_country" class="cursor-pointer">Public</label>
+                                        </div>
+                                        @endif
+                                    </div>
+                                    <div id="country_display" class="py-2.5 px-4 bg-gray-50 rounded-lg border border-gray-200 text-gray-800">
+                                        {{ $user->country }}
+                                    </div>
+                                    @if($isOwner)
+                                    <div id="country_edit" class="hidden">
+                                        <input type="text" id="country" name="country" value="{{ old('country', $user->country) }}" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm @error('country') border-red-500 @enderror" required>
+                                    </div>
+                                    @endif
+                                </div>
+                                @endif
+
+                                @if($shouldShow('date_of_birth'))
+                                <div id="date_of_birth_container">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <label class="block text-sm font-medium text-gray-700">
+                                            Date of Birth
+                                        </label>
+                                        @if($isOwner)
+                                        <div class="flex items-center space-x-2 text-xs text-gray-500">
+                                            <input type="hidden" name="privacy_settings[date_of_birth]" value="0">
+                                            <input type="checkbox" name="privacy_settings[date_of_birth]" value="1" id="privacy_dob" {{ $user->isFieldVisible('date_of_birth') ? 'checked' : '' }} class="rounded text-blue-600 focus:ring-blue-500">
+                                            <label for="privacy_dob" class="cursor-pointer">Public</label>
+                                        </div>
+                                        @endif
+                                    </div>
+                                    <div id="date_of_birth_display" class="py-2.5 px-4 bg-gray-50 rounded-lg border border-gray-200 text-gray-800 flex items-center">
+                                        <svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                        {{ $user->date_of_birth ? $user->date_of_birth->format('F d, Y') : 'Not provided' }}
+                                    </div>
+                                    @if($isOwner)
+                                    <div id="date_of_birth_edit" class="hidden">
+                                        <input type="date" id="date_of_birth" name="date_of_birth" value="{{ old('date_of_birth', $user->date_of_birth ? $user->date_of_birth->format('Y-m-d') : '') }}" max="{{ date('Y-m-d') }}" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm @error('date_of_birth') border-red-500 @enderror">
+                                    </div>
+                                    @endif
+                                </div>
+                                @endif
+                            </div>
                         </div>
-                        <div class="hidden p-4 bg-gray-200 rounded-lg" id="bio_edit">
-                            <label for="bio" class="block text-sm font-medium text-gray-700 mb-1">Bio</label>
-                            <textarea 
-                                id="bio" 
-                                name="bio" 
-                                rows="4"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('bio') border-red-500 @enderror"
-                                maxlength="1000"
-                            >{{ old('bio', Auth::user()->bio) }}</textarea>
-                            <p class="mt-1 text-xs text-gray-500">Share a brief introduction about yourself (max 1000 characters).</p>
-                            @error('bio')
-                                <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
-                            @enderror
+
+                        <div class="space-y-6">
+                            
+                            @if($user->account_type === 'job_seeker')
+                                <div class="bg-blue-50 rounded-xl p-5 border border-blue-100">
+                                    <h3 class="text-sm font-bold text-blue-900 uppercase tracking-wide mb-3 flex items-center justify-between">
+                                        Education Status
+                                        @if($isOwner)
+                                        <div class="flex items-center space-x-2 text-xs text-blue-700 font-normal normal-case">
+                                            <input type="hidden" name="privacy_settings[education]" value="0">
+                                            <input type="checkbox" name="privacy_settings[education]" value="1" id="privacy_education" {{ $user->isFieldVisible('education') ? 'checked' : '' }} class="rounded text-blue-600 focus:ring-blue-500">
+                                            <label for="privacy_education" class="cursor-pointer">Public</label>
+                                        </div>
+                                        @endif
+                                    </h3>
+                                    
+                                    @if($shouldShow('education'))
+                                    <div id="is_student_container">
+                                        <div id="is_student_display">
+                                            @if($user->is_student)
+                                                <div class="flex items-center text-blue-700">
+                                                    <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+                                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"/></svg>
+                                                    </div>
+                                                    <span class="font-medium">Currently a Student</span>
+                                                </div>
+                                            @else
+                                                <div class="flex items-center text-gray-500">
+                                                    <span class="text-sm">Not currently a student</span>
+                                                </div>
+                                            @endif
+                                        </div>
+                                        @if($isOwner)
+                                        <div id="is_student_edit" class="hidden">
+                                            <label class="flex items-start cursor-pointer p-2 hover:bg-white rounded-lg transition">
+                                                <div class="flex items-center h-5">
+                                                    <input type="checkbox" name="is_student" id="is_student" value="1" {{ old('is_student', $user->is_student) ? 'checked' : '' }} class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                                                </div>
+                                                <div class="ml-3 text-sm">
+                                                    <label for="is_student" class="font-medium text-gray-700">I am currently a student</label>
+                                                </div>
+                                            </label>
+                                        </div>
+                                        @endif
+                                    </div>
+                                    @endif
+                                </div>
+                            @endif
+
+                            <div class="bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
+                                <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wide mb-4 flex items-center">
+                                    Social Profiles
+                                </h3>
+                                
+                                <div class="space-y-4">
+                                    @if($shouldShow('github_url'))
+                                    <div id="github_url_container">
+                                        <div class="flex items-center justify-between mb-1">
+                                            <div class="flex items-center">
+                                                <svg class="w-5 h-5 mr-2 text-gray-700" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                                                <span class="text-sm font-medium text-gray-700">GitHub</span>
+                                            </div>
+                                            @if($isOwner)
+                                            <div class="flex items-center space-x-2 text-xs text-gray-500">
+                                                <input type="hidden" name="privacy_settings[github_url]" value="0">
+                                                <input type="checkbox" name="privacy_settings[github_url]" value="1" id="privacy_github" {{ $user->isFieldVisible('github_url') ? 'checked' : '' }} class="rounded text-blue-600 focus:ring-blue-500">
+                                                <label for="privacy_github" class="cursor-pointer">Public</label>
+                                            </div>
+                                            @endif
+                                        </div>
+                                        <div id="github_url_display">
+                                            @if($user->github_url)
+                                                <a href="{{ $user->github_url }}" target="_blank" class="text-sm text-blue-600 hover:text-blue-800 hover:underline truncate block w-full" title="{{ $user->github_url }}">
+                                                    {{ Str::limit($user->github_url, 30) }}
+                                                </a>
+                                            @else
+                                                <span class="text-sm text-gray-400">Not connected</span>
+                                            @endif
+                                        </div>
+                                        @if($isOwner)
+                                        <div id="github_url_edit" class="hidden mt-1">
+                                            <input type="url" id="github_url" name="github_url" value="{{ old('github_url', $user->github_url) }}" placeholder="https://github.com/username" class="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                            @error('github_url')
+                                                <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+                                        @endif
+                                    </div>
+                                    @endif
+                                    
+                                    <hr class="border-gray-100">
+
+                                    @if($shouldShow('linkedin_url'))
+                                    <div id="linkedin_url_container">
+                                        <div class="flex items-center justify-between mb-1">
+                                            <div class="flex items-center">
+                                                <svg class="w-5 h-5 mr-2 text-blue-700" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                                                <span class="text-sm font-medium text-gray-700">LinkedIn</span>
+                                            </div>
+                                            @if($isOwner)
+                                            <div class="flex items-center space-x-2 text-xs text-gray-500">
+                                                <input type="hidden" name="privacy_settings[linkedin_url]" value="0">
+                                                <input type="checkbox" name="privacy_settings[linkedin_url]" value="1" id="privacy_linkedin" {{ $user->isFieldVisible('linkedin_url') ? 'checked' : '' }} class="rounded text-blue-600 focus:ring-blue-500">
+                                                <label for="privacy_linkedin" class="cursor-pointer">Public</label>
+                                            </div>
+                                            @endif
+                                        </div>
+                                        <div id="linkedin_url_display">
+                                            @if($user->linkedin_url)
+                                                <a href="{{ $user->linkedin_url }}" target="_blank" class="text-sm text-blue-600 hover:text-blue-800 hover:underline truncate block w-full" title="{{ $user->linkedin_url }}">
+                                                    {{ Str::limit($user->linkedin_url, 30) }}
+                                                </a>
+                                            @else
+                                                <span class="text-sm text-gray-400">Not connected</span>
+                                            @endif
+                                        </div>
+                                        @if($isOwner)
+                                        <div id="linkedin_url_edit" class="hidden mt-1">
+                                            <input type="url" id="linkedin_url" name="linkedin_url" value="{{ old('linkedin_url', $user->linkedin_url) }}" placeholder="https://linkedin.com/in/username" class="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                            @error('linkedin_url')
+                                                <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+                                        @endif
+                                    </div>
+                                    @endif
+                                </div>
+                            </div>
+                            
+                            @if($user->cv_path)
+                                @if($shouldShow('cv_path'))
+                                <div class="bg-gray-50 rounded-xl p-5 border border-gray-200">
+                                    <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wide mb-3 flex items-center justify-between">
+                                        Resume
+                                        @if($isOwner)
+                                        <div class="flex items-center space-x-2 text-xs text-gray-500 normal-case font-normal">
+                                            <input type="hidden" name="privacy_settings[cv_path]" value="0">
+                                            <input type="checkbox" name="privacy_settings[cv_path]" value="1" id="privacy_cv" {{ $user->isFieldVisible('cv_path') ? 'checked' : '' }} class="rounded text-blue-600 focus:ring-blue-500">
+                                            <label for="privacy_cv" class="cursor-pointer">Public</label>
+                                        </div>
+                                        @endif
+                                    </h3>
+                                    <a href="{{ $user->cv_path }}" class="flex items-center justify-center w-full px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 hover:text-blue-600 transition shadow-sm font-medium text-sm">
+                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                        Download CV
+                                    </a>
+                                </div>
+                                @endif
+                            @endif
+                            
                         </div>
                     </div>
-
-                    @if(Auth::user()->cv_path)
-                        <div class="bg-gray-50 p-4 rounded-lg">
-                            <label class="flex items-center text-sm font-medium text-gray-500 mb-2">
-                                CV/Resume
-                                <svg class="w-4 h-4 ml-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" title="Publicly visible">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                </svg>
-                            </label>
-                            <a href="{{ Auth::user()->cv_path }}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
-                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                </svg>
-                                Download CV
-                            </a>
+                    
+                    <div class="mt-8 pt-8 border-t border-gray-100 flex flex-col sm:flex-row justify-end items-center gap-4">
+                        <div id="view-mode" class="w-full sm:w-auto flex flex-col sm:flex-row gap-4">
+                            @if($realIsOwner && $isPreview)
+                            @else
+                                <a href="/" class="text-center sm:text-left text-gray-500 hover:text-gray-700 font-medium px-4 py-2">
+                                    Back to Home
+                                </a>
+                            @endif
+                            @if($realIsOwner)
+                                @if($isPreview)
+                                    <a href="{{ route('profile') }}" class="w-full sm:w-auto px-6 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition shadow-sm flex items-center justify-center">
+                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                        Back to edit profile
+                                    </a>
+                                @else
+                                    <a href="{{ route('profile', ['preview' => 1]) }}" class="w-full sm:w-auto px-6 py-2.5 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition shadow-sm flex items-center justify-center">
+                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                                        Preview
+                                    </a>
+                                    <button type="button" onclick="enableEditMode()" class="w-full sm:w-auto px-6 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition shadow-sm flex items-center justify-center">
+                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                                        Edit Profile
+                                    </button>
+                                @endif
+                            @endif
                         </div>
-                    @endif
-
-                    <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                        <div class="flex items-start">
-                            <svg class="w-5 h-5 text-blue-600 mt-0.5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
-                            </svg>
-                            <div>
-                                <p class="text-sm font-medium text-blue-900">Account Information</p>
-                                <p class="text-sm text-blue-700 mt-1">
-                                    Member since {{ Auth::user()->created_at->format('F d, Y') }}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="pt-4 border-t border-gray-200">
-                        <div id="view-mode">
-                            <button type="button" onclick="enableEditMode()" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
-                                Edit Profile
-                            </button>
-                            <a href="/" class="ml-4 text-blue-600 hover:underline">Head back home</a>
-                        </div>
-
-                        <div id="edit-mode" class="hidden">
-                            <button type="submit" class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
-                                Save Changes
-                            </button>
-                            <button type="button" onclick="cancelEditMode()" class="ml-4 px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition">
+                        
+                        @if($isOwner)
+                        <div id="edit-mode" class="hidden w-full sm:w-auto flex flex-col sm:flex-row gap-3">
+                            <button type="button" onclick="cancelEditMode()" class="w-full sm:w-auto px-6 py-2.5 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition shadow-sm">
                                 Cancel
                             </button>
+                            <button type="submit" class="w-full sm:w-auto px-6 py-2.5 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition shadow-sm flex items-center justify-center">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                Save Changes
+                            </button>
                         </div>
+                        @endif
                     </div>
                 </div>
+            @if($isOwner)
             </form>
+            @endif
         </div>
     </div>
 </div>
 
+@if($isOwner)
 <div id="avatar-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
     <div class="fixed inset-0 bg-white/10 backdrop-blur-md transition-opacity" aria-hidden="true"></div>
 
@@ -471,8 +586,11 @@
         }, 'image/jpeg', 0.9);
     });
 
-    const editableFields = ['first_name', 'last_name', 'country', 'date_of_birth', 'bio'];
-    @if(Auth::user()->account_type === 'job_seeker')
+    const editableFields = [
+        'first_name', 'last_name', 'country', 'date_of_birth', 'bio', 
+        'github_url', 'linkedin_url'
+    ];
+    @if($user->account_type === 'job_seeker')
         editableFields.push('is_student');
     @endif
 
@@ -507,5 +625,7 @@
             }
         });
     }
+
 </script>
+@endif
 @endsection

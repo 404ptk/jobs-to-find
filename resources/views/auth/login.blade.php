@@ -135,7 +135,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
         
-        gradient.style.background = `radial-gradient(600px circle at ${x}px ${y}px, rgba(0, 0, 0, 0.15), transparent 80%)`;
+        gradient.style.background = `radial-gradient(600px circle at ${x}px ${y}px, rgba(68, 189, 245, 0.15), transparent 80%)`;
     });
     
     container.addEventListener('mouseleave', function() {

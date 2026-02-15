@@ -64,7 +64,7 @@ Route::get('/privacy', function () {
 })->name('privacy');
 
 Route::get('/profile', function () {
-    return view('auth.profile');
+    return view('auth.profile', ['user' => Auth::user()]);
 })->middleware('auth')->name('profile');
 
 Route::get('/profile/edit', function () {

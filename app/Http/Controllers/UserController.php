@@ -32,6 +32,6 @@ class UserController extends Controller
             abort(403, 'You are not authorized to view this profile.');
         }
 
-        return view('user.show', compact('user'));
+        return view('auth.profile', compact('user'));
     }
 }
