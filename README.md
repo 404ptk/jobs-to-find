@@ -27,8 +27,6 @@ A web application for publishing and searching job offers, built with Laravel fr
 
 ## Technologies
 
-## Technologies
-
 ### Backend
 - **Laravel** 12.0 - PHP framework
 - **PHP** 8.2 - programming language
@@ -39,6 +37,7 @@ A web application for publishing and searching job offers, built with Laravel fr
 - **Tailwind CSS** 4.1.18 - CSS framework
 - **Blade** - Laravel templating engine
 - **JavaScript** - client-side interactivity
+- **Cropper.js** 1.6.2 - JavaScript image cropper
 - **Vite** 7.0.7 - bundler and development tool
 - **Axios** 1.11.0 - HTTP client
 
