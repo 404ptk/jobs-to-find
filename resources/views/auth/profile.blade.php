@@ -153,6 +153,74 @@
                             
                             <hr class="border-gray-100">
 
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <h3 class="text-lg font-semibold text-gray-900 flex items-center">
+                                        Skills
+                                    </h3>
+                                    @if($isOwner)
+                                    <div class="flex items-center space-x-2 text-sm text-gray-500">
+                                        <input type="hidden" name="privacy_settings[skills]" value="0">
+                                        <input type="checkbox" name="privacy_settings[skills]" value="1" id="privacy_skills" {{ $user->isFieldVisible('skills') ? 'checked' : '' }} class="rounded text-blue-600 focus:ring-blue-500">
+                                        <label for="privacy_skills" class="cursor-pointer">Public</label>
+                                    </div>
+                                    @endif
+                                </div>
+                                
+                                @if($shouldShow('skills'))
+                                <div id="skills_container">
+                                    <div id="skills_display">
+                                        @php
+                                            $userSkills = $user->skills;
+                                        @endphp
+                                        @if($userSkills->count() > 0)
+                                            <div class="flex flex-wrap gap-2">
+                                                @foreach($userSkills as $skill)
+                                                    <span class="inline-flex items-center px-3 py-1.5 bg-blue-50 text-blue-700 text-sm font-medium rounded-full border border-blue-200">
+                                                        {{ $skill->name }}
+                                                    </span>
+                                                @endforeach
+                                            </div>
+                                        @else
+                                            <p class="text-gray-400 italic bg-gray-50 p-4 rounded-xl border border-gray-100">No skills added yet...</p>
+                                        @endif
+                                    </div>
+                                    @if($isOwner)
+                                    <div id="skills_edit" class="hidden">
+                                        <div class="bg-gray-50 p-4 rounded-xl border border-gray-200">
+                                            <p class="text-xs text-gray-600 mb-3">Select up to 20 skills from the list below:</p>
+                                            <p class="text-xs text-red-600 mb-2">
+                                                Debug: isset={{ isset($availableSkills) ? 'yes' : 'no' }}, 
+                                                count={{ isset($availableSkills) ? $availableSkills->count() : 'N/A' }}
+                                            </p>
+                                            <div class="max-h-60 overflow-y-auto space-y-1">
+                                                @if(isset($availableSkills) && $availableSkills->count() > 0)
+                                                    @foreach($availableSkills as $skill)
+                                                        <label class="flex items-center p-2 hover:bg-white rounded-lg transition cursor-pointer">
+                                                            <input type="checkbox" 
+                                                                   name="skills[]" 
+                                                                   value="{{ $skill->id }}" 
+                                                                   {{ $userSkills->contains($skill->id) ? 'checked' : '' }}
+                                                                   class="skill-checkbox rounded text-blue-600 focus:ring-blue-500 mr-3">
+                                                            <span class="text-sm text-gray-700">{{ $skill->name }}</span>
+                                                        </label>
+                                                    @endforeach
+                                                @else
+                                                    <p class="text-sm text-gray-500 p-4">No skills available. Please contact administrator.</p>
+                                                @endif
+                                            </div>
+                                            <p class="text-xs text-gray-500 mt-3">
+                                                <span id="skills-count">{{ $userSkills->count() }}</span> / 20 skills selected
+                                            </p>
+                                        </div>
+                                    </div>
+                                    @endif
+                                </div>
+                                @endif
+                            </div>
+
+                            <hr class="border-gray-100">
+
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 @if($isOwner || $isAdminView)
                                 <div id="first_name_container">
@@ -588,11 +656,43 @@
 
     const editableFields = [
         'first_name', 'last_name', 'country', 'date_of_birth', 'bio', 
-        'github_url', 'linkedin_url'
+        'github_url', 'linkedin_url', 'skills'
     ];
     @if($user->account_type === 'job_seeker')
         editableFields.push('is_student');
     @endif
+
+    let skillCheckboxes = [];
+    let skillsCountElement = null;
+    const MAX_SKILLS = 20;
+
+    function initializeSkillsManagement() {
+        skillCheckboxes = document.querySelectorAll('.skill-checkbox');
+        skillsCountElement = document.getElementById('skills-count');
+        
+        skillCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', updateSkillsCount);
+        });
+        
+        updateSkillsCount();
+    }
+
+    function updateSkillsCount() {
+        const checkedCount = document.querySelectorAll('.skill-checkbox:checked').length;
+        if (skillsCountElement) {
+            skillsCountElement.textContent = checkedCount;
+        }
+
+        skillCheckboxes.forEach(checkbox => {
+            if (!checkbox.checked && checkedCount >= MAX_SKILLS) {
+                checkbox.disabled = true;
+                checkbox.parentElement.classList.add('opacity-50', 'cursor-not-allowed');
+            } else if (checkbox.disabled && checkedCount < MAX_SKILLS) {
+                checkbox.disabled = false;
+                checkbox.parentElement.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+        });
+    }
 
     function enableEditMode() {
         document.getElementById('view-mode').classList.add('hidden');
@@ -607,6 +707,8 @@
                 editElement.classList.remove('hidden');
             }
         });
+
+        initializeSkillsManagement();
     }
 
     function cancelEditMode() {

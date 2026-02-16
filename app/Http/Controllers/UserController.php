@@ -32,6 +32,8 @@ class UserController extends Controller
             abort(403, 'You are not authorized to view this profile.');
         }
 
-        return view('auth.profile', compact('user'));
+        $availableSkills = \App\Models\Skill::orderBy('name')->get();
+
+        return view('auth.profile', compact('user', 'availableSkills'));
     }
 }

@@ -90,6 +90,8 @@ class AuthController extends Controller
             'avatar' => ['nullable', 'image', 'max:2048'], // Max 2MB
             'privacy_settings' => ['nullable', 'array'],
             'privacy_settings.*' => ['nullable', 'in:0,1'],
+            'skills' => ['nullable', 'array', 'max:20'],
+            'skills.*' => ['exists:skills,id'],
         ], [
             'first_name.regex' => 'First name can only contain letters and spaces.',
             'last_name.regex' => 'Last name can only contain letters and spaces.',
@@ -118,6 +120,12 @@ class AuthController extends Controller
         }
 
         $user->update($validated);
+
+        if ($request->has('skills')) {
+            $user->skills()->sync($request->input('skills'));
+        } else {
+            $user->skills()->sync([]);
+        }
 
         return redirect()->route('profile')->with('success', 'Profile updated successfully!');
     }

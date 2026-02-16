@@ -64,7 +64,11 @@ Route::get('/privacy', function () {
 })->name('privacy');
 
 Route::get('/profile', function () {
-    return view('auth.profile', ['user' => Auth::user()]);
+    $availableSkills = \App\Models\Skill::orderBy('name')->get();
+    return view('auth.profile', [
+        'user' => Auth::user(),
+        'availableSkills' => $availableSkills
+    ]);
 })->middleware('auth')->name('profile');
 
 Route::get('/profile/edit', function () {

@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -67,16 +68,13 @@ class User extends Authenticatable
         return $this->hasMany(JobOffer::class);
     }
 
+    public function skills(): BelongsToMany
+    {
+        return $this->belongsToMany(Skill::class);
+    }
+
     public function isFieldVisible(string $field): bool
     {
-        // If privacy_settings is null, assume everything is visible (default) or hidden?
-        // Let's assume hidden by default for safety, OR visible.
-        // User asked to "choose what to share", implying opt-in or opt-out.
-        // Let's assume public by default for now to match current behavior, 
-        // unless set to false.
-        
-        // If specific privacy setting exists and is false, it's hidden.
-        // Otherwise it's visible.
         return $this->privacy_settings[$field] ?? true;
     }
 }
