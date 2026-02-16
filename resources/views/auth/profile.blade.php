@@ -189,10 +189,6 @@
                                     <div id="skills_edit" class="hidden">
                                         <div class="bg-gray-50 p-4 rounded-xl border border-gray-200">
                                             <p class="text-xs text-gray-600 mb-3">Select up to 20 skills from the list below:</p>
-                                            <p class="text-xs text-red-600 mb-2">
-                                                Debug: isset={{ isset($availableSkills) ? 'yes' : 'no' }}, 
-                                                count={{ isset($availableSkills) ? $availableSkills->count() : 'N/A' }}
-                                            </p>
                                             <div class="max-h-60 overflow-y-auto space-y-1">
                                                 @if(isset($availableSkills) && $availableSkills->count() > 0)
                                                     @foreach($availableSkills as $skill)
