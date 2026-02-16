@@ -6,6 +6,8 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use App\Models\Skill;
+use App\Models\User;
 
 class UserSeeder extends Seeder
 {
@@ -89,12 +91,52 @@ class UserSeeder extends Seeder
             ],
         ]);
 
-        \App\Models\User::factory()->count(30)->create([
+        $allSkills = Skill::all()->pluck('id')->toArray();
+        
+        if (count($allSkills) > 0) {
+            $seededUsers = User::whereIn('username', ['admin', 'student_john', 'student_jane'])->get();
+            
+            foreach ($seededUsers as $user) {
+                $skillCount = rand(1, 100);
+                if ($skillCount <= 40) {
+                    $count = rand(1, 5);  
+                } elseif ($skillCount <= 75) {
+                    $count = rand(6, 10); 
+                } elseif ($skillCount <= 95) {
+                    $count = rand(11, 15); 
+                } else {
+                    $count = rand(16, 20); 
+                }
+                
+                $randomSkills = array_rand(array_flip($allSkills), min($count, count($allSkills)));
+                $user->skills()->attach(is_array($randomSkills) ? $randomSkills : [$randomSkills]);
+            }
+        }
+
+        $jobSeekers = \App\Models\User::factory()->count(30)->create([
             'account_type' => 'job_seeker',
         ]);
 
-        \App\Models\User::factory()->count(15)->create([
-            'account_type' => 'employer',
-        ]);
+        // $employers = \App\Models\User::factory()->count(15)->create([
+        //     'account_type' => 'employer',
+        // ]);
+
+        if (count($allSkills) > 0) {
+            foreach ($jobSeekers as $user) {
+                $skillCount = rand(1, 100);
+                if ($skillCount <= 40) {
+                    $count = rand(1, 5);
+                } elseif ($skillCount <= 75) {
+                    $count = rand(6, 10);
+                } elseif ($skillCount <= 95) {
+                    $count = rand(11, 15);
+                } else {
+                    $count = rand(16, 20);
+                }
+                
+                $randomSkills = array_rand(array_flip($allSkills), min($count, count($allSkills)));
+                $user->skills()->attach(is_array($randomSkills) ? $randomSkills : [$randomSkills]);
+            }
+        }
     }
 }

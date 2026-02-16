@@ -151,6 +151,8 @@
                             </div>
                             @endif
                             
+                            {{-- Skills Section - Only for Job Seekers --}}
+                            @if($user->account_type === 'job_seeker')
                             <hr class="border-gray-100">
 
                             <div class="space-y-3">
@@ -216,6 +218,7 @@
                             </div>
 
                             <hr class="border-gray-100">
+                            @endif
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 @if($isOwner || $isAdminView)
