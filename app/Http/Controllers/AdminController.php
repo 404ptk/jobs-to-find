@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\JobOffer;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
@@ -105,5 +106,11 @@ class AdminController extends Controller
     public function offerPartial($id) {
         $jobOffer = JobOffer::with(['category', 'location', 'user'])->findOrFail($id);
         return view('components.job-offer-details', compact('jobOffer'));
+    }
+
+    public function userPartial($id) {
+        $user = User::with(['skills'])->findOrFail($id);
+        $availableSkills = \App\Models\Skill::orderBy('name')->get();
+        return view('components.user-profile-details', compact('user', 'availableSkills'));
     }
 }
