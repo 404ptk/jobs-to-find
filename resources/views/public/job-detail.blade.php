@@ -202,16 +202,45 @@
                                     </div>
                                 </div>
                             @elseif(Auth::user()->account_type === 'job_seeker')
-                                <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
-                                    <h3 class="text-lg font-semibold text-gray-900 mb-3">Ready to apply?</h3>
-                                    <p class="text-gray-700 mb-4">Submit your application for this position and our team will get back to you soon.</p>
-                                    <button onclick="showApplyModal({{ $jobOffer->id }})" class="w-full px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition flex items-center justify-center cursor-pointer">
-                                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                        </svg>
-                                        Apply Now
-                                    </button>
-                                </div>
+                                @php
+                                    $existingApplication = \App\Models\Application::where('user_id', Auth::id())
+                                        ->where('job_offer_id', $jobOffer->id)
+                                        ->first();
+                                @endphp
+                                
+                                @if($existingApplication)
+                                    <div class="bg-green-50 border border-green-200 rounded-lg p-6">
+                                        <h3 class="text-lg font-semibold text-gray-900 mb-3">Application Status</h3>
+                                        <div class="flex items-center justify-center py-2">
+                                            <svg class="w-6 h-6 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                            </svg>
+                                            <span class="text-lg font-semibold text-green-700">You already applied</span>
+                                        </div>
+                                        <p class="text-gray-600 text-center mt-2">Applied on {{ $existingApplication->created_at->format('F j, Y') }}</p>
+                                        <div class="mt-4 text-center">
+                                            <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium
+                                                @if($existingApplication->status === 'pending') bg-yellow-100 text-yellow-800
+                                                @elseif($existingApplication->status === 'reviewed') bg-blue-100 text-blue-800
+                                                @elseif($existingApplication->status === 'accepted') bg-green-100 text-green-800
+                                                @elseif($existingApplication->status === 'rejected') bg-red-100 text-red-800
+                                                @endif">
+                                                Status: {{ ucfirst($existingApplication->status) }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                @else
+                                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
+                                        <h3 class="text-lg font-semibold text-gray-900 mb-3">Ready to apply?</h3>
+                                        <p class="text-gray-700 mb-4">Submit your application for this position and our team will get back to you soon.</p>
+                                        <button onclick="showApplyModal({{ $jobOffer->id }})" class="w-full px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition flex items-center justify-center cursor-pointer">
+                                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                            </svg>
+                                            Apply Now
+                                        </button>
+                                    </div>
+                                @endif
                             @elseif(Auth::user()->account_type === 'admin')
                                 <div class="bg-red-50 border border-red-200 rounded-lg p-6">
                                     <h3 class="text-lg font-semibold text-gray-900 mb-3">Administrator Actions</h3>

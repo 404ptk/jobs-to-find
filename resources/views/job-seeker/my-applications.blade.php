@@ -107,9 +107,9 @@
                                     <span>Applied {{ $application->created_at->diffForHumans() }}</span>
                                 </div>
 
-                                <a href="{{ route('job.show', $application->jobOffer->id) }}" class="block w-full px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition text-center">
+                                <button onclick="openJobModal({{ $application->jobOffer->id }})" class="block w-full px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition text-center cursor-pointer">
                                     View Job Details
-                                </a>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -124,4 +124,53 @@
         @endif
     </div>
 </div>
+
+@foreach($applications as $application)
+    <div id="job-modal-{{ $application->jobOffer->id }}" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="fixed inset-0 bg-opacity-30 backdrop-blur-sm transition-opacity" onclick="hideJobModal({{ $application->jobOffer->id }})"></div>
+        <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto transform transition-all scale-95 opacity-0 relative" id="job-modal-content-{{ $application->jobOffer->id }}">
+            <button onclick="hideJobModal({{ $application->jobOffer->id }})" class="absolute top-4 right-4 text-white hover:text-gray-200 z-20 cursor-pointer bg-black bg-opacity-30 rounded-full p-1 hover:bg-opacity-50 transition">
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+            <x-job-offer-details :jobOffer="$application->jobOffer" />
+        </div>
+    </div>
+@endforeach
+
+<script>
+    function openJobModal(jobId) {
+        const modal = document.getElementById(`job-modal-${jobId}`);
+        const modalContent = document.getElementById(`job-modal-content-${jobId}`);
+        
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            modalContent.classList.remove('scale-95', 'opacity-0');
+            modalContent.classList.add('scale-100', 'opacity-100');
+        }, 10);
+    }
+
+    function hideJobModal(jobId) {
+        const modal = document.getElementById(`job-modal-${jobId}`);
+        const modalContent = document.getElementById(`job-modal-content-${jobId}`);
+        
+        modalContent.classList.remove('scale-100', 'opacity-100');
+        modalContent.classList.add('scale-95', 'opacity-0');
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 200);
+    }
+    
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            const openModals = document.querySelectorAll('[id^="job-modal-"]:not(.hidden)');
+            openModals.forEach(modal => {
+                const jobId = modal.id.replace('job-modal-', '');
+                hideJobModal(jobId);
+            });
+        }
+    });
+</script>
+
 @endsection
