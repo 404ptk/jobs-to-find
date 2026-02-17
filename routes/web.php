@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\JobOfferController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ApplicationController;
 use App\Models\Category;
 use App\Models\Location;
 
@@ -103,11 +104,14 @@ Route::delete('/offer/{id}/delete', [JobOfferController::class, 'destroy'])
     ->middleware('auth')
     ->name('offer.delete');
 
-Route::get('/my-applications', [JobOfferController::class, 'myApplications'])
+Route::get('/my-applications', [ApplicationController::class, 'myApplications'])
     ->middleware('auth')
     ->name('my-applications');
 
-// Admin routes
+Route::post('/job/{id}/apply', [ApplicationController::class, 'apply'])
+    ->middleware('auth')
+    ->name('job-offers.apply');
+
 Route::get('/admin/accept-offers', [App\Http\Controllers\AdminController::class, 'acceptOffers'])
     ->middleware('auth')
     ->name('admin.accept-offers');

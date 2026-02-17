@@ -205,7 +205,7 @@
                                 <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
                                     <h3 class="text-lg font-semibold text-gray-900 mb-3">Ready to apply?</h3>
                                     <p class="text-gray-700 mb-4">Submit your application for this position and our team will get back to you soon.</p>
-                                    <button class="w-full px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition flex items-center justify-center cursor-pointer">
+                                    <button onclick="showApplyModal({{ $jobOffer->id }})" class="w-full px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition flex items-center justify-center cursor-pointer">
                                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                         </svg>
@@ -384,5 +384,11 @@
         }
     });
 </script>
+
+@auth
+    @if(Auth::user()->account_type === 'job_seeker')
+        <x-apply-modal :jobOffer="$jobOffer" />
+    @endif
+@endauth
 
 @endsection
