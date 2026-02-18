@@ -250,13 +250,6 @@
                                 <a href="{{ route('job.show', $offer->id) }}" class="flex-1 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition text-center">
                                     View Details
                                 </a>
-                                @auth
-                                    @if(Auth::user()->account_type === 'job_seeker')
-                                        <button class="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition cursor-pointer">
-                                            Apply Now
-                                        </button>
-                                    @endif
-                                @endauth
                             </div>
                         </div>
                     </div>
