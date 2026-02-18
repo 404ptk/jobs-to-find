@@ -102,7 +102,7 @@ class JobOfferController extends Controller
 
     public function show($id)
     {
-        $jobOffer = JobOffer::with(['category', 'location', 'user'])
+        $jobOffer = JobOffer::with(['category', 'location', 'user', 'applications'])
             ->where('is_active', true)
             ->findOrFail($id);
         
@@ -112,6 +112,8 @@ class JobOfferController extends Controller
                 abort(403, 'This job offer is pending approval and cannot be viewed at this time.');
             }
         }
+
+        $jobOffer->increment('views_count');
 
         return view('public.job-detail', compact('jobOffer'));
     }
