@@ -250,9 +250,33 @@
                                 <a href="{{ route('job.show', $offer->id) }}" class="flex-1 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition text-center">
                                     View Details
                                 </a>
+                                @auth
+                                    @if(Auth::user()->account_type === 'job_seeker')
+                                        @php
+                                            $existingApplication = \App\Models\Application::where('user_id', Auth::id())
+                                                ->where('job_offer_id', $offer->id)
+                                                ->first();
+                                        @endphp
+
+                                        @if($existingApplication)
+                                            <button disabled class="px-4 py-2 bg-gray-400 text-white text-sm font-medium rounded-lg cursor-not-allowed">
+                                                Applied
+                                            </button>
+                                        @else
+                                            <button onclick="showApplyModal({{ $offer->id }})" class="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition cursor-pointer">
+                                                Apply Now
+                                            </button>
+                                        @endif
+                                    @endif
+                                @endauth
                             </div>
                         </div>
                     </div>
+                    @auth
+                        @if(Auth::user()->account_type === 'job_seeker')
+                            <x-apply-modal :jobOffer="$offer" />
+                        @endif
+                    @endauth
                 @endforeach
             </div>
 
