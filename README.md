@@ -173,10 +173,7 @@ Main table for job offers.
 ## TODO
 
 ### Job Application System
-- No ability for job_seekers to apply to offers
-- No applications table to store applications
 - No view with applications for employers
-- No "My Applications" view for job_seekers
 
 ### Notification System
 - No email notifications
@@ -191,8 +188,6 @@ Main table for job offers.
 - No company page with all offers
 
 ### Job Seeker Profile
-- No CV/resume upload
-- No skills list
 - No employment history
 - No job alerts
 
@@ -208,7 +203,6 @@ Main table for job offers.
 ### Additional Features
 - No saving favorite offers
 - No tracking of offer view counts in database
-- No statistics for employers (number of applications, conversion rate)
 - No rating and review system for employers
 - No export offers to PDF
 - No LinkedIn integration
