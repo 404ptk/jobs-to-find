@@ -25,6 +25,7 @@ class JobOffer extends Model
         'location_id',
         'is_active',
         'is_approved',
+        'views_count',
         'expires_at',
     ];
 

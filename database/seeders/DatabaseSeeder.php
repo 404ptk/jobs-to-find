@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             SkillSeeder::class,
             UserSeeder::class,
             JobOfferSeeder::class,
+            ApplicationSeeder::class,
         ]);
     }
 }

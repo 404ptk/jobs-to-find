@@ -17,7 +17,7 @@ class JobOfferSeeder extends Seeder
     {
         $employer = User::where('username', 'employer_anna')->first();
         $employerTom = User::where('username', 'employer_tom')->first();
-        
+
         if (!$employer || !$employerTom) {
             $this->command->error('Users not found. Please run UserSeeder first.');
             return;
@@ -167,5 +167,13 @@ class JobOfferSeeder extends Seeder
             }
             $this->command->info('Additional job offers generated for other employers.');
         }
+
+        $allOffers = \App\Models\JobOffer::all();
+        foreach ($allOffers as $offer) {
+            $offer->update([
+                'views_count' => rand(15, 2500),
+            ]);
+        }
+        $this->command->info('Random views added to all job offers.');
     }
 }
