@@ -269,8 +269,8 @@ Main table for job offers.
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/your-username/jobstofind.git
-cd jobstofind
+git clone https://github.com/404ptk/jobs-to-find.git
+cd jobs-to-find
 ```
 
 2. Install PHP dependencies:
