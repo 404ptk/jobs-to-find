@@ -86,7 +86,8 @@ class ApplicationController extends Controller
             ->where('user_id', Auth::id())
             ->firstOrFail();
 
-        $applications = Application::where('job_offer_id', $jobOfferId)
+        $applications = Application::with('user')
+            ->where('job_offer_id', $jobOfferId)
             ->orderBy('created_at', 'desc')
             ->get();
 
