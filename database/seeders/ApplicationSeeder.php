@@ -42,12 +42,9 @@ class ApplicationSeeder extends Seeder
         $firstName = $firstNames[array_rand($firstNames)];
         $lastName = $lastNames[array_rand($lastNames)];
 
-        $cvPath = null;
-        if (rand(1, 100) <= 60) {
-          $filename = 'cvs/cv_' . strtolower($firstName) . '_' . strtolower(str_replace(['ś', 'ń', 'ó', 'ł', 'ą', 'ę', 'ć', 'ź', 'ż'], ['s', 'n', 'o', 'l', 'a', 'e', 'c', 'z', 'z'], $lastName)) . '_' . rand(1000, 9999) . '.pdf';
-          Storage::disk('public')->put($filename, $minimalPdf);
-          $cvPath = $filename;
-        }
+        $filename = 'cvs/cv_' . strtolower($firstName) . '_' . strtolower(str_replace(['ś', 'ń', 'ó', 'ł', 'ą', 'ę', 'ć', 'ź', 'ż'], ['s', 'n', 'o', 'l', 'a', 'e', 'c', 'z', 'z'], $lastName)) . '_' . rand(1000, 9999) . '.pdf';
+        Storage::disk('public')->put($filename, $minimalPdf);
+        $cvPath = $filename;
 
         Application::create([
           'user_id' => $seeker->id,

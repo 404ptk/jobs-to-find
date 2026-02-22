@@ -29,7 +29,7 @@ class ApplicationController extends Controller
                 'first_name' => 'required|string|max:255',
                 'last_name' => 'required|string|max:255',
                 'email' => 'required|email|max:255',
-                'cv' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
+                'cv' => 'required|file|mimes:pdf,doc,docx|max:10240',
             ]);
 
             $cvPath = null;
