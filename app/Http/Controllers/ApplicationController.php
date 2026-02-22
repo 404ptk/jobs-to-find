@@ -34,6 +34,7 @@ class ApplicationController extends Controller
 
             $cvPath = null;
             if ($request->hasFile('cv')) {
+                $cvPath = $request->file('cv')->store('cvs', 'public');
             }
 
             Application::create([
@@ -53,7 +54,7 @@ class ApplicationController extends Controller
         } catch (\Illuminate\Validation\ValidationException $e) {
             if ($request->wantsJson()) {
                 return response()->json([
-                    'success' => false, 
+                    'success' => false,
                     'message' => 'Validation failed. Please check your inputs.',
                     'errors' => $e->errors()
                 ], 422);
@@ -77,5 +78,33 @@ class ApplicationController extends Controller
             ->paginate($perPage);
 
         return view('job-seeker.my-applications', compact('applications'));
+    }
+
+    public function offerApplications($jobOfferId)
+    {
+        $jobOffer = JobOffer::where('id', $jobOfferId)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+
+        $applications = Application::where('job_offer_id', $jobOfferId)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('employer.offer-applications', compact('jobOffer', 'applications'));
+    }
+
+    public function downloadCv($applicationId)
+    {
+        $application = Application::findOrFail($applicationId);
+
+        $jobOffer = JobOffer::where('id', $application->job_offer_id)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+
+        if (!$application->cv_path) {
+            abort(404, 'No CV attached to this application.');
+        }
+
+        return response()->download(storage_path('app/public/' . $application->cv_path));
     }
 }

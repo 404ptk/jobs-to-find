@@ -9,32 +9,32 @@ use App\Models\Category;
 use App\Models\Location;
 
 Route::get('/', function () {
-    $categories = Category::whereHas('jobOffers', function($q) {
+    $categories = Category::whereHas('jobOffers', function ($q) {
         $q->where('is_active', true);
     })->orderBy('name')->get();
-    
-    $countries = Location::whereHas('jobOffers', function($q) {
+
+    $countries = Location::whereHas('jobOffers', function ($q) {
         $q->where('is_active', true);
     })->select('country')->distinct()->orderBy('country')->pluck('country');
-    
-    $cities = Location::whereHas('jobOffers', function($q) {
+
+    $cities = Location::whereHas('jobOffers', function ($q) {
         $q->where('is_active', true);
     })->select('city')->distinct()->orderBy('city')->pluck('city');
-    
+
     $employmentTypes = \App\Models\JobOffer::where('is_active', true)
         ->select('employment_type')
         ->distinct()
         ->orderBy('employment_type')
         ->pluck('employment_type');
-    
+
     $stats = [
         'activeJobs' => \App\Models\JobOffer::where('is_active', true)->where('is_approved', true)->count(),
         'companies' => \App\Models\JobOffer::where('is_active', true)->where('is_approved', true)->distinct('company_name')->count('company_name'),
-        'categories' => Category::whereHas('jobOffers', function($q) {
+        'categories' => Category::whereHas('jobOffers', function ($q) {
             $q->where('is_active', true)->where('is_approved', true);
         })->count(),
     ];
-    
+
     return view('public.home', compact('categories', 'countries', 'cities', 'employmentTypes', 'stats'));
 });
 
@@ -111,6 +111,14 @@ Route::get('/my-applications', [ApplicationController::class, 'myApplications'])
 Route::post('/job/{id}/apply', [ApplicationController::class, 'apply'])
     ->middleware('auth')
     ->name('job-offers.apply');
+
+Route::get('/offer/{id}/applications', [ApplicationController::class, 'offerApplications'])
+    ->middleware('auth')
+    ->name('offer.applications');
+
+Route::get('/application/{id}/download-cv', [ApplicationController::class, 'downloadCv'])
+    ->middleware('auth')
+    ->name('application.download-cv');
 
 Route::get('/admin/accept-offers', [App\Http\Controllers\AdminController::class, 'acceptOffers'])
     ->middleware('auth')
