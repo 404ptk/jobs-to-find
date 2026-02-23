@@ -61,6 +61,13 @@
                                 </svg>
                             </a>
                         @else
+                            @if(Auth::user()->account_type === 'job_seeker')
+                                <a href="{{ route('favorites') }}" class="transition p-2 rounded-lg {{ request()->is('favorites') ? 'text-red-500 bg-red-50' : 'text-gray-600 hover:text-red-500 hover:bg-red-50' }}" title="Favorites">
+                                    <svg class="w-6 h-6" fill="{{ request()->is('favorites') ? 'currentColor' : 'none' }}" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                                    </svg>
+                                </a>
+                            @endif
                             <button class="text-gray-600 hover:text-blue-600 transition p-2 rounded-lg hover:bg-blue-50 relative cursor-pointer" title="Notifications">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
@@ -106,6 +113,9 @@
                                         @if(Auth::user()->account_type === 'job_seeker')
                                             <a href="/my-applications" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition">
                                                 My applications
+                                            </a>
+                                            <a href="{{ route('favorites') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition">
+                                                Favorites
                                             </a>
                                         @else
                                             <a href="/my-offers" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition">

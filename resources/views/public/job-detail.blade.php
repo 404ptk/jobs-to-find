@@ -63,6 +63,23 @@
                             Active
                         </span>
                     @endif
+
+                    @guest
+                        <a href="/login" class="ml-2 p-2 rounded-full bg-white/20 hover:bg-white/30 transition" title="Login to save to favorites">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                            </svg>
+                        </a>
+                    @endguest
+                    @auth
+                        @if(Auth::user()->account_type === 'job_seeker')
+                            <button class="ml-2 p-2 rounded-full bg-white/20 hover:bg-white/30 transition cursor-pointer" title="Save to favorites">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                                </svg>
+                            </button>
+                        @endif
+                    @endauth
                 </div>
 
                 <div class="flex items-center gap-3 text-sm text-blue-100">

@@ -104,6 +104,10 @@ Route::delete('/offer/{id}/delete', [JobOfferController::class, 'destroy'])
     ->middleware('auth')
     ->name('offer.delete');
 
+Route::get('/favorites', function () {
+    return view('job-seeker.favorites');
+})->middleware('auth')->name('favorites');
+
 Route::get('/my-applications', [ApplicationController::class, 'myApplications'])
     ->middleware('auth')
     ->name('my-applications');
