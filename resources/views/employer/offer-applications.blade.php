@@ -17,8 +17,8 @@
         <p class="text-gray-600 mt-1">
           For: <span class="font-semibold text-gray-800">{{ $jobOffer->title }}</span>
           <span class="text-gray-400 mx-2">·</span>
-          <span class="text-gray-500">{{ $applications->count() }}
-            {{ Str::plural('application', $applications->count()) }}</span>
+          <span class="text-gray-500">{{ $applications->total() }}
+            {{ Str::plural('application', $applications->total()) }}</span>
         </p>
       </div>
 
@@ -32,62 +32,76 @@
           <p class="text-gray-600">No one has applied to this job offer yet. Check back later!</p>
         </div>
       @else
-        <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-          <table class="w-full">
-            <thead>
-              <tr class="bg-gray-50 border-b border-gray-200">
-                <th class="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">#</th>
-                <th class="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Applicant</th>
-                <th class="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">CV</th>
-                <th class="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Applied</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-100">
-              @foreach($applications as $index => $application)
-                <tr class="hover:bg-gray-50 transition">
-                  <td class="px-6 py-4 text-sm text-gray-400 font-medium">{{ $index + 1 }}</td>
-                  <td class="px-6 py-4">
-                    <div class="flex items-center cursor-pointer group" onclick="openUserModal({{ $application->user_id }})">
-                      <div
-                        class="shrink-0 h-10 w-10 rounded-full overflow-hidden border border-gray-300 group-hover:border-blue-400 transition">
-                        @if($application->user && $application->user->avatar)
-                          <img src="{{ asset('storage/' . $application->user->avatar) }}" alt="{{ $application->first_name }}"
-                            class="h-full w-full object-cover">
-                        @else
-                          <img src="{{ asset('images/default-avatar.svg') }}" alt="Default Avatar"
-                            class="h-full w-full object-cover">
-                        @endif
-                      </div>
-                      <div class="ml-3">
-                        <div class="text-sm font-medium text-gray-900 group-hover:text-blue-600 transition">
-                          {{ $application->first_name }} {{ $application->last_name }}
-                        </div>
-                        <div class="text-xs text-gray-500">{{ $application->email }}</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td class="px-6 py-4 text-sm">
-                    @if($application->cv_path)
-                      <a href="{{ route('application.download-cv', $application->id) }}"
-                        class="inline-flex items-center px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition text-xs font-medium">
-                        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                        Download CV
-                      </a>
-                    @else
-                      <span class="text-gray-400 text-xs italic">No CV attached</span>
-                    @endif
-                  </td>
-                  <td class="px-6 py-4 text-sm text-gray-500">{{ $application->created_at->diffForHumans() }}</td>
+              <x-toolbar 
+                :total="$applications->total()"
+                :currentPerPage="10"
+                :perPageOptions="[10, 20, 50]"
+                routeName="offer.applications"
+        :routeParams="['id' => $jobOffer->id]"
+                :showGridButtons="false"
+              />
+
+              <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+            <table class="w-full">
+              <thead>
+                <tr class="bg-gray-50 border-b border-gray-200">
+                  <th class="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">#</th>
+                  <th class="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Applicant</th>
+                  <th class="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">CV</th>
+                  <th class="text-left px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Applied</th>
                 </tr>
-              @endforeach
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody class="divide-y divide-gray-100">
+                @foreach($applications as $index => $application)
+                  <tr class="hover:bg-gray-50 transition">
+                    <td class="px-6 py-4 text-sm text-gray-400 font-medium">{{ $applications->firstItem() + $index }}</td>
+                    <td class="px-6 py-4">
+                      <div class="flex items-center cursor-pointer group" onclick="openUserModal({{ $application->user_id }})">
+                        <div
+                          class="shrink-0 h-10 w-10 rounded-full overflow-hidden border border-gray-300 group-hover:border-blue-400 transition">
+                          @if($application->user && $application->user->avatar)
+                            <img src="{{ asset('storage/' . $application->user->avatar) }}" alt="{{ $application->first_name }}"
+                              class="h-full w-full object-cover">
+                          @else
+                            <img src="{{ asset('images/default-avatar.svg') }}" alt="Default Avatar"
+                              class="h-full w-full object-cover">
+                          @endif
+                        </div>
+                        <div class="ml-3">
+                          <div class="text-sm font-medium text-gray-900 group-hover:text-blue-600 transition">
+                            {{ $application->first_name }} {{ $application->last_name }}
+                          </div>
+                          <div class="text-xs text-gray-500">{{ $application->email }}</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="px-6 py-4 text-sm">
+                      @if($application->cv_path)
+                        <a href="{{ route('application.download-cv', $application->id) }}"
+                          class="inline-flex items-center px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition text-xs font-medium">
+                          <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                          </svg>
+                          Download CV
+                        </a>
+                      @else
+                        <span class="text-gray-400 text-xs italic">No CV attached</span>
+                      @endif
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-500">{{ $application->created_at->diffForHumans() }}</td>
+                  </tr>
+                @endforeach
+              </tbody>
+            </table>
+          </div>
+             @if($applications->hasPages())
+              <div class="mt-6">
+                {{ $applications->links() }}
+              </div>
+            @endif
       @endif
-    </div>
+      </div>
   </div>
 
   <div id="user-profile-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -123,13 +137,13 @@
     function openUserModal(userId) {
       userModal.classList.remove('hidden');
       userModalBody.innerHTML = `
-              <div class="flex justify-center items-center h-64">
-                  <svg class="animate-spin h-10 w-10 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-              </div>
-          `;
+                <div class="flex justify-center items-center h-64">
+                    <svg class="animate-spin h-10 w-10 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                </div>
+            `;
 
       setTimeout(() => {
         userModalContent.classList.remove('scale-95', 'opacity-0');

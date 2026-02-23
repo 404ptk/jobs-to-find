@@ -3,6 +3,7 @@
     'currentPerPage' => 10,
     'perPageOptions' => [10, 20, 30],
     'routeName',
+    'routeParams' => [],
     'gridId' => 'offersGrid',
     'storageKey' => 'gridLayout',
     'defaultColumns' => 2,
@@ -15,7 +16,7 @@
             Found {{ $total }} {{ $total == 1 ? 'item' : 'items' }}
         </div>
         
-        <form method="GET" action="{{ route($routeName) }}" id="perPageForm{{ $gridId }}" class="flex items-center gap-2">
+        <form method="GET" action="{{ route($routeName, $routeParams) }}" id="perPageForm{{ $gridId }}" class="flex items-center gap-2">
             @foreach(request()->except(['per_page', 'page']) as $key => $value)
                 <input type="hidden" name="{{ $key }}" value="{{ $value }}">
             @endforeach

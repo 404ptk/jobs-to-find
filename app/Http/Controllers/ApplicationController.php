@@ -80,16 +80,18 @@ class ApplicationController extends Controller
         return view('job-seeker.my-applications', compact('applications'));
     }
 
-    public function offerApplications($jobOfferId)
+    public function offerApplications(Request $request, $jobOfferId)
     {
         $jobOffer = JobOffer::where('id', $jobOfferId)
             ->where('user_id', Auth::id())
             ->firstOrFail();
 
+        $perPage = $request->input('per_page', 10);
+
         $applications = Application::with('user')
             ->where('job_offer_id', $jobOfferId)
             ->orderBy('created_at', 'desc')
-            ->get();
+            ->paginate($perPage);
 
         return view('employer.offer-applications', compact('jobOffer', 'applications'));
     }
