@@ -105,6 +105,9 @@ Route::delete('/offer/{id}/delete', [JobOfferController::class, 'destroy'])
     ->name('offer.delete');
 
 Route::get('/favorites', function () {
+    if (Auth::user()->account_type !== 'job_seeker') {
+        abort(403, 'Access denied. Only job seekers can view favorites.');
+    }
     $favorites = Auth::user()->favoriteOffers()
         ->with(['category', 'location'])
         ->orderBy('favorites.created_at', 'desc')
@@ -113,6 +116,9 @@ Route::get('/favorites', function () {
 })->middleware('auth')->name('favorites');
 
 Route::post('/favorites/toggle/{jobOffer}', function (\App\Models\JobOffer $jobOffer) {
+    if (Auth::user()->account_type !== 'job_seeker') {
+        abort(403, 'Access denied.');
+    }
     $user = Auth::user();
     $result = $user->favoriteOffers()->toggle($jobOffer->id);
     $isFavorited = in_array($jobOffer->id, $result['attached']);

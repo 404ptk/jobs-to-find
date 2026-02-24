@@ -11,6 +11,10 @@ class ApplicationController extends Controller
 {
     public function apply(Request $request, $jobOfferId)
     {
+        if (Auth::user()->account_type !== 'job_seeker') {
+            abort(403, 'Access denied. Only job seekers can apply to jobs.');
+        }
+
         try {
             $jobOffer = JobOffer::findOrFail($jobOfferId);
 
@@ -70,6 +74,10 @@ class ApplicationController extends Controller
 
     public function myApplications(Request $request)
     {
+        if (Auth::user()->account_type !== 'job_seeker') {
+            abort(403, 'Access denied. Only job seekers can view their applications.');
+        }
+
         $perPage = $request->input('per_page', 9);
 
         $applications = Application::with(['jobOffer.category', 'jobOffer.location', 'jobOffer.applications'])
@@ -82,6 +90,10 @@ class ApplicationController extends Controller
 
     public function offerApplications(Request $request, $jobOfferId)
     {
+        if (Auth::user()->account_type !== 'employer') {
+            abort(403, 'Access denied. Only employers can view applications.');
+        }
+
         $jobOffer = JobOffer::where('id', $jobOfferId)
             ->where('user_id', Auth::id())
             ->firstOrFail();
@@ -98,6 +110,10 @@ class ApplicationController extends Controller
 
     public function downloadCv($applicationId)
     {
+        if (Auth::user()->account_type !== 'employer') {
+            abort(403, 'Access denied. Only employers can download CVs.');
+        }
+
         $application = Application::findOrFail($applicationId);
 
         $jobOffer = JobOffer::where('id', $application->job_offer_id)
@@ -117,6 +133,10 @@ class ApplicationController extends Controller
 
     public function accept($applicationId)
     {
+        if (Auth::user()->account_type !== 'employer') {
+            abort(403, 'Access denied.');
+        }
+
         $application = Application::findOrFail($applicationId);
 
         JobOffer::where('id', $application->job_offer_id)
@@ -130,6 +150,10 @@ class ApplicationController extends Controller
 
     public function reject($applicationId)
     {
+        if (Auth::user()->account_type !== 'employer') {
+            abort(403, 'Access denied.');
+        }
+
         $application = Application::findOrFail($applicationId);
 
         JobOffer::where('id', $application->job_offer_id)
