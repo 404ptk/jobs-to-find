@@ -29,9 +29,9 @@
         </div>
       @else
         <x-toolbar :total="$favorites->total()" :currentPerPage="10" :perPageOptions="[10, 20, 50]" routeName="favorites"
-          :showGridButtons="false" />
+          gridId="favoritesGrid" storageKey="favoritesGridLayout" :defaultColumns="1" />
 
-        <div class="space-y-4">
+        <div id="favoritesGrid" class="grid grid-cols-1 gap-4">
           @foreach($favorites as $offer)
             <div class="bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition p-6"
               id="fav-card-{{ $offer->id }}">
