@@ -73,6 +73,11 @@ class User extends Authenticatable
         return $this->belongsToMany(Skill::class);
     }
 
+    public function favoriteOffers(): BelongsToMany
+    {
+        return $this->belongsToMany(JobOffer::class, 'favorites')->withTimestamps();
+    }
+
     public function isFieldVisible(string $field): bool
     {
         return $this->privacy_settings[$field] ?? true;

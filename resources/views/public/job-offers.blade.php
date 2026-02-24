@@ -278,10 +278,13 @@
                                     @endguest
                                     @auth
                                         @if(Auth::user()->account_type === 'job_seeker')
+                                            @php $isFav = in_array($offer->id, $favoriteIds ?? []); @endphp
                                             <button
-                                                class="px-3 py-2 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition cursor-pointer"
-                                                title="Save to favorites">
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                onclick="toggleFavorite({{ $offer->id }}, this)"
+                                                class="px-3 py-2 rounded-lg transition cursor-pointer {{ $isFav ? 'text-red-500 bg-red-50' : 'text-gray-400 hover:text-red-500 hover:bg-red-50' }}"
+                                                title="{{ $isFav ? 'Remove from favorites' : 'Save to favorites' }}"
+                                            >
+                                                <svg class="w-5 h-5" fill="{{ $isFav ? 'currentColor' : 'none' }}" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                         d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                                                 </svg>
@@ -345,6 +348,32 @@
                     form.classList.add('hidden');
                     toggleText.textContent = 'Show filters';
                 }
+            }
+
+            function toggleFavorite(offerId, button) {
+                fetch(`/favorites/toggle/${offerId}`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json',
+                    }
+                })
+                .then(r => r.json())
+                .then(data => {
+                    const svg = button.querySelector('svg');
+                    if (data.favorited) {
+                        svg.setAttribute('fill', 'currentColor');
+                        button.classList.remove('text-gray-400');
+                        button.classList.add('text-red-500', 'bg-red-50');
+                        button.title = 'Remove from favorites';
+                    } else {
+                        svg.setAttribute('fill', 'none');
+                        button.classList.remove('text-red-500', 'bg-red-50');
+                        button.classList.add('text-gray-400');
+                        button.title = 'Save to favorites';
+                    }
+                })
+                .catch(err => console.error('Error:', err));
             }
         </script>
     @endpush

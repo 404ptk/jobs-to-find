@@ -105,8 +105,22 @@ Route::delete('/offer/{id}/delete', [JobOfferController::class, 'destroy'])
     ->name('offer.delete');
 
 Route::get('/favorites', function () {
-    return view('job-seeker.favorites');
+    $favorites = Auth::user()->favoriteOffers()
+        ->with(['category', 'location'])
+        ->orderBy('favorites.created_at', 'desc')
+        ->paginate(10);
+    return view('job-seeker.favorites', compact('favorites'));
 })->middleware('auth')->name('favorites');
+
+Route::post('/favorites/toggle/{jobOffer}', function (\App\Models\JobOffer $jobOffer) {
+    $user = Auth::user();
+    $result = $user->favoriteOffers()->toggle($jobOffer->id);
+    $isFavorited = in_array($jobOffer->id, $result['attached']);
+    return response()->json([
+        'favorited' => $isFavorited,
+        'message' => $isFavorited ? 'Added to favorites' : 'Removed from favorites',
+    ]);
+})->middleware('auth')->name('favorites.toggle');
 
 Route::get('/my-applications', [ApplicationController::class, 'myApplications'])
     ->middleware('auth')

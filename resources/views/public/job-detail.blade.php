@@ -73,8 +73,13 @@
                     @endguest
                     @auth
                         @if(Auth::user()->account_type === 'job_seeker')
-                            <button class="ml-2 p-2 rounded-full bg-white/20 hover:bg-white/30 transition cursor-pointer" title="Save to favorites">
-                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <button
+                                id="fav-btn-detail"
+                                onclick="toggleFavoriteDetail({{ $jobOffer->id }}, this)"
+                                class="ml-2 p-2 rounded-full {{ ($isFavorited ?? false) ? 'bg-white/40' : 'bg-white/20 hover:bg-white/30' }} transition cursor-pointer"
+                                title="{{ ($isFavorited ?? false) ? 'Remove from favorites' : 'Save to favorites' }}"
+                            >
+                                <svg class="w-6 h-6 text-white" fill="{{ ($isFavorited ?? false) ? 'currentColor' : 'none' }}" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
                                 </svg>
                             </button>
@@ -451,6 +456,32 @@
             hideModal();
         }
     });
+
+    function toggleFavoriteDetail(offerId, button) {
+        fetch(`/favorites/toggle/${offerId}`, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Accept': 'application/json',
+            }
+        })
+        .then(r => r.json())
+        .then(data => {
+            const svg = button.querySelector('svg');
+            if (data.favorited) {
+                svg.setAttribute('fill', 'currentColor');
+                button.classList.remove('bg-white/20');
+                button.classList.add('bg-white/40');
+                button.title = 'Remove from favorites';
+            } else {
+                svg.setAttribute('fill', 'none');
+                button.classList.remove('bg-white/40');
+                button.classList.add('bg-white/20');
+                button.title = 'Save to favorites';
+            }
+        })
+        .catch(err => console.error('Error:', err));
+    }
 </script>
 
 @auth

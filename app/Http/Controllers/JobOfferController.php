@@ -29,27 +29,27 @@ class JobOfferController extends Controller
             ->where('is_approved', true);
 
         if (!empty($validated['search'])) {
-            $query->where(function($q) use ($validated) {
+            $query->where(function ($q) use ($validated) {
                 $q->where('title', 'LIKE', '%' . $validated['search'] . '%')
-                  ->orWhere('description', 'LIKE', '%' . $validated['search'] . '%')
-                  ->orWhere('company_name', 'LIKE', '%' . $validated['search'] . '%');
+                    ->orWhere('description', 'LIKE', '%' . $validated['search'] . '%')
+                    ->orWhere('company_name', 'LIKE', '%' . $validated['search'] . '%');
             });
         }
 
         if (!empty($validated['country'])) {
-            $query->whereHas('location', function($q) use ($validated) {
+            $query->whereHas('location', function ($q) use ($validated) {
                 $q->where('country', $validated['country']);
             });
         }
 
         if (!empty($validated['city'])) {
-            $query->whereHas('location', function($q) use ($validated) {
+            $query->whereHas('location', function ($q) use ($validated) {
                 $q->where('city', $validated['city']);
             });
         }
 
         if (!empty($validated['category'])) {
-            $query->whereHas('category', function($q) use ($validated) {
+            $query->whereHas('category', function ($q) use ($validated) {
                 $q->where('slug', $validated['category']);
             });
         }
@@ -78,18 +78,18 @@ class JobOfferController extends Controller
         $perPage = $request->input('per_page', 10);
         $jobOffers = $query->paginate($perPage)->appends($request->except('page'));
 
-        $categories = Category::whereHas('jobOffers', function($q) {
+        $categories = Category::whereHas('jobOffers', function ($q) {
             $q->where('is_active', true)->where('is_approved', true);
         })->orderBy('name')->get();
-        
-        $countries = Location::whereHas('jobOffers', function($q) {
+
+        $countries = Location::whereHas('jobOffers', function ($q) {
             $q->where('is_active', true)->where('is_approved', true);
         })->select('country')->distinct()->orderBy('country')->pluck('country');
-        
-        $cities = Location::whereHas('jobOffers', function($q) {
+
+        $cities = Location::whereHas('jobOffers', function ($q) {
             $q->where('is_active', true)->where('is_approved', true);
         })->select('city')->distinct()->orderBy('city')->pluck('city');
-        
+
         $employmentTypes = JobOffer::where('is_active', true)
             ->where('is_approved', true)
             ->select('employment_type')
@@ -97,7 +97,12 @@ class JobOfferController extends Controller
             ->orderBy('employment_type')
             ->pluck('employment_type');
 
-        return view('public.job-offers', compact('jobOffers', 'validated', 'categories', 'countries', 'cities', 'employmentTypes'));
+        $favoriteIds = [];
+        if (Auth::check() && Auth::user()->account_type === 'job_seeker') {
+            $favoriteIds = Auth::user()->favoriteOffers()->pluck('job_offer_id')->toArray();
+        }
+
+        return view('public.job-offers', compact('jobOffers', 'validated', 'categories', 'countries', 'cities', 'employmentTypes', 'favoriteIds'));
     }
 
     public function show($id)
@@ -105,17 +110,24 @@ class JobOfferController extends Controller
         $jobOffer = JobOffer::with(['category', 'location', 'user', 'applications'])
             ->where('is_active', true)
             ->findOrFail($id);
-        
+
         if (!$jobOffer->is_approved) {
-            if (!Auth::check() || 
-                (Auth::user()->account_type !== 'admin' && Auth::id() !== $jobOffer->user_id)) {
+            if (
+                !Auth::check() ||
+                (Auth::user()->account_type !== 'admin' && Auth::id() !== $jobOffer->user_id)
+            ) {
                 abort(403, 'This job offer is pending approval and cannot be viewed at this time.');
             }
         }
 
         $jobOffer->increment('views_count');
 
-        return view('public.job-detail', compact('jobOffer'));
+        $isFavorited = false;
+        if (Auth::check() && Auth::user()->account_type === 'job_seeker') {
+            $isFavorited = Auth::user()->favoriteOffers()->where('job_offer_id', $jobOffer->id)->exists();
+        }
+
+        return view('public.job-detail', compact('jobOffer', 'isFavorited'));
     }
 
     public function myOffers(Request $request)
@@ -125,7 +137,7 @@ class JobOfferController extends Controller
         }
 
         $perPage = $request->input('per_page', 9);
-        
+
         $jobOffers = JobOffer::where('user_id', Auth::id())
             ->with(['category', 'location'])
             ->orderBy('created_at', 'desc')
