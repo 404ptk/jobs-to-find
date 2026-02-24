@@ -17,15 +17,21 @@ class UserController extends Controller
         // 2. Admin can view anyone's profile.
         // 3. Employer can view job seeker's profile.
         // 4. Job Seeker CANNOT view another job seeker.
-        
+
         $canView = false;
 
         if ($currentUser->id === $user->id) {
             $canView = true;
         } elseif ($currentUser->account_type === 'admin') {
             $canView = true;
-        } elseif ($currentUser->account_type === 'employer' && $user->account_type === 'job_seeker') {
+        } elseif ($user->account_type === 'job_seeker' && $currentUser->account_type === 'employer') {
             $canView = true;
+        } elseif ($user->account_type === 'job_seeker' && $currentUser->account_type === 'job_seeker') {
+            $canView = false;
+        }
+
+        if ($user->account_type === 'employer' && $currentUser->id !== $user->id && $currentUser->account_type !== 'admin') {
+            $canView = false;
         }
 
         if (!$canView) {

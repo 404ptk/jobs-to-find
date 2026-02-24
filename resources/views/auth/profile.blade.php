@@ -108,13 +108,13 @@
                         
                         <div class="lg:col-span-2 space-y-8">
                             
-                            @if($shouldShow('bio'))
+                            @if($user->account_type === 'job_seeker' && $shouldShow('bio'))
                             <div id="bio_container" class="space-y-3">
                                 <div class="flex items-center justify-between">
                                     <h3 class="text-lg font-semibold text-gray-900 flex items-center">
                                         About Me
                                     </h3>
-                                    @if($isOwner)
+                                    @if($isOwner && $user->account_type === 'job_seeker')
                                     <div class="flex items-center space-x-2 text-sm text-gray-500">
                                         <input type="hidden" name="privacy_settings[bio]" value="0">
                                         <input type="checkbox" name="privacy_settings[bio]" value="1" id="privacy_bio" {{ $user->isFieldVisible('bio') ? 'checked' : '' }} class="rounded text-blue-600 focus:ring-blue-500">
@@ -249,11 +249,11 @@
                                 </div>
                                 @endif
 
-                                @if($shouldShow('country'))
+                                @if($user->account_type === 'employer' || $shouldShow('country'))
                                 <div id="country_container">
                                     <div class="flex justify-between items-center mb-2">
                                         <label class="block text-sm font-medium text-gray-700">Country</label>
-                                        @if($isOwner)
+                                        @if($isOwner && $user->account_type === 'job_seeker')
                                         <div class="flex items-center space-x-2 text-xs text-gray-500">
                                             <input type="hidden" name="privacy_settings[country]" value="0">
                                             <input type="checkbox" name="privacy_settings[country]" value="1" id="privacy_country" {{ $user->isFieldVisible('country') ? 'checked' : '' }} class="rounded text-blue-600 focus:ring-blue-500">
@@ -272,13 +272,13 @@
                                 </div>
                                 @endif
 
-                                @if($shouldShow('date_of_birth'))
+                                @if($user->account_type === 'employer' || $shouldShow('date_of_birth'))
                                 <div id="date_of_birth_container">
                                     <div class="flex justify-between items-center mb-2">
                                         <label class="block text-sm font-medium text-gray-700">
                                             Date of Birth
                                         </label>
-                                        @if($isOwner)
+                                        @if($isOwner && $user->account_type === 'job_seeker')
                                         <div class="flex items-center space-x-2 text-xs text-gray-500">
                                             <input type="hidden" name="privacy_settings[date_of_birth]" value="0">
                                             <input type="checkbox" name="privacy_settings[date_of_birth]" value="1" id="privacy_dob" {{ $user->isFieldVisible('date_of_birth') ? 'checked' : '' }} class="rounded text-blue-600 focus:ring-blue-500">
@@ -348,6 +348,7 @@
                                 </div>
                             @endif
 
+                            @if($user->account_type === 'job_seeker')
                             <div class="bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
                                 <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wide mb-4 flex items-center">
                                     Social Profiles
@@ -427,8 +428,9 @@
                                     @endif
                                 </div>
                             </div>
+                            @endif
                             
-                            @if($user->cv_path)
+                            @if($user->account_type === 'job_seeker' && $user->cv_path)
                                 @if($shouldShow('cv_path'))
                                 <div class="bg-gray-50 rounded-xl p-5 border border-gray-200">
                                     <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wide mb-3 flex items-center justify-between">
@@ -467,10 +469,12 @@
                                         Back to edit profile
                                     </a>
                                 @else
+                                    @if($user->account_type === 'job_seeker')
                                     <a href="{{ route('profile', ['preview' => 1]) }}" class="w-full sm:w-auto px-6 py-2.5 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition shadow-sm flex items-center justify-center">
                                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
                                         Preview
                                     </a>
+                                    @endif
                                     <button type="button" onclick="enableEditMode()" class="w-full sm:w-auto px-6 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition shadow-sm flex items-center justify-center">
                                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
                                         Edit Profile
