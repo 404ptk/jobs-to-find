@@ -84,6 +84,7 @@
                             <h2 class="text-2xl font-bold text-gray-900">{{ $user->first_name }} {{ $user->last_name }}</h2>
                             <p class="text-gray-500 font-medium">@ {{ $user->username }}</p>
                             
+                            @if($isOwner || $isAdminView)
                             <div class="mt-2 flex items-center justify-center sm:justify-start text-sm text-gray-600">
                                 <svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
                                 {{ $user->email }}
@@ -95,6 +96,7 @@
                                 </span>
                                 @endif
                             </div>
+                            @endif
                         </div>
                     </div>
 
