@@ -138,6 +138,14 @@ Route::get('/application/{id}/download-cv', [ApplicationController::class, 'down
     ->middleware('auth')
     ->name('application.download-cv');
 
+Route::post('/application/{id}/accept', [ApplicationController::class, 'accept'])
+    ->middleware('auth')
+    ->name('application.accept');
+
+Route::post('/application/{id}/reject', [ApplicationController::class, 'reject'])
+    ->middleware('auth')
+    ->name('application.reject');
+
 Route::get('/admin/accept-offers', [App\Http\Controllers\AdminController::class, 'acceptOffers'])
     ->middleware('auth')
     ->name('admin.accept-offers');

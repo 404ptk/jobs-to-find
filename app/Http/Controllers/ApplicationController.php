@@ -108,6 +108,36 @@ class ApplicationController extends Controller
             abort(404, 'No CV attached to this application.');
         }
 
+        if ($application->status === 'pending') {
+            $application->update(['status' => 'reviewed']);
+        }
+
         return response()->download(storage_path('app/public/' . $application->cv_path));
+    }
+
+    public function accept($applicationId)
+    {
+        $application = Application::findOrFail($applicationId);
+
+        JobOffer::where('id', $application->job_offer_id)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+
+        $application->update(['status' => 'accepted']);
+
+        return redirect()->back()->with('success', 'Application accepted successfully.');
+    }
+
+    public function reject($applicationId)
+    {
+        $application = Application::findOrFail($applicationId);
+
+        JobOffer::where('id', $application->job_offer_id)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+
+        $application->update(['status' => 'rejected']);
+
+        return redirect()->back()->with('success', 'Application rejected.');
     }
 }
