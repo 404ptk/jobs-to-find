@@ -168,6 +168,25 @@ class JobOfferSeeder extends Seeder
             $this->command->info('Additional job offers generated for other employers.');
         }
 
+        $allEmployers = User::where('account_type', 'employer')->get();
+
+        if ($allEmployers->count() > 0) {
+            for ($i = 0; $i < 30; $i++) {
+                $randomDate = now()->subMonths(rand(1, 11))->subDays(rand(0, 27));
+                $emp = $allEmployers->random();
+
+                \App\Models\JobOffer::factory()->create([
+                    'user_id' => $emp->id,
+                    'is_approved' => true,
+                    'company_name' => fake()->company(),
+                    'created_at' => $randomDate,
+                    'updated_at' => $randomDate,
+                    'expires_at' => $randomDate->copy()->addMonths(rand(1, 3)),
+                ]);
+            }
+            $this->command->info('Additional 30 historical job offers created across the last 12 months.');
+        }
+
         $allOffers = \App\Models\JobOffer::all();
         foreach ($allOffers as $offer) {
             $offer->update([

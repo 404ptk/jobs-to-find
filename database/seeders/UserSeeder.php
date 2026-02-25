@@ -92,37 +92,11 @@ class UserSeeder extends Seeder
         ]);
 
         $allSkills = Skill::all()->pluck('id')->toArray();
-        
+
         if (count($allSkills) > 0) {
             $seededUsers = User::whereIn('username', ['admin', 'student_john', 'student_jane'])->get();
-            
+
             foreach ($seededUsers as $user) {
-                $skillCount = rand(1, 100);
-                if ($skillCount <= 40) {
-                    $count = rand(1, 5);  
-                } elseif ($skillCount <= 75) {
-                    $count = rand(6, 10); 
-                } elseif ($skillCount <= 95) {
-                    $count = rand(11, 15); 
-                } else {
-                    $count = rand(16, 20); 
-                }
-                
-                $randomSkills = array_rand(array_flip($allSkills), min($count, count($allSkills)));
-                $user->skills()->attach(is_array($randomSkills) ? $randomSkills : [$randomSkills]);
-            }
-        }
-
-        $jobSeekers = \App\Models\User::factory()->count(30)->create([
-            'account_type' => 'job_seeker',
-        ]);
-
-        // $employers = \App\Models\User::factory()->count(15)->create([
-        //     'account_type' => 'employer',
-        // ]);
-
-        if (count($allSkills) > 0) {
-            foreach ($jobSeekers as $user) {
                 $skillCount = rand(1, 100);
                 if ($skillCount <= 40) {
                     $count = rand(1, 5);
@@ -133,7 +107,57 @@ class UserSeeder extends Seeder
                 } else {
                     $count = rand(16, 20);
                 }
-                
+
+                $randomSkills = array_rand(array_flip($allSkills), min($count, count($allSkills)));
+                $user->skills()->attach(is_array($randomSkills) ? $randomSkills : [$randomSkills]);
+            }
+        }
+
+        $jobSeekers = \App\Models\User::factory()->count(30)->create([
+            'account_type' => 'job_seeker',
+        ]);
+
+        // --- Additional users with varied creation dates (last 12 months) ---
+        $historicalJobSeekers = collect();
+        for ($i = 0; $i < 60; $i++) {
+            $randomDate = now()->subMonths(rand(1, 11))->subDays(rand(0, 27));
+            $user = \App\Models\User::factory()->create([
+                'account_type' => 'job_seeker',
+                'created_at' => $randomDate,
+                'updated_at' => $randomDate,
+            ]);
+            $historicalJobSeekers->push($user);
+        }
+
+        for ($i = 0; $i < 15; $i++) {
+            $randomDate = now()->subMonths(rand(1, 11))->subDays(rand(0, 27));
+            \App\Models\User::factory()->create([
+                'account_type' => 'employer',
+                'created_at' => $randomDate,
+                'updated_at' => $randomDate,
+            ]);
+        }
+
+        $this->command->info('Additional historical users created (60 job seekers + 15 employers).');
+
+        // $employers = \App\Models\User::factory()->count(15)->create([
+        //     'account_type' => 'employer',
+        // ]);
+
+        if (count($allSkills) > 0) {
+            $allJobSeekers = $jobSeekers->merge($historicalJobSeekers);
+            foreach ($allJobSeekers as $user) {
+                $skillCount = rand(1, 100);
+                if ($skillCount <= 40) {
+                    $count = rand(1, 5);
+                } elseif ($skillCount <= 75) {
+                    $count = rand(6, 10);
+                } elseif ($skillCount <= 95) {
+                    $count = rand(11, 15);
+                } else {
+                    $count = rand(16, 20);
+                }
+
                 $randomSkills = array_rand(array_flip($allSkills), min($count, count($allSkills)));
                 $user->skills()->attach(is_array($randomSkills) ? $randomSkills : [$randomSkills]);
             }

@@ -28,6 +28,10 @@ A web application for publishing and searching job offers, built with Laravel fr
 
 ![Check Applications](images/jtf-check-apps.png)
 
+### Admin - Statistics
+
+![Statistics](images/jtf-statistics.png)
+
 ### Admin - Approve Offers
 
 ![Approve Offers](images/jtf-approve-offers.png)
@@ -46,7 +50,7 @@ A web application for publishing and searching job offers, built with Laravel fr
 
 - **Laravel** 12.0 - PHP framework
 - **PHP** 8.2 - programming language
-- **MySQL** - database management system
+- **SQLite** - local database engine
 - **Eloquent ORM** - object-relational mapping
 
 ### Frontend
@@ -54,6 +58,7 @@ A web application for publishing and searching job offers, built with Laravel fr
 - **Tailwind CSS** 4.1.18 - CSS framework
 - **Blade** - Laravel templating engine
 - **JavaScript** - client-side interactivity
+- **Chart.js** 4.5.1 - JavaScript charting library for statistics
 - **Cropper.js** 1.6.2 - JavaScript image cropper
 - **Vite** 7.0.7 - bundler and development tool
 - **Axios** 1.11.0 - HTTP client
@@ -123,6 +128,7 @@ Main table for job offers.
 - `location_id` - foreign key to locations (indexed)
 - `is_active` - whether the offer is active (indexed)
 - `is_approved` - whether the offer has been approved by administrator
+- `views_count` - number of times the offer was viewed
 - `expires_at` - expiration date (optional)
 - `timestamps` - created_at (also used as approval date), updated_at
 
@@ -176,7 +182,8 @@ Main table for job offers.
 - Browse pending offers (is_approved = false)
 - Approve offers (sets is_approved = true and created_at to current date)
 - Reject offers (sets is_active = false)
-- Display employer statistics (first name, last name, username, number of active offers, number of pending offers)
+- Statistics view with comparison charts (offers vs new users)
+- Manage users (listing, searching, viewing profiles)
 - Admin actions also available in offer details view
 - Custom confirmation dialogs for rejection actions
 
@@ -184,7 +191,16 @@ Main table for job offers.
 
 - List of own published offers
 - Offer status (Pending Approval / Active)
-- View count information (prepared, but not tracked in database)
+- Job Application management (viewing applicants, downloading CVs, accepting/rejecting)
+- View count information for each offer
+
+### Job Seeker Panel
+
+- Browse and search job offers
+- Apply for jobs with CV upload
+- Manage own applications
+- Save favorite offers
+- User profile with skills management (tags)
 
 ### User Interface
 
@@ -204,10 +220,6 @@ Main table for job offers.
     - `admin/` - administrator views
 
 ## TODO
-
-### Job Application System
-
-- No view with applications for employers
 
 ### Notification System
 
@@ -241,8 +253,6 @@ Main table for job offers.
 
 ### Additional Features
 
-- No saving favorite offers
-- No tracking of offer view counts in database
 - No rating and review system for employers
 - No export offers to PDF
 - No LinkedIn integration
@@ -262,7 +272,7 @@ Main table for job offers.
 - PHP >= 8.2
 - Composer
 - Node.js and npm
-- MySQL
+- SQLite
 
 ### Installation Steps
 
@@ -297,36 +307,42 @@ cp .env.example .env
 php artisan key:generate
 ```
 
-6. Configure database in `.env` file:
+6. Configure database in `.env` file (SQLite is enabled by default in Laravel 12):
 
 ```
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=jobstofind
-DB_USERNAME=root
-DB_PASSWORD=
+DB_CONNECTION=sqlite
+# DB_HOST=127.0.0.1
+# DB_PORT=3306
+# DB_DATABASE=jobstofind
+# DB_USERNAME=root
+# DB_PASSWORD=
 ```
 
-7. Run migrations and seeders:
+7. Create empty SQLite database file:
+
+```bash
+touch database/database.sqlite
+```
+
+8. Run migrations and seeders:
 
 ```bash
 php artisan migrate --seed
 ```
 
-8. Build frontend assets:
+9. Build frontend assets:
 
 ```bash
 npm run build
 ```
 
-9. Start development server:
+10. Start development server:
 
 ```bash
 php artisan serve
 ```
 
-10. (Optional) In a separate terminal, run Vite for hot reload:
+11. (Optional) In a separate terminal, run Vite for hot reload:
 
 ```bash
 npm run dev

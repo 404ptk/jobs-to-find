@@ -63,9 +63,9 @@ class AdminController extends Controller
             $search = $request->get('search');
             $query->where(function ($q) use ($search) {
                 $q->where('first_name', 'like', "%{$search}%")
-                  ->orWhere('last_name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%")
-                  ->orWhere('username', 'like', "%{$search}%");
+                    ->orWhere('last_name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('username', 'like', "%{$search}%");
             });
         }
 
@@ -90,7 +90,7 @@ class AdminController extends Controller
             $search = $request->get('search');
             $query->where(function ($q) use ($search) {
                 $q->where('title', 'like', "%{$search}%")
-                  ->orWhere('company_name', 'like', "%{$search}%");
+                    ->orWhere('company_name', 'like', "%{$search}%");
             });
         }
 
@@ -103,14 +103,70 @@ class AdminController extends Controller
         return view('admin.offers', compact('offers', 'totalOffers', 'activeOffers', 'pendingOffers'));
     }
 
-    public function offerPartial($id) {
+    public function offerPartial($id)
+    {
         $jobOffer = JobOffer::with(['category', 'location', 'user'])->findOrFail($id);
         return view('components.job-offer-details', compact('jobOffer'));
     }
 
-    public function userPartial($id) {
+    public function userPartial($id)
+    {
         $user = User::with(['skills'])->findOrFail($id);
         $availableSkills = \App\Models\Skill::orderBy('name')->get();
         return view('components.user-profile-details', compact('user', 'availableSkills'));
+    }
+
+    public function statistics()
+    {
+        if (Auth::user()->account_type !== 'admin') {
+            abort(403, 'Access denied. Only administrators can access this page.');
+        }
+
+        $months = collect();
+        for ($i = 11; $i >= 0; $i--) {
+            $months->push(now()->subMonths($i)->startOfMonth());
+        }
+
+        $offersRaw = JobOffer::selectRaw("strftime('%Y', created_at) as year, CAST(strftime('%m', created_at) AS INTEGER) as month, COUNT(*) as total")
+            ->where('created_at', '>=', now()->subMonths(11)->startOfMonth())
+            ->groupByRaw("strftime('%Y', created_at), strftime('%m', created_at)")
+            ->get()
+            ->keyBy(fn($item) => $item->year . '-' . $item->month);
+
+        $usersRaw = User::selectRaw("strftime('%Y', created_at) as year, CAST(strftime('%m', created_at) AS INTEGER) as month, COUNT(*) as total")
+            ->where('created_at', '>=', now()->subMonths(11)->startOfMonth())
+            ->groupByRaw("strftime('%Y', created_at), strftime('%m', created_at)")
+            ->get()
+            ->keyBy(fn($item) => $item->year . '-' . $item->month);
+
+        $labels = [];
+        $offersData = [];
+        $usersData = [];
+
+        foreach ($months as $date) {
+            $key = $date->year . '-' . $date->month;
+            $labels[] = $date->translatedFormat('M Y');
+            $offersData[] = $offersRaw[$key]->total ?? 0;
+            $usersData[] = $usersRaw[$key]->total ?? 0;
+        }
+
+        $totalOffers = JobOffer::count();
+        $totalUsers = User::count();
+        $thisMonthOffers = JobOffer::whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->count();
+        $thisMonthUsers = User::whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->count();
+
+        return view('admin.statistics', compact(
+            'labels',
+            'offersData',
+            'usersData',
+            'totalOffers',
+            'totalUsers',
+            'thisMonthOffers',
+            'thisMonthUsers'
+        ));
     }
 }
