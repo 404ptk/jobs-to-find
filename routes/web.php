@@ -65,10 +65,19 @@ Route::get('/privacy', function () {
 })->name('privacy');
 
 Route::get('/profile', function () {
+    $user = Auth::user();
     $availableSkills = \App\Models\Skill::orderBy('name')->get();
+
+    $stats = [
+        'total' => $user->applications()->count(),
+        'accepted' => $user->applications()->where('status', 'accepted')->count(),
+        'rejected' => $user->applications()->where('status', 'rejected')->count(),
+    ];
+
     return view('auth.profile', [
-        'user' => Auth::user(),
-        'availableSkills' => $availableSkills
+        'user' => $user,
+        'availableSkills' => $availableSkills,
+        'applicationStats' => $stats
     ]);
 })->middleware('auth')->name('profile');
 

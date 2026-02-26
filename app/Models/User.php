@@ -82,4 +82,9 @@ class User extends Authenticatable
     {
         return $this->privacy_settings[$field] ?? true;
     }
+
+    public function applications(): HasMany
+    {
+        return $this->hasMany(Application::class);
+    }
 }

@@ -40,6 +40,12 @@ class UserController extends Controller
 
         $availableSkills = \App\Models\Skill::orderBy('name')->get();
 
-        return view('auth.profile', compact('user', 'availableSkills'));
+        $applicationStats = [
+            'total' => $user->applications()->count(),
+            'accepted' => $user->applications()->where('status', 'accepted')->count(),
+            'rejected' => $user->applications()->where('status', 'rejected')->count(),
+        ];
+
+        return view('auth.profile', compact('user', 'availableSkills', 'applicationStats'));
     }
 }
