@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\JobOffer;
 use App\Models\User;
+use App\Models\Application;
 use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
@@ -113,7 +114,14 @@ class AdminController extends Controller
     {
         $user = User::with(['skills'])->findOrFail($id);
         $availableSkills = \App\Models\Skill::orderBy('name')->get();
-        return view('components.user-profile-details', compact('user', 'availableSkills'));
+
+        $applicationStats = [
+            'total' => $user->applications()->count(),
+            'accepted' => $user->applications()->where('status', 'accepted')->count(),
+            'rejected' => $user->applications()->where('status', 'rejected')->count(),
+        ];
+
+        return view('components.user-profile-details', compact('user', 'availableSkills', 'applicationStats'));
     }
 
     public function statistics()
@@ -139,23 +147,36 @@ class AdminController extends Controller
             ->get()
             ->keyBy(fn($item) => $item->year . '-' . $item->month);
 
+        $applicationsRaw = Application::selectRaw("strftime('%Y', created_at) as year, CAST(strftime('%m', created_at) AS INTEGER) as month, COUNT(*) as total")
+            ->where('created_at', '>=', now()->subMonths(11)->startOfMonth())
+            ->groupByRaw("strftime('%Y', created_at), strftime('%m', created_at)")
+            ->get()
+            ->keyBy(fn($item) => $item->year . '-' . $item->month);
+
         $labels = [];
         $offersData = [];
         $usersData = [];
+        $applicationsData = [];
 
         foreach ($months as $date) {
             $key = $date->year . '-' . $date->month;
             $labels[] = $date->translatedFormat('M Y');
             $offersData[] = $offersRaw[$key]->total ?? 0;
             $usersData[] = $usersRaw[$key]->total ?? 0;
+            $applicationsData[] = $applicationsRaw[$key]->total ?? 0;
         }
 
         $totalOffers = JobOffer::count();
         $totalUsers = User::count();
+        $totalApplications = Application::count();
+
         $thisMonthOffers = JobOffer::whereMonth('created_at', now()->month)
             ->whereYear('created_at', now()->year)
             ->count();
         $thisMonthUsers = User::whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->count();
+        $thisMonthApplications = Application::whereMonth('created_at', now()->month)
             ->whereYear('created_at', now()->year)
             ->count();
 
@@ -163,10 +184,13 @@ class AdminController extends Controller
             'labels',
             'offersData',
             'usersData',
+            'applicationsData',
             'totalOffers',
             'totalUsers',
+            'totalApplications',
             'thisMonthOffers',
-            'thisMonthUsers'
+            'thisMonthUsers',
+            'thisMonthApplications'
         ));
     }
 }
