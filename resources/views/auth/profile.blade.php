@@ -464,6 +464,40 @@
                                 </div>
                                 <p class="mt-3 text-[10px] text-gray-400 italic">This information is only visible to you and administrators.</p>
                             </div>
+                            @elseif(($isOwner || $isAdminView) && $user->account_type === 'employer')
+                            <div class="bg-white rounded-xl p-5 border border-gray-200 shadow-sm mt-6">
+                                <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wide mb-4 flex items-center">
+                                    <svg class="w-4 h-4 mr-2 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                                    Offer Statistics
+                                </h3>
+                                
+                                <div class="space-y-3">
+                                    <div class="flex items-center justify-between bg-gray-50 p-4 rounded-xl border border-gray-100 min-w-0 transition-all hover:bg-gray-100/50">
+                                        <div class="flex items-center min-w-0">
+                                            <div class="w-2 h-2 rounded-full bg-gray-400 mr-3 shrink-0"></div>
+                                            <p class="text-sm font-semibold text-gray-600 uppercase tracking-wider truncate">Total Offers</p>
+                                        </div>
+                                        <p class="text-xl font-black text-gray-900 ml-4">{{ $offerStats['total'] ?? 0 }}</p>
+                                    </div>
+
+                                    <div class="flex items-center justify-between bg-emerald-50 p-4 rounded-xl border border-emerald-100 min-w-0 transition-all hover:bg-emerald-100/50">
+                                        <div class="flex items-center min-w-0">
+                                            <div class="w-2 h-2 rounded-full bg-emerald-500 mr-3 shrink-0"></div>
+                                            <p class="text-sm font-semibold text-emerald-700 uppercase tracking-wider truncate">Active Offers</p>
+                                        </div>
+                                        <p class="text-xl font-black text-emerald-800 ml-4">{{ $offerStats['active'] ?? 0 }}</p>
+                                    </div>
+
+                                    <div class="flex items-center justify-between bg-amber-50 p-4 rounded-xl border border-amber-100 min-w-0 transition-all hover:bg-amber-100/50">
+                                        <div class="flex items-center min-w-0">
+                                            <div class="w-2 h-2 rounded-full bg-amber-500 mr-3 shrink-0"></div>
+                                            <p class="text-sm font-semibold text-amber-700 uppercase tracking-wider truncate">Pending Approval</p>
+                                        </div>
+                                        <p class="text-xl font-black text-amber-800 ml-4">{{ $offerStats['pending'] ?? 0 }}</p>
+                                    </div>
+                                </div>
+                                <p class="mt-3 text-[10px] text-gray-400 italic">This information is only visible to you and administrators.</p>
+                            </div>
                             @endif
                             
                             @if($user->account_type === 'job_seeker' && $user->cv_path)

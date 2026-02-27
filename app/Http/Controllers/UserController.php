@@ -46,6 +46,15 @@ class UserController extends Controller
             'rejected' => $user->applications()->where('status', 'rejected')->count(),
         ];
 
-        return view('auth.profile', compact('user', 'availableSkills', 'applicationStats'));
+        $offerStats = null;
+        if ($user->account_type === 'employer') {
+            $offerStats = [
+                'total' => $user->jobOffers()->count(),
+                'active' => $user->jobOffers()->where('is_active', true)->where('is_approved', true)->count(),
+                'pending' => $user->jobOffers()->where('is_approved', false)->count(),
+            ];
+        }
+
+        return view('auth.profile', compact('user', 'availableSkills', 'applicationStats', 'offerStats'));
     }
 }
