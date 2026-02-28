@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\JobOfferController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ApplicationController;
+use App\Http\Controllers\MessageController;
 use App\Models\Category;
 use App\Models\Location;
 
@@ -140,6 +141,10 @@ Route::post('/favorites/toggle/{jobOffer}', function (\App\Models\JobOffer $jobO
 Route::get('/my-applications', [ApplicationController::class, 'myApplications'])
     ->middleware('auth')
     ->name('my-applications');
+
+Route::get('/messages', [MessageController::class, 'index'])
+    ->middleware('auth')
+    ->name('messages');
 
 Route::post('/job/{id}/apply', [ApplicationController::class, 'apply'])
     ->middleware('auth')
