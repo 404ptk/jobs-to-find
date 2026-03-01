@@ -150,6 +150,14 @@ Route::get('/messages/modal/{userId}', [MessageController::class, 'partial'])
     ->middleware('auth')
     ->name('messages.partial');
 
+Route::post('/messages', [MessageController::class, 'store'])
+    ->middleware('auth')
+    ->name('messages.store');
+
+Route::get('/messages/conversation/{userId}', [MessageController::class, 'conversation'])
+    ->middleware('auth')
+    ->name('messages.conversation');
+
 Route::post('/job/{id}/apply', [ApplicationController::class, 'apply'])
     ->middleware('auth')
     ->name('job-offers.apply');

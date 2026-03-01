@@ -66,6 +66,49 @@
         }, 200);
     }
 
+    function sendMessageAJAX(event, userId) {
+        event.preventDefault();
+        const form = event.target;
+        const content = form.querySelector('textarea[name="message"]').value;
+        const submitBtn = form.querySelector('button[type="submit"]');
+
+        submitBtn.disabled = true;
+
+        fetch('/messages', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({
+                receiver_id: userId,
+                content: content
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    if (typeof openConversationModal === 'function') {
+                        const name = document.querySelector('#message-modal-body .font-semibold').innerText;
+                        const avatarImg = document.querySelector('#message-modal-body img');
+                        const avatar = avatarImg ? avatarImg.getAttribute('src').replace('/storage/', '').replace(window.location.origin, '') : null;
+
+                        openConversationModal(userId, name, avatar);
+                    } else {
+                        hideMessageModal();
+                        alert('Message sent!');
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to send message.');
+            })
+            .finally(() => {
+                submitBtn.disabled = false;
+            });
+    }
+
     document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape' && !messageModal.classList.contains('hidden')) {
             hideMessageModal();

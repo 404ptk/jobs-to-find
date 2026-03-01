@@ -12,9 +12,9 @@
   </div>
 </div>
 
-<form action="#" method="POST"
-  onsubmit="event.preventDefault(); alert('Message sending will be implemented soon!'); hideMessageModal();">
+<form onsubmit="sendMessageAJAX(event, {{ $user->id }})">
   @csrf
+  <input type="hidden" name="receiver_id" value="{{ $user->id }}">
   <div class="mb-4">
     <label for="message-content" class="block text-sm font-medium text-gray-700 mb-1">Your Message</label>
     <textarea id="message-content" name="message" rows="4"

@@ -183,6 +183,7 @@
         </div>
     </footer>
 
-    @stack('scripts')
+    <x-message-modal />
+    <x-conversation-modal />
 </body>
 </html>
