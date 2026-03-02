@@ -43,14 +43,9 @@
                   @endif
                 </div>
                 <div class="ml-4 flex-1 min-w-0">
-                  <div class="flex items-center justify-between mb-1">
-                    <h3 class="text-sm font-bold text-gray-900 truncate">
-                      {{ $contact['user']->first_name }} {{ $contact['user']->last_name }}
-                    </h3>
-                    <span class="text-xs text-gray-400">
-                      {{ $contact['latest_message']->created_at->diffForHumans() }}
-                    </span>
-                  </div>
+                  <h3 class="text-sm font-bold text-gray-900 truncate mb-1">
+                    {{ $contact['user']->first_name }} {{ $contact['user']->last_name }}
+                  </h3>
                   <p
                     class="text-sm text-gray-500 truncate {{ $contact['unread_count'] > 0 ? 'font-semibold text-gray-900' : '' }}">
                     {{ $contact['latest_message']->content }}
@@ -58,15 +53,17 @@
                 </div>
               </div>
 
-              <div class="ml-6 flex items-center">
+              <div class="ml-6 flex items-center shrink-0">
+                <span class="text-xs text-gray-400 mr-4">
+                  {{ $contact['latest_message']->created_at->diffForHumans() }}
+                </span>
                 @if($contact['unread_count'] > 0)
                   <span
-                    class="inline-flex items-center justify-center w-6 h-6 bg-blue-600 text-white text-[10px] font-bold rounded-full shadow-sm">
+                    class="inline-flex items-center justify-center w-6 h-6 bg-blue-600 text-white text-[10px] font-bold rounded-full shadow-sm mr-4">
                     {{ $contact['unread_count'] }}
                   </span>
                 @endif
-                <svg
-                  class="ml-4 w-5 h-5 text-gray-300 group-hover:text-blue-500 transition transform group-hover:translate-x-1"
+                <svg class="w-5 h-5 text-gray-300 group-hover:text-blue-500 transition transform group-hover:translate-x-1"
                   fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                 </svg>
