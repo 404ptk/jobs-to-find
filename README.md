@@ -138,6 +138,26 @@ Main table for job offers.
 - `job_offers.category_id` -> `categories.id` (ON DELETE CASCADE)
 - `job_offers.location_id` -> `locations.id` (ON DELETE CASCADE)
 
+### Table: favorites
+
+Stores job seeker's favorite job offers.
+
+- `id` - primary key
+- `user_id` - foreign key to users
+- `job_offer_id` - foreign key to job_offers
+- `timestamps` - created_at, updated_at
+
+### Table: messages
+
+Internal messaging system between users.
+
+- `id` - primary key
+- `sender_id` - foreign key to users (indexed)
+- `receiver_id` - foreign key to users (indexed)
+- `content` - message content
+- `read_at` - read timestamp (nullable)
+- `timestamps` - created_at, updated_at
+
 ## Implemented Features
 
 ### Users (roles)
@@ -193,6 +213,7 @@ Main table for job offers.
 - Offer status (Pending Approval / Active)
 - Job Application management (viewing applicants, downloading CVs, accepting/rejecting)
 - View count information for each offer
+- Offer statistics (Application count, Active offers, Pending offers)
 
 ### Job Seeker Panel
 
@@ -202,6 +223,12 @@ Main table for job offers.
 - Save favorite offers
 - User profile with skills management (tags)
 
+### Messaging System
+
+- Private messages between users
+- Conversation history modal
+- Real-time-like interface for communication
+
 ### User Interface
 
 - Responsive design (Tailwind CSS)
@@ -209,6 +236,7 @@ Main table for job offers.
 - Interactive elements with pointer cursor
 - Modal dialogs with confirmations
 - Clear navigation
+- Reusable UI components (Stat cards, modals)
 
 ### Code Organization
 
@@ -228,22 +256,10 @@ Main table for job offers.
 - No notifications about new offers matching profile
 - No notifications about application status changes
 
-### Employer Profile
-
-- No dedicated companies table
-- No extended company information
-- No company logo
-- No company page with all offers
-
 ### Job Seeker Profile
 
 - No employment history
 - No job alerts
-
-### Messaging System
-
-- No internal messaging system
-- No employer-candidate communication
 
 ### User Verification
 
@@ -257,6 +273,7 @@ Main table for job offers.
 - No export offers to PDF
 - No LinkedIn integration
 - No REST API for external integrations
+- No company page with all offers
 
 ### SEO and Marketing
 
