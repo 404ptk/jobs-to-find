@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Message;
+use App\Models\Application;
 use Illuminate\Support\Facades\Auth;
 
 class MessageController extends Controller
@@ -83,6 +84,21 @@ class MessageController extends Controller
     $currentUserId = Auth::id();
     $otherUser = User::findOrFail($userId);
 
+    $application = Application::where(function ($q) use ($currentUserId, $userId) {
+      $q->where('user_id', $currentUserId)->whereHas('jobOffer', function ($q2) use ($userId) {
+        $q2->where('user_id', $userId);
+      });
+    })->orWhere(function ($q) use ($currentUserId, $userId) {
+      $q->where('user_id', $userId)->whereHas('jobOffer', function ($q2) use ($currentUserId) {
+        $q2->where('user_id', $currentUserId);
+      });
+    })
+      ->with('jobOffer')
+      ->latest()
+      ->first();
+
+    $jobOffer = $application ? $application->jobOffer : null;
+
     $messages = Message::where(function ($query) use ($currentUserId, $userId) {
       $query->where('sender_id', $currentUserId)
         ->where('receiver_id', $userId);
@@ -99,6 +115,6 @@ class MessageController extends Controller
       ->whereNull('read_at')
       ->update(['read_at' => now()]);
 
-    return view('messages.conversation_partial', compact('messages', 'otherUser'));
+    return view('messages.conversation_partial', compact('messages', 'otherUser', 'jobOffer'));
   }
 }

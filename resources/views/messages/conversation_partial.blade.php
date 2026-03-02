@@ -1,4 +1,19 @@
 <div class="flex flex-col space-y-4 mb-4">
+  @if(isset($jobOffer) && $jobOffer)
+    <div class="bg-blue-50 border border-blue-100 rounded-xl p-3 mb-2 flex items-center shadow-sm">
+      <div class="bg-blue-100 p-2 rounded-lg mr-3">
+        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 0-2 2v10a2 2 0 002 2z" />
+        </svg>
+      </div>
+      <div>
+        <p class="text-[10px] uppercase tracking-wider font-bold text-blue-500 mb-0.5">Regarding Job Offer</p>
+        <p class="text-sm font-semibold text-gray-900">{{ $jobOffer->title }}</p>
+      </div>
+    </div>
+  @endif
+
   @forelse($messages as $message)
     @if($message->sender_id === auth()->id())
       <div class="flex justify-end">
