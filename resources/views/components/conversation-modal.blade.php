@@ -27,7 +27,7 @@
     </div>
 
     <div class="px-6 py-4 border-t border-gray-100 bg-white">
-      <form id="conversation-reply-form" class="flex items-end gap-2">
+      <form id="conversation-reply-form" class="flex items-center gap-2">
         @csrf
         <input type="hidden" name="receiver_id" id="conversation-receiver-id">
         <div class="flex-1 relative">
@@ -36,8 +36,8 @@
             placeholder="Type a message..." required></textarea>
         </div>
         <button type="submit"
-          class="shrink-0 bg-blue-600 text-white p-2.5 rounded-full hover:bg-blue-700 transition shadow-md cursor-pointer flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed group">
-          <svg class="w-5 h-5 transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition" fill="none"
+          class="shrink-0 w-[42px] h-[42px] bg-blue-600 text-white rounded-full hover:bg-blue-700 transition shadow-md cursor-pointer flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed group">
+          <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none"
             stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
