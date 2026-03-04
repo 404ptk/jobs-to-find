@@ -105,21 +105,17 @@
         convBody.innerHTML = html;
         scrollToBottom();
 
-        // Update UI if conversation was unread
         if (wasUnread) {
-          // Hide badge in contact list (using both style and class for robustness)
           if (contactBadge) {
             contactBadge.style.display = 'none';
             contactBadge.classList.add('hidden');
           }
 
-          // Un-bold preview text
           const previewText = document.getElementById(`latest-message-preview-${userId}`);
           if (previewText) {
             previewText.classList.remove('font-semibold', 'text-gray-900');
           }
 
-          // Decrement navbar badges
           const navbarBadges = document.querySelectorAll('.unread-badge-navbar');
           navbarBadges.forEach(badge => {
             let countText = badge.innerText.replace('+', '').trim();
