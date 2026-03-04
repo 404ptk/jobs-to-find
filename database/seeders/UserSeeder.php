@@ -117,7 +117,6 @@ class UserSeeder extends Seeder
             'account_type' => 'job_seeker',
         ]);
 
-        // --- Additional users with varied creation dates (last 12 months) ---
         $historicalJobSeekers = collect();
         for ($i = 0; $i < 60; $i++) {
             $randomDate = now()->subMonths(rand(1, 11))->subDays(rand(0, 27));

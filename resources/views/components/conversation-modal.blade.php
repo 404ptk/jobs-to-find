@@ -37,8 +37,8 @@
         </div>
         <button type="submit"
           class="shrink-0 w-[42px] h-[42px] bg-blue-600 text-white rounded-full hover:bg-blue-700 transition shadow-md cursor-pointer flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed group">
-          <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none"
-            stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor"
+            viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
           </svg>
@@ -96,12 +96,45 @@
   }
 
   function fetchConversation(userId) {
+    const contactBadge = document.getElementById(`unread-badge-contact-${userId}`);
+    const wasUnread = contactBadge && (contactBadge.offsetParent !== null || !contactBadge.classList.contains('hidden'));
+
     fetch(`/messages/conversation/${userId}`)
       .then(response => response.text())
       .then(html => {
         convBody.innerHTML = html;
         scrollToBottom();
 
+        // Update UI if conversation was unread
+        if (wasUnread) {
+          // Hide badge in contact list (using both style and class for robustness)
+          if (contactBadge) {
+            contactBadge.style.display = 'none';
+            contactBadge.classList.add('hidden');
+          }
+
+          // Un-bold preview text
+          const previewText = document.getElementById(`latest-message-preview-${userId}`);
+          if (previewText) {
+            previewText.classList.remove('font-semibold', 'text-gray-900');
+          }
+
+          // Decrement navbar badges
+          const navbarBadges = document.querySelectorAll('.unread-badge-navbar');
+          navbarBadges.forEach(badge => {
+            let countText = badge.innerText.replace('+', '').trim();
+            let count = parseInt(countText);
+            if (!isNaN(count) && count > 0) {
+              count--;
+              if (count === 0) {
+                badge.style.display = 'none';
+                badge.classList.add('hidden');
+              } else {
+                badge.innerText = count > 99 ? '+99' : count;
+              }
+            }
+          });
+        }
       })
       .catch(error => {
         console.error('Error:', error);

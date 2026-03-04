@@ -46,7 +46,7 @@
                   <h3 class="text-sm font-bold text-gray-900 truncate mb-1">
                     {{ $contact['user']->first_name }} {{ $contact['user']->last_name }}
                   </h3>
-                  <p
+                  <p id="latest-message-preview-{{ $contact['user']->id }}"
                     class="text-sm text-gray-500 truncate {{ $contact['unread_count'] > 0 ? 'font-semibold text-gray-900' : '' }}">
                     {{ $contact['latest_message']->content }}
                   </p>
@@ -58,8 +58,8 @@
                   {{ $contact['latest_message']->created_at->diffForHumans() }}
                 </span>
                 @if($contact['unread_count'] > 0)
-                  <span
-                    class="inline-flex items-center justify-center w-6 h-6 bg-blue-600 text-white text-[10px] font-bold rounded-full shadow-sm mr-4">
+                  <span id="unread-badge-contact-{{ $contact['user']->id }}"
+                    class="unread-badge-contact inline-flex items-center justify-center w-6 h-6 bg-blue-600 text-white text-[10px] font-bold rounded-full shadow-sm mr-4">
                     {{ $contact['unread_count'] }}
                   </span>
                 @endif
