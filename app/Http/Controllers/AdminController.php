@@ -36,6 +36,9 @@ class AdminController extends Controller
         $offer->created_at = now();
         $offer->save();
 
+        // Send notification to the user who created the offer
+        $offer->user->notify(new \App\Notifications\JobOfferApprovedNotification($offer));
+
         return redirect()->route('admin.accept-offers')->with('success', 'Job offer approved successfully!');
     }
 

@@ -6,6 +6,7 @@ use App\Http\Controllers\JobOfferController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\MessageController;
+use App\Http\Controllers\NotificationController;
 use App\Models\Category;
 use App\Models\Location;
 
@@ -157,6 +158,18 @@ Route::post('/messages', [MessageController::class, 'store'])
 Route::get('/messages/conversation/{userId}', [MessageController::class, 'conversation'])
     ->middleware('auth')
     ->name('messages.conversation');
+
+Route::get('/notifications', [NotificationController::class, 'index'])
+    ->middleware('auth')
+    ->name('notifications.index');
+
+Route::post('/notifications/{id}/mark-as-read', [NotificationController::class, 'markAsRead'])
+    ->middleware('auth')
+    ->name('notifications.mark-as-read');
+
+Route::post('/notifications/mark-all-as-read', [NotificationController::class, 'markAllAsRead'])
+    ->middleware('auth')
+    ->name('notifications.mark-all-as-read');
 
 Route::post('/job/{id}/apply', [ApplicationController::class, 'apply'])
     ->middleware('auth')
