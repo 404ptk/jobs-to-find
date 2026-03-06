@@ -36,7 +36,6 @@ class AdminController extends Controller
         $offer->created_at = now();
         $offer->save();
 
-        // Send notification to the user who created the offer
         $offer->user->notify(new \App\Notifications\JobOfferApprovedNotification($offer));
 
         return redirect()->route('admin.accept-offers')->with('success', 'Job offer approved successfully!');
@@ -73,13 +72,23 @@ class AdminController extends Controller
             });
         }
 
-        $users = $query->paginate(10);
+        $sort = $request->get('sort', 'created_at');
+        $direction = $request->get('direction', 'desc');
+        $allowedSorts = ['first_name', 'account_type', 'country', 'created_at'];
+
+        if (in_array($sort, $allowedSorts)) {
+            $query->orderBy($sort, $direction);
+        } else {
+            $query->orderBy('created_at', 'desc');
+        }
+
+        $users = $query->paginate(10)->withQueryString();
 
         $totalUsers = \App\Models\User::count();
         $totalJobSeekers = \App\Models\User::where('account_type', 'job_seeker')->count();
         $totalEmployers = \App\Models\User::where('account_type', 'employer')->count();
 
-        return view('admin.users', compact('users', 'totalUsers', 'totalJobSeekers', 'totalEmployers'));
+        return view('admin.users', compact('users', 'totalUsers', 'totalJobSeekers', 'totalEmployers', 'sort', 'direction'));
     }
 
     public function offers(Request $request)
@@ -98,13 +107,23 @@ class AdminController extends Controller
             });
         }
 
-        $offers = $query->orderBy('created_at', 'desc')->paginate(10);
+        $sort = $request->get('sort', 'created_at');
+        $direction = $request->get('direction', 'desc');
+        $allowedSorts = ['title', 'is_approved', 'created_at'];
+
+        if (in_array($sort, $allowedSorts)) {
+            $query->orderBy($sort, $direction);
+        } else {
+            $query->orderBy('created_at', 'desc');
+        }
+
+        $offers = $query->paginate(10)->withQueryString();
 
         $totalOffers = JobOffer::count();
         $activeOffers = JobOffer::where('is_active', true)->where('is_approved', true)->count();
         $pendingOffers = JobOffer::where('is_active', true)->where('is_approved', false)->count();
 
-        return view('admin.offers', compact('offers', 'totalOffers', 'activeOffers', 'pendingOffers'));
+        return view('admin.offers', compact('offers', 'totalOffers', 'activeOffers', 'pendingOffers', 'sort', 'direction'));
     }
 
     public function offerPartial($id)

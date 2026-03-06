@@ -56,7 +56,14 @@
                 </form>
             </div>
 
-            <x-table :headers="['Job Offer', 'Posted By', 'Status', 'Date', 'Actions']" :pagination="$offers">
+            <x-table :headers="[
+            ['label' => 'Job Offer', 'sort' => 'title'],
+            'Posted By',
+            ['label' => 'Status', 'sort' => 'is_approved'],
+            ['label' => 'Date', 'sort' => 'created_at'],
+            'Actions'
+        ]" :pagination="$offers" :sort="$sort"
+                :direction="$direction">
                 @forelse($offers as $offer)
                     <tr class="hover:bg-gray-50">
                         <td class="px-6 py-4">
