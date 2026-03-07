@@ -137,13 +137,15 @@ class ApplicationController extends Controller
             abort(403, 'Access denied.');
         }
 
-        $application = Application::findOrFail($applicationId);
+        $application = Application::with('jobOffer')->findOrFail($applicationId);
 
         JobOffer::where('id', $application->job_offer_id)
             ->where('user_id', Auth::id())
             ->firstOrFail();
 
         $application->update(['status' => 'accepted']);
+
+        $application->user->notify(new \App\Notifications\ApplicationAcceptedNotification($application, $application->jobOffer->title));
 
         return redirect()->back()->with('success', 'Application accepted successfully.');
     }
@@ -154,13 +156,15 @@ class ApplicationController extends Controller
             abort(403, 'Access denied.');
         }
 
-        $application = Application::findOrFail($applicationId);
+        $application = Application::with('jobOffer')->findOrFail($applicationId);
 
         JobOffer::where('id', $application->job_offer_id)
             ->where('user_id', Auth::id())
             ->firstOrFail();
 
         $application->update(['status' => 'rejected']);
+
+        $application->user->notify(new \App\Notifications\ApplicationRejectedNotification($application, $application->jobOffer->title));
 
         return redirect()->back()->with('success', 'Application rejected.');
     }
