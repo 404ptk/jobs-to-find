@@ -19,13 +19,15 @@
             </svg>
           </div>
           <h2 class="text-2xl font-bold text-gray-900 mb-2">No messages yet</h2>
-          <p class="text-gray-500 max-w-sm mx-auto mb-8">
-            Your message history will appear here once you start communicating with others about job offers.
-          </p>
-          <a href="/"
-            class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 transition shadow-md">
-            Browse Job Offers
-          </a>
+          @if(Auth::user()->account_type !== 'admin')
+            <p class="text-gray-500 max-w-sm mx-auto mb-8">
+              Your message history will appear here once you start communicating with others about job offers.
+            </p>
+            <a href="/"
+              class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 transition shadow-md">
+              Browse Job Offers
+            </a>
+          @endif
         </div>
       @else
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden divide-y divide-gray-50">
