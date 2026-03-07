@@ -1,6 +1,6 @@
 @props(['jobOffer'])
 
-<div id="apply-modal-{{ $jobOffer->id }}" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+<div id="apply-modal-{{ $jobOffer->id }}" class="hidden fixed inset-0 z-50 items-center justify-center p-4">
     <div class="fixed inset-0 bg-opacity-30 backdrop-blur-sm transition-opacity"
         onclick="hideApplyModal({{ $jobOffer->id }})"></div>
     <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full transform transition-all scale-95 opacity-0 relative"
@@ -56,8 +56,8 @@
                         Upload CV/Resume <span class="text-red-500">*</span>
                     </label>
                     <div
-                        class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-blue-400 transition">
-                        <div class="space-y-1 text-center">
+                        class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-blue-400 transition relative">
+                        <div id="upload-prompt-{{ $jobOffer->id }}" class="space-y-1 text-center">
                             <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none"
                                 viewBox="0 0 48 48">
                                 <path
@@ -69,11 +69,32 @@
                                     class="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500">
                                     <span>Upload a file</span>
                                     <input id="cv_{{ $jobOffer->id }}" name="cv" type="file" class="sr-only"
-                                        accept=".pdf,.doc,.docx" required>
+                                        accept=".pdf,.doc,.docx" required
+                                        onchange="handleFileSelect(event, {{ $jobOffer->id }})">
                                 </label>
                                 <p class="pl-1">or drag and drop</p>
                             </div>
                             <p class="text-xs text-gray-500">PDF, DOC, DOCX up to 10MB</p>
+                        </div>
+
+                        <div id="file-info-{{ $jobOffer->id }}"
+                            class="hidden w-full flex flex-col items-center justify-center space-y-3">
+                            <div class="p-3 bg-blue-50 rounded-full">
+                                <svg class="h-8 w-8 text-blue-600" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                            </div>
+                            <div class="text-center">
+                                <p id="file-name-{{ $jobOffer->id }}"
+                                    class="text-sm font-bold text-gray-900 truncate max-w-xs"></p>
+                                <p id="file-size-{{ $jobOffer->id }}" class="text-xs text-gray-500"></p>
+                            </div>
+                            <button type="button" onclick="document.getElementById('cv_{{ $jobOffer->id }}').click()"
+                                class="text-xs font-semibold text-blue-600 hover:text-blue-500 transition cursor-pointer">
+                                Change file
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -145,6 +166,32 @@
 </div>
 
 <script>
+    function handleFileSelect(event, offerId) {
+        const file = event.target.files[0];
+        if (file) {
+            const prompt = document.getElementById(`upload-prompt-${offerId}`);
+            const info = document.getElementById(`file-info-${offerId}`);
+            const name = document.getElementById(`file-name-${offerId}`);
+            const size = document.getElementById(`file-size-${offerId}`);
+
+            name.textContent = file.name;
+            size.textContent = formatBytes(file.size);
+
+            prompt.classList.add('hidden');
+            info.classList.remove('hidden');
+            info.classList.add('flex');
+        }
+    }
+
+    function formatBytes(bytes, decimals = 2) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const dm = decimals < 0 ? 0 : decimals;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+    }
+
     function handleApplySubmit(event, offerId) {
         event.preventDefault();
 
@@ -213,6 +260,7 @@
         const modalContent = document.getElementById(`apply-modal-content-${offerId}`);
 
         modal.classList.remove('hidden');
+        modal.classList.add('flex');
         setTimeout(() => {
             modalContent.classList.remove('scale-95', 'opacity-0');
             modalContent.classList.add('scale-100', 'opacity-100');
@@ -227,6 +275,7 @@
         modalContent.classList.add('scale-95', 'opacity-0');
         setTimeout(() => {
             modal.classList.add('hidden');
+            modal.classList.remove('flex');
         }, 200);
     }
 
