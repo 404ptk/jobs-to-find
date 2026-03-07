@@ -199,9 +199,13 @@ Route::post('/admin/approve-offer/{id}', [App\Http\Controllers\AdminController::
     ->middleware('auth')
     ->name('admin.approve-offer');
 
-Route::post('/admin/reject-offer/{id}', [App\Http\Controllers\AdminController::class, 'rejectOffer'])
+Route::get('/admin/reject-offer/{id}', [App\Http\Controllers\AdminController::class, 'rejectOffer'])
     ->middleware('auth')
     ->name('admin.reject-offer');
+
+Route::delete('/admin/delete-offer/{id}', [App\Http\Controllers\AdminController::class, 'deleteOffer'])
+    ->middleware('auth')
+    ->name('admin.delete-offer');
 
 Route::get('/admin/users', [App\Http\Controllers\AdminController::class, 'users'])
     ->middleware('auth')

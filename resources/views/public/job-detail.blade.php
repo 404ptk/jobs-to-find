@@ -267,7 +267,11 @@
                                 <div class="bg-red-50 border border-red-200 rounded-lg p-6">
                                     <h3 class="text-lg font-semibold text-gray-900 mb-3">Administrator Actions</h3>
                                     <p class="text-gray-700 mb-4">Manage this job offer</p>
-                                    <button class="w-full px-6 py-3 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition flex items-center justify-center cursor-pointer">
+                                    <form id="delete-offer-form" action="{{ route('admin.delete-offer', $jobOffer->id) }}" method="POST" class="hidden">
+                                        @csrf
+                                        @method('DELETE')
+                                    </form>
+                                    <button id="delete-offer-btn" class="w-full px-6 py-3 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition flex items-center justify-center cursor-pointer">
                                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                                         </svg>
@@ -383,12 +387,37 @@
     </div>
 </div>
 
-<div id="reject-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
-    <div class="bg-white rounded-lg shadow-2xl max-w-md w-full p-6 transform transition-all scale-95 opacity-0 border border-gray-300 pointer-events-auto" id="modal-content">
+<div id="delete-modal" class="hidden fixed inset-0 z-50 items-center justify-center p-4">
+    <div class="fixed inset-0 bg-black/50 transition-opacity" id="delete-modal-overlay"></div>
+    <div class="bg-white rounded-lg shadow-2xl max-w-md w-full p-6 transform transition-all scale-95 opacity-0 border border-gray-300 relative z-10" id="delete-modal-content">
         <div class="flex items-center mb-4">
-            <div class="flex-shrink-0 w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
+            <div class="shrink-0 w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
                 <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                </svg>
+            </div>
+            <h3 class="ml-4 text-xl font-bold text-gray-900">Confirm Deletion</h3>
+        </div>
+        <p class="text-gray-600 mb-6">Are you sure you want to delete this job offer? This action will permanently remove the offer and notify the employer.</p>
+        <div class="flex gap-3">
+            <button id="delete-modal-cancel" class="flex-1 px-4 py-2 bg-gray-200 text-gray-800 font-semibold rounded-lg hover:bg-gray-300 transition cursor-pointer">
+                No, Keep it
+            </button>
+            <button id="delete-modal-confirm" class="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition cursor-pointer font-bold">
+                Yes, Delete Offer
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="reject-modal" class="hidden fixed inset-0 z-50 items-center justify-center p-4">
+    <div class="fixed inset-0 bg-black/50 transition-opacity" id="reject-modal-overlay"></div>
+    <div class="bg-white rounded-lg shadow-2xl max-w-md w-full p-6 transform transition-all scale-95 opacity-0 border border-gray-300 relative z-10" id="reject-modal-content">
+        <div class="flex items-center mb-4">
+            <div class="shrink-0 w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
+                <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                </svg>
             </div>
             <h3 class="ml-4 text-xl font-bold text-gray-900">Confirm Rejection</h3>
         </div>
@@ -406,24 +435,27 @@
 
 <script>
     let currentFormId = null;
-    const modal = document.getElementById('reject-modal');
-    const modalContent = document.getElementById('modal-content');
+    const rejectModal = document.getElementById('reject-modal');
+    const rejectModalContent = document.getElementById('reject-modal-content');
     const modalCancel = document.getElementById('modal-cancel');
     const modalConfirm = document.getElementById('modal-confirm');
+    const rejectOverlay = document.getElementById('reject-modal-overlay');
 
-    function showModal() {
-        modal.classList.remove('hidden');
+    function showRejectModal() {
+        rejectModal.classList.remove('hidden');
+        rejectModal.classList.add('flex');
         setTimeout(() => {
-            modalContent.classList.remove('scale-95', 'opacity-0');
-            modalContent.classList.add('scale-100', 'opacity-100');
+            rejectModalContent.classList.remove('scale-95', 'opacity-0');
+            rejectModalContent.classList.add('scale-100', 'opacity-100');
         }, 10);
     }
 
-    function hideModal() {
-        modalContent.classList.remove('scale-100', 'opacity-100');
-        modalContent.classList.add('scale-95', 'opacity-0');
+    function hideRejectModal() {
+        rejectModalContent.classList.remove('scale-100', 'opacity-100');
+        rejectModalContent.classList.add('scale-95', 'opacity-0');
         setTimeout(() => {
-            modal.classList.add('hidden');
+            rejectModal.classList.add('hidden');
+            rejectModal.classList.remove('flex');
         }, 200);
         currentFormId = null;
     }
@@ -433,11 +465,12 @@
             e.preventDefault();
             const offerId = this.getAttribute('data-offer-id');
             currentFormId = 'reject-form-' + offerId;
-            showModal();
+            showRejectModal();
         });
     });
 
-    modalCancel.addEventListener('click', hideModal);
+    modalCancel.addEventListener('click', hideRejectModal);
+    rejectOverlay.addEventListener('click', hideRejectModal);
 
     modalConfirm.addEventListener('click', function() {
         if (currentFormId) {
@@ -445,15 +478,46 @@
         }
     });
 
-    modal.addEventListener('click', function(e) {
-        if (e.target === modal) {
-            hideModal();
-        }
-    });
+    const deleteModal = document.getElementById('delete-modal');
+    const deleteModalContent = document.getElementById('delete-modal-content');
+    const deleteBtn = document.getElementById('delete-offer-btn');
+    const deleteCancel = document.getElementById('delete-modal-cancel');
+    const deleteConfirm = document.getElementById('delete-modal-confirm');
+    const deleteOverlay = document.getElementById('delete-modal-overlay');
+
+    if (deleteBtn) {
+        deleteBtn.addEventListener('click', function() {
+            deleteModal.classList.remove('hidden');
+            deleteModal.classList.add('flex');
+            setTimeout(() => {
+                deleteModalContent.classList.remove('scale-95', 'opacity-0');
+                deleteModalContent.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        });
+    }
+
+    function hideDeleteModal() {
+        deleteModalContent.classList.remove('scale-100', 'opacity-100');
+        deleteModalContent.classList.add('scale-95', 'opacity-0');
+        setTimeout(() => {
+            deleteModal.classList.add('hidden');
+            deleteModal.classList.remove('flex');
+        }, 200);
+    }
+
+    if (deleteCancel) deleteCancel.addEventListener('click', hideDeleteModal);
+    if (deleteOverlay) deleteOverlay.addEventListener('click', hideDeleteModal);
+
+    if (deleteConfirm) {
+        deleteConfirm.addEventListener('click', function() {
+            document.getElementById('delete-offer-form').submit();
+        });
+    }
 
     document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
-            hideModal();
+        if (e.key === 'Escape') {
+            if (!rejectModal.classList.contains('hidden')) hideRejectModal();
+            if (deleteModal && !deleteModal.classList.contains('hidden')) hideDeleteModal();
         }
     });
 

@@ -54,6 +54,25 @@ class AdminController extends Controller
         return redirect()->route('admin.accept-offers')->with('success', 'Job offer rejected successfully!');
     }
 
+    public function deleteOffer($id)
+    {
+        if (Auth::user()->account_type !== 'admin') {
+            abort(403, 'Access denied. Only administrators can perform this action.');
+        }
+
+        $offer = JobOffer::with('user')->findOrFail($id);
+        $owner = $offer->user;
+        $offerTitle = $offer->title;
+
+        $offer->delete();
+
+        if ($owner) {
+            $owner->notify(new \App\Notifications\JobOfferDeletedNotification($offerTitle));
+        }
+
+        return redirect()->route('admin.offers')->with('success', 'Job offer deleted successfully and user notified.');
+    }
+
     public function users(Request $request)
     {
         if (Auth::user()->account_type !== 'admin') {
