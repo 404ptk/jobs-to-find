@@ -116,6 +116,20 @@ Job offer locations.
 - `city` - city
 - `timestamps` - created_at, updated_at
 
+### Table: companies
+
+Stores company details managed by employers.
+
+- `id` - primary key
+- `user_id` - foreign key to users
+- `name` - company name
+- `logo_path` - path to company logo
+- `description` - about the company
+- `location` - company headquarters/location
+- `founded_at` - year of foundation (integer)
+- `nip` - Tax Identification Number
+- `timestamps` - created_at, updated_at
+
 ### Table: job_offers
 
 Main table for job offers.
@@ -130,6 +144,7 @@ Main table for job offers.
 - `employment_type` - employment type (full-time, part-time, contract, internship)
 - `category_id` - foreign key to categories (indexed)
 - `location_id` - foreign key to locations (indexed)
+- `company_id` - foreign key to companies (indexed)
 - `is_active` - whether the offer is active (indexed)
 - `is_approved` - whether the offer has been approved by administrator
 - `views_count` - number of times the offer was viewed
@@ -141,6 +156,8 @@ Main table for job offers.
 - `job_offers.user_id` -> `users.id` (ON DELETE CASCADE)
 - `job_offers.category_id` -> `categories.id` (ON DELETE CASCADE)
 - `job_offers.location_id` -> `locations.id` (ON DELETE CASCADE)
+- `job_offers.company_id` -> `companies.id` (ON DELETE SET NULL)
+- `companies.user_id` -> `users.id` (ON DELETE CASCADE)
 
 ### Table: favorites
 
@@ -218,6 +235,7 @@ Internal messaging system between users.
 - Job Application management (viewing applicants, downloading CVs, accepting/rejecting)
 - View count information for each offer
 - Offer statistics (Application count, Active offers, Pending offers)
+- **Company Management**: Employers can manage up to 3 separate company profiles, including logos and detailed descriptions.
 
 ### Job Seeker Panel
 
@@ -277,7 +295,6 @@ Internal messaging system between users.
 - No export offers to PDF
 - No LinkedIn integration
 - No REST API for external integrations
-- No company page with all offers
 
 ### SEO and Marketing
 
