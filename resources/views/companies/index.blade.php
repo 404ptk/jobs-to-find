@@ -98,7 +98,7 @@
                   </div>
                   <div class="flex justify-between text-xs">
                     <span class="text-gray-500 uppercase tracking-wider font-semibold">Founded</span>
-                    <span class="text-gray-900">{{ $company->founded_at ? $company->founded_at->format('Y') : 'N/A' }}</span>
+                    <span class="text-gray-900">{{ $company->founded_at ?: 'N/A' }}</span>
                   </div>
                   <div class="flex justify-between text-xs">
                     <span class="text-gray-500 uppercase tracking-wider font-semibold">Active Offers</span>

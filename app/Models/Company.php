@@ -19,7 +19,7 @@ class Company extends Model
     ];
 
     protected $casts = [
-        'founded_at' => 'date',
+        'founded_at' => 'integer',
     ];
 
     public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo

@@ -49,10 +49,11 @@
             </div>
 
             <div class="col-span-2 md:col-span-1">
-              <label for="founded_at" class="block text-sm font-semibold text-gray-700 mb-2">Founded Date</label>
-              <input type="date" name="founded_at" id="founded_at"
-                value="{{ old('founded_at', $company->founded_at ? $company->founded_at->format('Y-m-d') : '') }}"
-                class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
+              <label for="founded_at" class="block text-sm font-semibold text-gray-700 mb-2">Founded Year</label>
+              <input type="number" name="founded_at" id="founded_at" value="{{ old('founded_at', $company->founded_at) }}"
+                min="1900" max="{{ date('Y') + 1 }}"
+                class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+                placeholder="e.g. 2020">
               @error('founded_at') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
             </div>
 

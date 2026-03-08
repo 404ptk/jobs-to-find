@@ -31,7 +31,7 @@ class CompanyController extends Controller
             'logo' => 'nullable|image|max:2048',
             'description' => 'required|string',
             'location' => 'required|string|max:255',
-            'founded_at' => 'nullable|date',
+            'founded_at' => 'nullable|integer|min:1900|max:' . (date('Y') + 1),
             'nip' => 'required|string|max:20',
         ]);
 
@@ -61,7 +61,7 @@ class CompanyController extends Controller
             'logo' => 'nullable|image|max:2048',
             'description' => 'required|string',
             'location' => 'required|string|max:255',
-            'founded_at' => 'nullable|date',
+            'founded_at' => 'nullable|integer|min:1900|max:' . (date('Y') + 1),
             'nip' => 'required|string|max:20',
         ]);
 
