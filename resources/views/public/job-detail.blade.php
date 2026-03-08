@@ -209,7 +209,7 @@
                                         Admin Actions - Pending Approval
                                     </h3>
                                     <p class="text-gray-700 mb-4">This job offer is awaiting approval. Review and approve or reject it.</p>
-                                    <div class="flex gap-3">
+                                    <div class="flex gap-3 mb-4">
                                         <form action="{{ route('admin.approve-offer', $jobOffer->id) }}" method="POST" class="flex-1">
                                             @csrf
                                             <button type="submit" class="w-full px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition flex items-center justify-center cursor-pointer">
@@ -229,6 +229,12 @@
                                             </button>
                                         </form>
                                     </div>
+                                    <button onclick="openMessageModal({{ $jobOffer->user_id }})" class="w-full px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition flex items-center justify-center cursor-pointer">
+                                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                                        </svg>
+                                        Message Employer
+                                    </button>
                                 </div>
                             @elseif(Auth::user()->account_type === 'job_seeker')
                                 @php
@@ -274,6 +280,14 @@
                                 <div class="bg-red-50 border border-red-200 rounded-lg p-6">
                                     <h3 class="text-lg font-semibold text-gray-900 mb-3">Administrator Actions</h3>
                                     <p class="text-gray-700 mb-4">Manage this job offer</p>
+                                    
+                                    <button onclick="openMessageModal({{ $jobOffer->user_id }})" class="w-full px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition flex items-center justify-center cursor-pointer mb-3">
+                                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                                        </svg>
+                                        Message Employer
+                                    </button>
+
                                     <form id="delete-offer-form" action="{{ route('admin.delete-offer', $jobOffer->id) }}" method="POST" class="hidden">
                                         @csrf
                                         @method('DELETE')
