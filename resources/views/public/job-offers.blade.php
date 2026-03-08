@@ -196,7 +196,18 @@
                                                 {{ $offer->title }}
                                             </h3>
                                         </a>
-                                        <p class="text-base text-gray-700 font-medium">{{ $offer->company_name }}</p>
+                                        <div class="flex items-center gap-3">
+                                            @if($offer->company && $offer->company->logo_path)
+                                                <img src="{{ asset('storage/' . $offer->company->logo_path) }}" alt="{{ $offer->company->name }}" class="w-10 h-10 rounded-lg object-cover border border-gray-100">
+                                            @else
+                                                <div class="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center border border-gray-200">
+                                                    <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                                                    </svg>
+                                                </div>
+                                            @endif
+                                            <p class="text-base text-gray-700 font-medium">{{ $offer->company_name }}</p>
+                                        </div>
                                     </div>
                                     <span
                                         class="ml-4 px-3 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800 whitespace-nowrap">

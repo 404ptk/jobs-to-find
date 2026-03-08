@@ -164,6 +164,9 @@
                                             <a href="/my-offers" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition">
                                                 My job offers
                                             </a>
+                                            <a href="{{ route('companies.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition">
+                                                My companies
+                                            </a>
                                         @endif
                                     @endif
                                     <div class="border-t border-gray-200 my-1"></div>

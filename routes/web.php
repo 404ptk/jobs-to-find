@@ -7,6 +7,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\CompanyController;
 use App\Models\Category;
 use App\Models\Location;
 
@@ -226,3 +227,12 @@ Route::get('/admin/user/{id}/partial', [\App\Http\Controllers\AdminController::c
 Route::get('/profile/{username}', [UserController::class, 'show'])
     ->middleware('auth')
     ->name('user.show');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/companies', [CompanyController::class, 'index'])->name('companies.index');
+    Route::get('/companies/create', [CompanyController::class, 'create'])->name('companies.create');
+    Route::post('/companies', [CompanyController::class, 'store'])->name('companies.store');
+    Route::get('/companies/{id}/edit', [CompanyController::class, 'edit'])->name('companies.edit');
+    Route::put('/companies/{id}', [CompanyController::class, 'update'])->name('companies.update');
+    Route::delete('/companies/{id}', [CompanyController::class, 'destroy'])->name('companies.destroy');
+});

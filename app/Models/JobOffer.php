@@ -15,6 +15,7 @@ class JobOffer extends Model
 
     protected $fillable = [
         'user_id',
+        'company_id',
         'title',
         'description',
         'requirements',
@@ -62,5 +63,10 @@ class JobOffer extends Model
     public function favoritedBy(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'favorites')->withTimestamps();
+    }
+
+    public function company(): BelongsTo
+    {
+        return $this->belongsTo(Company::class);
     }
 }

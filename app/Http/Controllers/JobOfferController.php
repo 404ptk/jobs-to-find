@@ -166,8 +166,9 @@ class JobOfferController extends Controller
         $categories = \App\Models\Category::orderBy('name')->get();
         $locations = \App\Models\Location::orderBy('country')->orderBy('city')->get();
         $employmentTypes = ['full-time', 'part-time', 'contract', 'internship'];
+        $companies = Auth::user()->companies;
 
-        return view('employer.create-offer', compact('categories', 'locations', 'employmentTypes'));
+        return view('employer.create-offer', compact('categories', 'locations', 'employmentTypes', 'companies'));
     }
 
     public function store(Request $request)
@@ -180,7 +181,8 @@ class JobOfferController extends Controller
             'title' => ['required', 'string', 'max:96', 'regex:/^[a-zA-Z0-9\s\-]+$/'],
             'description' => ['required', 'string', 'max:5000'],
             'requirements' => ['required', 'string', 'max:5000'],
-            'company_name' => ['required', 'string', 'max:96', 'regex:/^[a-zA-Z0-9\s\-]+$/'],
+            'company_id' => ['nullable', 'exists:companies,id'],
+            'company_name' => ['required_without:company_id', 'nullable', 'string', 'max:96', 'regex:/^[a-zA-Z0-9\s\-]+$/'],
             'salary_min' => ['nullable', 'numeric', 'min:0'],
             'salary_max' => ['nullable', 'numeric', 'min:0', 'gte:salary_min'],
             'employment_type' => ['required', 'string', 'in:full-time,part-time,contract,internship'],
@@ -190,8 +192,14 @@ class JobOfferController extends Controller
         ], [
             'title.regex' => 'Title can only contain letters, numbers, spaces, and hyphens.',
             'company_name.regex' => 'Company name can only contain letters, numbers, spaces, and hyphens.',
+            'company_name.required_without' => 'Please select a company or provide a company name.',
             'salary_max.gte' => 'Maximum salary must be greater than or equal to minimum salary.',
         ]);
+
+        if (!empty($validated['company_id'])) {
+            $company = \App\Models\Company::findOrFail($validated['company_id']);
+            $validated['company_name'] = $company->name;
+        }
 
         $validated['user_id'] = Auth::id();
         $validated['is_active'] = true;
@@ -218,8 +226,9 @@ class JobOfferController extends Controller
         $categories = \App\Models\Category::orderBy('name')->get();
         $locations = \App\Models\Location::orderBy('country')->orderBy('city')->get();
         $employmentTypes = ['full-time', 'part-time', 'contract', 'internship'];
+        $companies = Auth::user()->companies;
 
-        return view('employer.edit-offer', compact('jobOffer', 'categories', 'locations', 'employmentTypes'));
+        return view('employer.edit-offer', compact('jobOffer', 'categories', 'locations', 'employmentTypes', 'companies'));
     }
 
     public function update(Request $request, $id)
@@ -238,7 +247,8 @@ class JobOfferController extends Controller
             'title' => ['required', 'string', 'max:96', 'regex:/^[a-zA-Z0-9\s\-]+$/'],
             'description' => ['required', 'string', 'max:5000'],
             'requirements' => ['required', 'string', 'max:5000'],
-            'company_name' => ['required', 'string', 'max:96', 'regex:/^[a-zA-Z0-9\s\-]+$/'],
+            'company_id' => ['nullable', 'exists:companies,id'],
+            'company_name' => ['required_without:company_id', 'nullable', 'string', 'max:96', 'regex:/^[a-zA-Z0-9\s\-]+$/'],
             'salary_min' => ['nullable', 'numeric', 'min:0'],
             'salary_max' => ['nullable', 'numeric', 'min:0', 'gte:salary_min'],
             'employment_type' => ['required', 'string', 'in:full-time,part-time,contract,internship'],
@@ -248,8 +258,14 @@ class JobOfferController extends Controller
         ], [
             'title.regex' => 'Title can only contain letters, numbers, spaces, and hyphens.',
             'company_name.regex' => 'Company name can only contain letters, numbers, spaces, and hyphens.',
+            'company_name.required_without' => 'Please select a company or provide a company name.',
             'salary_max.gte' => 'Maximum salary must be greater than or equal to minimum salary.',
         ]);
+
+        if (!empty($validated['company_id'])) {
+            $company = \App\Models\Company::findOrFail($validated['company_id']);
+            $validated['company_name'] = $company->name;
+        }
 
         $jobOffer->update($validated);
 
