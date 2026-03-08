@@ -89,11 +89,13 @@
             .then(data => {
                 if (data.status === 'success') {
                     if (typeof openConversationModal === 'function') {
-                        const name = document.querySelector('#message-modal-body .font-semibold').innerText;
+                        const nameElement = document.querySelector('#contact-name-display');
+                        const name = nameElement ? nameElement.innerText.trim() : 'Chat';
+                        const accountType = nameElement ? nameElement.dataset.accountType : 'job_seeker';
                         const avatarImg = document.querySelector('#message-modal-body img');
                         const avatar = avatarImg ? avatarImg.getAttribute('src').replace('/storage/', '').replace(window.location.origin, '') : null;
 
-                        openConversationModal(userId, name, avatar);
+                        openConversationModal(userId, name, avatar, accountType);
                     } else {
                         hideMessageModal();
                         alert('Message sent!');

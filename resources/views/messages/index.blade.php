@@ -7,7 +7,7 @@
     <div class="max-w-7xl mx-auto">
       <div class="mb-8">
         <h1 class="text-3xl font-bold text-gray-900">Messages</h1>
-        <p class="text-gray-600 mt-1">Your conversation history with employers and job seekers.</p>
+        <p class="text-gray-600 mt-1">Your conversation history.</p>
       </div>
 
       @if($contacts->isEmpty())
@@ -33,7 +33,7 @@
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden divide-y divide-gray-50">
           @foreach($contacts as $contact)
             <div class="p-6 hover:bg-gray-50 transition cursor-pointer flex items-center justify-between group"
-              onclick="openConversationModal({{ $contact['user']->id }}, '{{ $contact['user']->first_name }} {{ $contact['user']->last_name }}', '{{ $contact['user']->avatar }}')">
+              onclick="openConversationModal({{ $contact['user']->id }}, '{{ $contact['user']->account_type === 'admin' ? 'Admin' : $contact['user']->first_name . ' ' . $contact['user']->last_name }}', '{{ $contact['user']->avatar }}', '{{ $contact['user']->account_type }}')">
               <div class="flex items-center flex-1 min-w-0">
                 <div
                   class="shrink-0 h-14 w-14 rounded-full overflow-hidden border-2 border-white shadow-sm ring-2 ring-gray-100 group-hover:ring-blue-100 transition">
@@ -45,8 +45,9 @@
                   @endif
                 </div>
                 <div class="ml-4 flex-1 min-w-0">
-                  <h3 class="text-sm font-bold text-gray-900 truncate mb-1">
-                    {{ $contact['user']->first_name }} {{ $contact['user']->last_name }}
+                  <h3
+                    class="text-sm font-bold truncate mb-1 {{ $contact['user']->account_type === 'admin' ? 'text-red-600' : 'text-gray-900' }}">
+                    {{ $contact['user']->account_type === 'admin' ? 'Admin' : $contact['user']->first_name . ' ' . $contact['user']->last_name }}
                   </h3>
                   <p id="latest-message-preview-{{ $contact['user']->id }}"
                     class="text-sm text-gray-500 truncate {{ $contact['unread_count'] > 0 ? 'font-semibold text-gray-900' : '' }}">

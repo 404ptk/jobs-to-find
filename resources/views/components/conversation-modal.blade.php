@@ -57,12 +57,16 @@
   const replyContent = document.getElementById('conversation-reply-content');
   const receiverIdInput = document.getElementById('conversation-receiver-id');
 
-  function openConversationModal(userId, userName = 'Chat', userAvatar = null) {
+  function openConversationModal(userId, userName = 'Chat', userAvatar = null, accountType = 'job_seeker') {
     if (typeof hideMessageModal === 'function') hideMessageModal();
 
     convModal.classList.remove('hidden');
     convModal.classList.add('flex');
     receiverIdInput.value = userId;
+
+    const isAdmin = accountType === 'admin';
+    const displayName = isAdmin ? 'Admin' : userName;
+    const nameClasses = isAdmin ? 'text-sm font-bold text-red-600' : 'text-sm font-bold text-gray-900';
 
     const avatarSrc = userAvatar ? (userAvatar.startsWith('http') ? userAvatar : `/storage/${userAvatar}`) : '/images/default-avatar.svg';
     convHeaderUser.innerHTML = `
@@ -70,7 +74,7 @@
                 <img src="${avatarSrc}" alt="${userName}" class="h-full w-full object-cover">
             </div>
             <div class="ml-3">
-                <div class="text-sm font-bold text-gray-900">${userName}</div>
+                <div class="${nameClasses}">${displayName}</div>
                 <div class="flex items-center">
                     <span class="flex w-2 h-2 bg-green-500 rounded-full mr-1.5 focus:ring-0"></span>
                     <span class="text-[10px] text-gray-500 font-medium">Online</span>

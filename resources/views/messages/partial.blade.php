@@ -7,7 +7,10 @@
     @endif
   </div>
   <div class="ml-4">
-    <div class="text-sm font-semibold text-gray-900">{{ $user->first_name }} {{ $user->last_name }}</div>
+    <div class="text-sm font-semibold {{ $user->account_type === 'admin' ? 'text-red-600' : 'text-gray-900' }}"
+      id="contact-name-display" data-account-type="{{ $user->account_type }}">
+      {{ $user->account_type === 'admin' ? 'Admin' : $user->first_name . ' ' . $user->last_name }}
+    </div>
     <div class="text-xs text-gray-500">{{ '@' . $user->username }}</div>
   </div>
 </div>

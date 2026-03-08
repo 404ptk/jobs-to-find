@@ -235,7 +235,7 @@ Internal messaging system between users.
 - Job Application management (viewing applicants, downloading CVs, accepting/rejecting)
 - View count information for each offer
 - Offer statistics (Application count, Active offers, Pending offers)
-- **Company Management**: Employers can manage up to 3 separate company profiles, including logos and detailed descriptions.
+- Company Management: Employers can manage up to 3 separate company profiles, including logos and detailed descriptions.
 
 ### Job Seeker Panel
 
