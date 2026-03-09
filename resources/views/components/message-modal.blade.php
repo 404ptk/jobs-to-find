@@ -85,9 +85,9 @@
                 content: content
             })
         })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
+            .then(async response => {
+                const data = await response.json();
+                if (response.ok && data.status === 'success') {
                     if (typeof openConversationModal === 'function') {
                         const nameElement = document.querySelector('#contact-name-display');
                         const name = nameElement ? nameElement.innerText.trim() : 'Chat';
@@ -100,6 +100,8 @@
                         hideMessageModal();
                         alert('Message sent!');
                     }
+                } else {
+                    alert(data.message || 'Failed to send message.');
                 }
             })
             .catch(error => {

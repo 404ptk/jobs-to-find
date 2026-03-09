@@ -63,9 +63,42 @@ class MessageController extends Controller
       'content' => 'required|string',
     ]);
 
+    $senderId = Auth::id();
+    $receiverId = $request->input('receiver_id');
+    $user = Auth::user();
+
+    $conversationExists = Message::where(function ($q) use ($senderId, $receiverId) {
+      $q->where('sender_id', $senderId)->where('receiver_id', $receiverId);
+    })->orWhere(function ($q) use ($senderId, $receiverId) {
+      $q->where('sender_id', $receiverId)->where('receiver_id', $senderId);
+    })->exists();
+
+    if (!$conversationExists) {
+      if ($user->account_type === 'job_seeker') {
+        return response()->json([
+          'status' => 'error',
+          'message' => 'Job seekers cannot initiate new conversations.'
+        ], 403);
+      }
+
+      if ($user->account_type === 'employer') {
+        $hasApplied = Application::where('user_id', $receiverId)
+          ->whereHas('jobOffer', function ($query) use ($senderId) {
+            $query->where('user_id', $senderId);
+          })->exists();
+
+        if (!$hasApplied) {
+          return response()->json([
+            'status' => 'error',
+            'message' => 'Employers can only initiate conversations with candidates who have applied to their job offers.'
+          ], 403);
+        }
+      }
+    }
+
     $message = Message::create([
-      'sender_id' => Auth::id(),
-      'receiver_id' => $request->input('receiver_id'),
+      'sender_id' => $senderId,
+      'receiver_id' => $receiverId,
       'content' => $request->input('content'),
     ]);
 
