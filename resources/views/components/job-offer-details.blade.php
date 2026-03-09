@@ -3,8 +3,16 @@
     <div class="bg-gradient-to-r from-blue-600 to-blue-700 px-8 py-8 text-white">
         <div class="flex items-start justify-between mb-4">
             <div class="flex-1">
-                <h1 class="text-3xl font-bold mb-3">{{ $jobOffer->title }}</h1>
-                <p class="text-xl text-blue-100 mb-4">{{ $jobOffer->company_name }}</p>
+                <div class="flex items-center gap-4 mb-3">
+                    @if($jobOffer->company && $jobOffer->company->logo_path)
+                        <img src="{{ asset('storage/' . $jobOffer->company->logo_path) }}"
+                            alt="{{ $jobOffer->company->name }}" class="w-16 h-16 rounded-lg object-cover bg-white p-1">
+                    @endif
+                    <div>
+                        <h1 class="text-3xl font-bold">{{ $jobOffer->title }}</h1>
+                        <p class="text-xl text-blue-100">{{ $jobOffer->company_name }}</p>
+                    </div>
+                </div>
 
                 <div class="flex flex-wrap gap-4 text-sm">
                     <div class="flex items-center">
@@ -219,28 +227,50 @@
                         </div>
                     </div>
 
-                    <div class="bg-white rounded-lg border border-gray-200 p-6">
-                        <h3 class="text-lg font-bold text-gray-900 mb-4">About the Company</h3>
-                        <div class="flex items-center mb-4">
-                            <div
-                                class="h-12 w-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold text-xl mr-4">
-                                {{ strtoupper(substr($jobOffer->company_name, 0, 1)) }}
+                    <div class="bg-gray-50 rounded-lg p-6 mb-6">
+                        <h3 class="text-lg font-bold text-gray-900 mb-4">About Company</h3>
+                        <p class="font-medium text-gray-900 mb-2">{{ $jobOffer->company_name }}</p>
+                        @if($jobOffer->company)
+                            <p class="text-sm text-gray-600 mb-4">{{ $jobOffer->company->description }}</p>
+                            <div class="text-sm text-gray-600 space-y-2 mb-4">
+                                <div class="flex items-center">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    </svg>
+                                    {{ $jobOffer->company->location }}
+                                </div>
+                                @if($jobOffer->company->founded_at)
+                                    <div class="flex items-center">
+                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                        </svg>
+                                        Founded in {{ $jobOffer->company->founded_at }}
+                                    </div>
+                                @endif
                             </div>
-                            <div>
-                                <h4 class="font-semibold text-gray-900">{{ $jobOffer->company_name }}</h4>
-                                <a href="#" class="text-sm text-blue-600 hover:underline">View all jobs</a>
-                            </div>
-                        </div>
-                        @if($jobOffer->company_website)
-                            <a href="{{ $jobOffer->company_website }}" target="_blank"
-                                class="text-sm text-gray-600 hover:text-blue-600 flex items-center">
-                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                                </svg>
-                                Visit Website
-                            </a>
                         @endif
+
+                        <div class="flex flex-col gap-2">
+                            <a href="{{ route('search', ['search' => $jobOffer->company_name]) }}"
+                                class="text-sm text-blue-600 hover:text-blue-700 font-medium transition flex items-center">
+                                View all jobs from this company &rarr;
+                            </a>
+
+                            @if($jobOffer->company_website)
+                                <a href="{{ $jobOffer->company_website }}" target="_blank"
+                                    class="text-sm text-gray-600 hover:text-blue-600 flex items-center">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                    </svg>
+                                    Visit Website
+                                </a>
+                            @endif
+                        </div>
                     </div>
                 </div>
 
@@ -312,11 +342,11 @@
                                 </p>
                                 <div class="mt-4 text-center">
                                     <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium
-                                                                            @if($existingApplication->status === 'pending') bg-yellow-100 text-yellow-800
-                                                                            @elseif($existingApplication->status === 'reviewed') bg-blue-100 text-blue-800
-                                                                            @elseif($existingApplication->status === 'accepted') bg-green-100 text-green-800
-                                                                            @elseif($existingApplication->status === 'rejected') bg-red-100 text-red-800
-                                                                            @endif">
+                                                                                                    @if($existingApplication->status === 'pending') bg-yellow-100 text-yellow-800
+                                                                                                    @elseif($existingApplication->status === 'reviewed') bg-blue-100 text-blue-800
+                                                                                                    @elseif($existingApplication->status === 'accepted') bg-green-100 text-green-800
+                                                                                                    @elseif($existingApplication->status === 'rejected') bg-red-100 text-red-800
+                                                                                                    @endif">
                                         Status: {{ ucfirst($existingApplication->status) }}
                                     </span>
                                 </div>
@@ -336,6 +366,7 @@
                                 </button>
                             </div>
                         @endif
+                    @elseif(Auth::user()->account_type === 'admin')
                         <div class="bg-red-50 border border-red-200 rounded-lg p-6">
                             <h3 class="text-lg font-semibold text-gray-900 mb-3">Administrator Actions</h3>
                             <p class="text-gray-700 mb-4">Manage this job offer</p>
@@ -349,7 +380,12 @@
                                 Message Employer
                             </button>
 
-                            <button
+                            <form id="delete-offer-form-{{ $jobOffer->id }}"
+                                action="{{ route('admin.delete-offer', $jobOffer->id) }}" method="POST" class="hidden">
+                                @csrf
+                                @method('DELETE')
+                            </form>
+                            <button type="button" data-action="delete" data-offer-id="{{ $jobOffer->id }}"
                                 class="w-full px-6 py-3 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition flex items-center justify-center cursor-pointer">
                                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -428,28 +464,50 @@
                     </div>
                 </div>
 
-                <div class="bg-white rounded-lg border border-gray-200 p-6">
-                    <h3 class="text-lg font-bold text-gray-900 mb-4">About the Company</h3>
-                    <div class="flex items-center mb-4">
-                        <div
-                            class="h-12 w-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold text-xl mr-4">
-                            {{ strtoupper(substr($jobOffer->company_name, 0, 1)) }}
+                <div class="bg-gray-50 rounded-lg p-6">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4">About Company</h3>
+                    <p class="font-medium text-gray-900 mb-2">{{ $jobOffer->company_name }}</p>
+                    @if($jobOffer->company)
+                        <p class="text-sm text-gray-600 mb-4">{{ $jobOffer->company->description }}</p>
+                        <div class="text-sm text-gray-600 space-y-2 mb-4">
+                            <div class="flex items-center">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                                {{ $jobOffer->company->location }}
+                            </div>
+                            @if($jobOffer->company->founded_at)
+                                <div class="flex items-center">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2-2v12a2 2 0 002 2z" />
+                                    </svg>
+                                    Founded in {{ $jobOffer->company->founded_at }}
+                                </div>
+                            @endif
                         </div>
-                        <div>
-                            <h4 class="font-semibold text-gray-900">{{ $jobOffer->company_name }}</h4>
-                            <a href="#" class="text-sm text-blue-600 hover:underline">View all jobs</a>
-                        </div>
-                    </div>
-                    @if($jobOffer->company_website)
-                        <a href="{{ $jobOffer->company_website }}" target="_blank"
-                            class="text-sm text-gray-600 hover:text-blue-600 flex items-center">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                            </svg>
-                            Visit Website
-                        </a>
                     @endif
+
+                    <div class="flex flex-col gap-2">
+                        <a href="{{ route('search', ['search' => $jobOffer->company_name]) }}"
+                            class="text-sm text-blue-600 hover:text-blue-700 font-medium transition flex items-center">
+                            View all jobs from this company &rarr;
+                        </a>
+
+                        @if($jobOffer->company_website)
+                            <a href="{{ $jobOffer->company_website }}" target="_blank"
+                                class="text-sm text-gray-600 hover:text-blue-600 flex items-center">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                </svg>
+                                Visit Website
+                            </a>
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>

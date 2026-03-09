@@ -107,7 +107,7 @@ class JobOfferController extends Controller
 
     public function show($id)
     {
-        $jobOffer = JobOffer::with(['category', 'location', 'user', 'applications'])
+        $jobOffer = JobOffer::with(['category', 'location', 'user', 'applications', 'company'])
             ->where('is_active', true)
             ->findOrFail($id);
 

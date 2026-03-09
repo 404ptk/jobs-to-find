@@ -147,7 +147,7 @@ class AdminController extends Controller
 
     public function offerPartial($id)
     {
-        $jobOffer = JobOffer::with(['category', 'location', 'user'])->findOrFail($id);
+        $jobOffer = JobOffer::with(['category', 'location', 'user', 'company'])->findOrFail($id);
         return view('components.job-offer-details', compact('jobOffer'));
     }
 

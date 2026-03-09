@@ -528,14 +528,29 @@
     const deleteConfirm = document.getElementById('delete-modal-confirm');
     const deleteOverlay = document.getElementById('delete-modal-overlay');
 
+    function showDeleteModal() {
+        if (!deleteModal) return;
+        deleteModal.classList.remove('hidden');
+        deleteModal.classList.add('flex');
+        setTimeout(() => {
+            deleteModalContent.classList.remove('scale-95', 'opacity-0');
+            deleteModalContent.classList.add('scale-100', 'opacity-100');
+        }, 10);
+    }
+
+    document.querySelectorAll('[data-action="delete"]').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            const offerId = this.getAttribute('data-offer-id');
+            currentFormId = 'delete-offer-form-' + offerId;
+            showDeleteModal();
+        });
+    });
+
     if (deleteBtn) {
         deleteBtn.addEventListener('click', function() {
-            deleteModal.classList.remove('hidden');
-            deleteModal.classList.add('flex');
-            setTimeout(() => {
-                deleteModalContent.classList.remove('scale-95', 'opacity-0');
-                deleteModalContent.classList.add('scale-100', 'opacity-100');
-            }, 10);
+            currentFormId = 'delete-offer-form';
+            showDeleteModal();
         });
     }
 

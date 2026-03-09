@@ -80,7 +80,7 @@ class ApplicationController extends Controller
 
         $perPage = $request->input('per_page', 9);
 
-        $applications = Application::with(['jobOffer.category', 'jobOffer.location', 'jobOffer.applications'])
+        $applications = Application::with(['jobOffer.category', 'jobOffer.location', 'jobOffer.applications', 'jobOffer.company'])
             ->where('user_id', Auth::id())
             ->orderBy('created_at', 'desc')
             ->paginate($perPage);
