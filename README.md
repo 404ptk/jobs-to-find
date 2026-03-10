@@ -278,9 +278,7 @@ Internal messaging system between users.
 ### Notification System
 
 - No email notifications
-- No in-app notifications
 - No notifications about new offers matching profile
-- No notifications about application status changes
 
 ### Job Seeker Profile
 
