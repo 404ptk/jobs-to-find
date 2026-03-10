@@ -207,5 +207,6 @@
     <x-message-modal />
     <x-conversation-modal />
     <x-notifications-modal />
+    @stack('scripts')
 </body>
 </html>
