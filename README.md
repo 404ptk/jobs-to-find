@@ -24,6 +24,10 @@ A web application for publishing and searching job offers, built with Laravel fr
 
 ![Messages](images/jtf-messages.png)
 
+### Notifications
+
+![Notifications](images/jtf-notifications.png)
+
 ### Employer Panel - My Offers
 
 ![My Offers](images/jtf-myoffers.png)
