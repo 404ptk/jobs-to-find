@@ -33,8 +33,8 @@ class JobOfferFactory extends Factory
             'salary_max' => $salaryMax,
             'currency' => 'PLN', // Default currency
             'employment_type' => fake()->randomElement($employmentTypes),
-            'category_id' => Category::inRandomOrder()->first()->id ?? 1,
-            'location_id' => Location::inRandomOrder()->first()->id ?? 1,
+            'category_id' => Category::factory(),
+            'location_id' => Location::factory(),
             'is_active' => true,
             'is_approved' => true,
             'expires_at' => fake()->dateTimeBetween('now', '+3 months'),
