@@ -167,8 +167,9 @@ class JobOfferController extends Controller
         $locations = \App\Models\Location::orderBy('country')->orderBy('city')->get();
         $employmentTypes = ['full-time', 'part-time', 'contract', 'internship'];
         $companies = Auth::user()->companies;
+        $skills = \App\Models\Skill::orderBy('name')->get();
 
-        return view('employer.create-offer', compact('categories', 'locations', 'employmentTypes', 'companies'));
+        return view('employer.create-offer', compact('categories', 'locations', 'employmentTypes', 'companies', 'skills'));
     }
 
     public function store(Request $request)
@@ -189,6 +190,8 @@ class JobOfferController extends Controller
             'category_id' => ['required', 'exists:categories,id'],
             'location_id' => ['required', 'exists:locations,id'],
             'expires_at' => ['required', 'date', 'after:today'],
+            'skills' => ['nullable', 'array'],
+            'skills.*' => ['exists:skills,id'],
         ], [
             'title.regex' => 'Title can only contain letters, numbers, spaces, and hyphens.',
             'company_name.regex' => 'Company name can only contain letters, numbers, spaces, and hyphens.',
@@ -201,12 +204,16 @@ class JobOfferController extends Controller
             $validated['company_name'] = $company->name;
         }
 
+        $skillIds = $validated['skills'] ?? [];
+        unset($validated['skills']);
+
         $validated['user_id'] = Auth::id();
         $validated['is_active'] = true;
         $validated['is_approved'] = false;
         $validated['currency'] = 'EUR';
 
-        JobOffer::create($validated);
+        $jobOffer = JobOffer::create($validated);
+        $jobOffer->skills()->sync($skillIds);
 
         return redirect()->route('my-offers')->with('success', 'Job offer created successfully! It will be visible after admin approval.');
     }

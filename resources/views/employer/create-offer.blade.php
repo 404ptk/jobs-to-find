@@ -198,6 +198,38 @@
                         <p class="mt-1 text-sm text-gray-500">Press Enter for line breaks</p>
                     </div>
 
+                    <div class="mb-8">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Skills <span class="text-gray-400">(optional)</span>
+                        </label>
+                        <p class="text-sm text-gray-500 mb-3">Select relevant skills for this position</p>
+                        
+                        <div class="relative mb-3">
+                            <input type="text" id="skills-search" placeholder="Search skills..."
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                autocomplete="off">
+                            <svg class="w-5 h-5 absolute right-3 top-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                            </svg>
+                        </div>
+
+                        <div id="selected-skills" class="flex flex-wrap gap-2 mb-3"></div>
+
+                        <div id="skills-list" class="max-h-48 overflow-y-auto border border-gray-200 rounded-lg p-2 bg-gray-50">
+                            @foreach($skills as $skill)
+                                <label class="skill-item flex items-center px-3 py-2 hover:bg-white rounded cursor-pointer transition" data-name="{{ strtolower($skill->name) }}">
+                                    <input type="checkbox" name="skills[]" value="{{ $skill->id }}" 
+                                        class="skill-checkbox w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 cursor-pointer"
+                                        {{ in_array($skill->id, old('skills', [])) ? 'checked' : '' }}>
+                                    <span class="ml-3 text-sm text-gray-700">{{ $skill->name }}</span>
+                                </label>
+                            @endforeach
+                        </div>
+                        @error('skills')
+                            <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                        @enderror
+                    </div>
+
                     <div class="flex items-center justify-end space-x-4">
                         <a href="{{ route('my-offers') }}"
                             class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium">
@@ -235,6 +267,42 @@
     document.addEventListener('DOMContentLoaded', function() {
         const select = document.getElementById('company_id');
         if (select) handleCompanyChange(select);
+
+        const searchInput = document.getElementById('skills-search');
+        const skillItems = document.querySelectorAll('.skill-item');
+        const checkboxes = document.querySelectorAll('.skill-checkbox');
+        const selectedContainer = document.getElementById('selected-skills');
+
+        searchInput.addEventListener('input', function() {
+            const query = this.value.toLowerCase();
+            skillItems.forEach(item => {
+                const name = item.dataset.name;
+                item.style.display = name.includes(query) ? '' : 'none';
+            });
+        });
+
+        function renderSelectedSkills() {
+            selectedContainer.innerHTML = '';
+            checkboxes.forEach(cb => {
+                if (cb.checked) {
+                    const name = cb.closest('.skill-item').querySelector('span').textContent.trim();
+                    const tag = document.createElement('span');
+                    tag.className = 'inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-800 text-sm font-medium rounded-full';
+                    tag.innerHTML = `${name}<button type="button" class="ml-1 hover:text-blue-600 cursor-pointer" data-id="${cb.value}">&times;</button>`;
+                    tag.querySelector('button').addEventListener('click', function() {
+                        cb.checked = false;
+                        renderSelectedSkills();
+                    });
+                    selectedContainer.appendChild(tag);
+                }
+            });
+        }
+
+        checkboxes.forEach(cb => {
+            cb.addEventListener('change', renderSelectedSkills);
+        });
+
+        renderSelectedSkills();
     });
 </script>
 
