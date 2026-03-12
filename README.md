@@ -282,7 +282,6 @@ Internal messaging system between users.
 
 ### Job Seeker Profile
 
-- No employment history
 - No job alerts
 
 ### User Verification
