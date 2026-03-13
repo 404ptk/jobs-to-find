@@ -24,9 +24,11 @@ class JobOfferSeeder extends Seeder
         }
 
         $allSkills = \App\Models\Skill::all();
+        $allCategories = \App\Models\Category::all();
+        $allLocations = \App\Models\Location::all();
 
-        if ($allSkills->isEmpty()) {
-            $this->command->error('No skills found. Please run SkillSeeder first.');
+        if ($allSkills->isEmpty() || $allCategories->isEmpty() || $allLocations->isEmpty()) {
+            $this->command->error('Resources not found. Please run SkillSeeder, CategorySeeder, and LocationSeeder first.');
             return;
         }
 
@@ -186,6 +188,8 @@ class JobOfferSeeder extends Seeder
             foreach ($employers as $emp) {
                 $offers = \App\Models\JobOffer::factory()->count(rand(2, 5))->create([
                     'user_id' => $emp->id,
+                    'category_id' => $allCategories->random()->id,
+                    'location_id' => $allLocations->random()->id,
                     'is_approved' => true,
                     'company_name' => fake()->company(),
                 ]);
@@ -198,6 +202,8 @@ class JobOfferSeeder extends Seeder
 
                 $pending = \App\Models\JobOffer::factory()->count(rand(0, 2))->create([
                     'user_id' => $emp->id,
+                    'category_id' => $allCategories->random()->id,
+                    'location_id' => $allLocations->random()->id,
                     'is_approved' => false,
                     'company_name' => fake()->company(),
                 ]);
@@ -220,6 +226,8 @@ class JobOfferSeeder extends Seeder
 
                 $offer = \App\Models\JobOffer::factory()->create([
                     'user_id' => $emp->id,
+                    'category_id' => $allCategories->random()->id,
+                    'location_id' => $allLocations->random()->id,
                     'is_approved' => true,
                     'company_name' => fake()->company(),
                     'created_at' => $randomDate,
