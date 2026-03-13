@@ -23,129 +23,160 @@ class JobOfferSeeder extends Seeder
             return;
         }
 
+        $allSkills = \App\Models\Skill::all();
+
+        if ($allSkills->isEmpty()) {
+            $this->command->error('No skills found. Please run SkillSeeder first.');
+            return;
+        }
+
         $jobOffers = [
             [
-                'user_id' => $employer->id,
-                'title' => 'Senior Full Stack Developer',
-                'description' => 'We are looking for an experienced Full Stack Developer to join our growing team. You will be responsible for developing and maintaining web applications using modern technologies. This is a great opportunity to work on exciting projects with a talented team in a dynamic environment.',
-                'requirements' => '- 5+ years of experience in web development
+                'data' => [
+                    'user_id' => $employer->id,
+                    'title' => 'Senior Full Stack Developer',
+                    'description' => 'We are looking for an experienced Full Stack Developer to join our growing team. You will be responsible for developing and maintaining web applications using modern technologies. This is a great opportunity to work on exciting projects with a talented team in a dynamic environment.',
+                    'requirements' => '- 5+ years of experience in web development
                 - Strong knowledge of PHP, Laravel, JavaScript, React
                 - Experience with RESTful APIs and microservices
                 - Knowledge of SQL and NoSQL databases
                 - Excellent problem-solving skills
                 - Good communication skills in English',
-                'company_name' => 'TechVision Solutions',
-                'salary_min' => 12000,
-                'salary_max' => 18000,
-                'currency' => 'EUR',
-                'employment_type' => 'full-time',
-                'category_id' => 1, // IT & Software
-                'location_id' => 1, // Warsaw
-                'is_active' => true,
-                'is_approved' => true,
-                'expires_at' => Carbon::now()->addMonths(2),
-                'created_at' => now(),
-                'updated_at' => now(),
+                    'company_name' => 'TechVision Solutions',
+                    'salary_min' => 12000,
+                    'salary_max' => 18000,
+                    'currency' => 'EUR',
+                    'employment_type' => 'full-time',
+                    'category_id' => 1, // IT & Software
+                    'location_id' => 1, // Warsaw
+                    'is_active' => true,
+                    'is_approved' => true,
+                    'expires_at' => Carbon::now()->addMonths(2),
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ],
+                'skills' => ['PHP', 'Laravel', 'JavaScript', 'React', 'SQL']
             ],
             [
-                'user_id' => $employer->id,
-                'title' => 'Junior Frontend Developer',
-                'description' => 'Join our team as a Junior Frontend Developer! This is an excellent opportunity for someone starting their career in web development. You will work on creating responsive and user-friendly interfaces while learning from experienced developers.',
-                'requirements' => '- 1+ year of experience with HTML, CSS, JavaScript
+                'data' => [
+                    'user_id' => $employer->id,
+                    'title' => 'Junior Frontend Developer',
+                    'description' => 'Join our team as a Junior Frontend Developer! This is an excellent opportunity for someone starting their career in web development. You will work on creating responsive and user-friendly interfaces while learning from experienced developers.',
+                    'requirements' => '- 1+ year of experience with HTML, CSS, JavaScript
                 - Basic knowledge of React or Vue.js
                 - Understanding of responsive design
                 - Willingness to learn and grow
                 - Team player attitude
                 - English level: B2 or higher',
-                'company_name' => 'TechVision Solutions',
-                'salary_min' => 5000,
-                'salary_max' => 7000,
-                'currency' => 'EUR',
-                'employment_type' => 'full-time',
-                'category_id' => 1, // IT & Software
-                'location_id' => 7, // Remote
-                'is_active' => true,
-                'is_approved' => true,
-                'expires_at' => Carbon::now()->addMonths(1),
-                'created_at' => now(),
-                'updated_at' => now(),
+                    'company_name' => 'TechVision Solutions',
+                    'salary_min' => 5000,
+                    'salary_max' => 7000,
+                    'currency' => 'EUR',
+                    'employment_type' => 'full-time',
+                    'category_id' => 1, // IT & Software
+                    'location_id' => 7, // Remote
+                    'is_active' => true,
+                    'is_approved' => true,
+                    'expires_at' => Carbon::now()->addMonths(1),
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ],
+                'skills' => ['HTML', 'CSS', 'JavaScript', 'React']
             ],
             [
-                'user_id' => $employer->id,
-                'title' => 'Marketing Specialist - Internship',
-                'description' => 'We offer an internship position for students or recent graduates interested in digital marketing. You will have the opportunity to work on real marketing campaigns, create content, and analyze market trends under the guidance of experienced marketers.',
-                'requirements' => '- Currently studying Marketing, Business, or related field
+                'data' => [
+                    'user_id' => $employer->id,
+                    'title' => 'Marketing Specialist - Internship',
+                    'description' => 'We offer an internship position for students or recent graduates interested in digital marketing. You will have the opportunity to work on real marketing campaigns, create content, and analyze market trends under the guidance of experienced marketers.',
+                    'requirements' => '- Currently studying Marketing, Business, or related field
                 - Basic knowledge of social media platforms
                 - Creative thinking and good writing skills
                 - Proficiency in MS Office
                 - Eagerness to learn digital marketing tools
                 - Good English communication skills',
-                'company_name' => 'TechVision Solutions',
-                'salary_min' => 3000,
-                'salary_max' => 4000,
-                'currency' => 'EUR',
-                'employment_type' => 'internship',
-                'category_id' => 2, // Marketing
-                'location_id' => 2, // Krakow
-                'is_active' => true,
-                'is_approved' => true,
-                'expires_at' => Carbon::now()->addMonths(1),
-                'created_at' => now(),
-                'updated_at' => now(),
+                    'company_name' => 'TechVision Solutions',
+                    'salary_min' => 3000,
+                    'salary_max' => 4000,
+                    'currency' => 'EUR',
+                    'employment_type' => 'internship',
+                    'category_id' => 2, // Marketing
+                    'location_id' => 2, // Krakow
+                    'is_active' => true,
+                    'is_approved' => true,
+                    'expires_at' => Carbon::now()->addMonths(1),
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ],
+                'skills' => ['Communication', 'Teamwork', 'Creativity']
             ],
         ];
 
         $pendingOffers = [
             [
-                'user_id' => $employerTom->id,
-                'title' => 'DevOps Engineer',
-                'description' => 'We are seeking a talented DevOps Engineer to join our innovative startup. You will be responsible for building and maintaining our cloud infrastructure, implementing CI/CD pipelines, and ensuring system reliability and scalability.',
-                'requirements' => '- 3+ years of experience in DevOps/SRE
+                'data' => [
+                    'user_id' => $employerTom->id,
+                    'title' => 'DevOps Engineer',
+                    'description' => 'We are seeking a talented DevOps Engineer to join our innovative startup. You will be responsible for building and maintaining our cloud infrastructure, implementing CI/CD pipelines, and ensuring system reliability and scalability.',
+                    'requirements' => '- 3+ years of experience in DevOps/SRE
                 - Strong knowledge of AWS or Azure
                 - Experience with Docker and Kubernetes
                 - Proficiency in scripting (Python, Bash)
                 - Experience with CI/CD tools (Jenkins, GitLab CI)
                 - Understanding of monitoring and logging systems',
-                'company_name' => 'CloudTech Innovations',
-                'salary_min' => 8000,
-                'salary_max' => 12000,
-                'currency' => 'EUR',
-                'employment_type' => 'full-time',
-                'category_id' => 1, // IT & Software
-                'location_id' => 7, // Remote
-                'is_active' => true,
-                'is_approved' => false,
-                'expires_at' => Carbon::now()->addMonths(2),
-                'created_at' => now(),
-                'updated_at' => now(),
+                    'company_name' => 'CloudTech Innovations',
+                    'salary_min' => 8000,
+                    'salary_max' => 12000,
+                    'currency' => 'EUR',
+                    'employment_type' => 'full-time',
+                    'category_id' => 1, // IT & Software
+                    'location_id' => 7, // Remote
+                    'is_active' => true,
+                    'is_approved' => false,
+                    'expires_at' => Carbon::now()->addMonths(2),
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ],
+                'skills' => ['Docker', 'Kubernetes', 'AWS', 'Linux', 'Jenkins']
             ],
             [
-                'user_id' => $employerTom->id,
-                'title' => 'UI/UX Designer',
-                'description' => 'Join our creative team as a UI/UX Designer! You will work on designing beautiful and intuitive user interfaces for our web and mobile applications. This is a great opportunity to shape the user experience of cutting-edge products.',
-                'requirements' => '- 2+ years of experience in UI/UX design
+                'data' => [
+                    'user_id' => $employerTom->id,
+                    'title' => 'UI/UX Designer',
+                    'description' => 'Join our creative team as a UI/UX Designer! You will work on designing beautiful and intuitive user interfaces for our web and mobile applications. This is a great opportunity to shape the user experience of cutting-edge products.',
+                    'requirements' => '- 2+ years of experience in UI/UX design
                 - Proficiency in Figma or Adobe XD
                 - Strong portfolio showcasing web/mobile designs
                 - Understanding of user-centered design principles
                 - Knowledge of HTML/CSS is a plus
                 - Excellent communication and collaboration skills',
-                'company_name' => 'CloudTech Innovations',
-                'salary_min' => 6000,
-                'salary_max' => 9000,
-                'currency' => 'EUR',
-                'employment_type' => 'full-time',
-                'category_id' => 3, // Design & Creative
-                'location_id' => 7, // Remote
-                'is_active' => true,
-                'is_approved' => false,
-                'expires_at' => Carbon::now()->addMonths(1),
-                'created_at' => now(),
-                'updated_at' => now(),
+                    'company_name' => 'CloudTech Innovations',
+                    'salary_min' => 6000,
+                    'salary_max' => 9000,
+                    'currency' => 'EUR',
+                    'employment_type' => 'full-time',
+                    'category_id' => 3, // Design & Creative
+                    'location_id' => 7, // Remote
+                    'is_active' => true,
+                    'is_approved' => false,
+                    'expires_at' => Carbon::now()->addMonths(1),
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ],
+                'skills' => ['UI/UX Design', 'Figma', 'Adobe XD', 'Photoshop']
             ],
         ];
 
-        DB::table('job_offers')->insert($jobOffers);
-        DB::table('job_offers')->insert($pendingOffers);
+        foreach ($jobOffers as $offerData) {
+            $offer = \App\Models\JobOffer::create($offerData['data']);
+            $skillIds = $allSkills->whereIn('name', $offerData['skills'])->pluck('id');
+            $offer->skills()->attach($skillIds);
+        }
+
+        foreach ($pendingOffers as $offerData) {
+            $offer = \App\Models\JobOffer::create($offerData['data']);
+            $skillIds = $allSkills->whereIn('name', $offerData['skills'])->pluck('id');
+            $offer->skills()->attach($skillIds);
+        }
 
         $this->command->info('Job offers created successfully for employer_anna and employer_tom!');
 
@@ -153,17 +184,29 @@ class JobOfferSeeder extends Seeder
 
         if ($employers->count() > 0) {
             foreach ($employers as $emp) {
-                \App\Models\JobOffer::factory()->count(rand(2, 5))->create([
+                $offers = \App\Models\JobOffer::factory()->count(rand(2, 5))->create([
                     'user_id' => $emp->id,
                     'is_approved' => true,
                     'company_name' => fake()->company(),
                 ]);
 
-                \App\Models\JobOffer::factory()->count(rand(0, 2))->create([
+                foreach ($offers as $offer) {
+                    if (rand(1, 10) > 3) {
+                        $offer->skills()->attach($allSkills->random(rand(2, 6))->pluck('id'));
+                    }
+                }
+
+                $pending = \App\Models\JobOffer::factory()->count(rand(0, 2))->create([
                     'user_id' => $emp->id,
                     'is_approved' => false,
                     'company_name' => fake()->company(),
                 ]);
+
+                foreach ($pending as $offer) {
+                    if (rand(1, 10) > 4) {
+                        $offer->skills()->attach($allSkills->random(rand(1, 4))->pluck('id'));
+                    }
+                }
             }
             $this->command->info('Additional job offers generated for other employers.');
         }
@@ -175,7 +218,7 @@ class JobOfferSeeder extends Seeder
                 $randomDate = now()->subMonths(rand(1, 11))->subDays(rand(0, 27));
                 $emp = $allEmployers->random();
 
-                \App\Models\JobOffer::factory()->create([
+                $offer = \App\Models\JobOffer::factory()->create([
                     'user_id' => $emp->id,
                     'is_approved' => true,
                     'company_name' => fake()->company(),
@@ -183,15 +226,21 @@ class JobOfferSeeder extends Seeder
                     'updated_at' => $randomDate,
                     'expires_at' => $randomDate->copy()->addMonths(rand(1, 3)),
                 ]);
+
+                if (rand(1, 10) > 3) {
+                    $offer->skills()->attach($allSkills->random(rand(2, 5))->pluck('id'));
+                }
             }
             $this->command->info('Additional 30 historical job offers created across the last 12 months.');
         }
 
         $allOffers = \App\Models\JobOffer::all();
         foreach ($allOffers as $offer) {
-            $offer->update([
-                'views_count' => rand(15, 2500),
-            ]);
+            if ($offer->views_count === 0) {
+                $offer->update([
+                    'views_count' => rand(15, 2500),
+                ]);
+            }
         }
         $this->command->info('Random views added to all job offers.');
     }
