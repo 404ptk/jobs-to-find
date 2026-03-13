@@ -185,6 +185,24 @@
                             </div>
                         </section>
 
+                        @if($jobOffer->skills && $jobOffer->skills->count() > 0)
+                            <section>
+                                <h2 class="text-2xl font-bold text-gray-900 mb-4 flex items-center">
+                                    <svg class="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                                    </svg>
+                                    Skills
+                                </h2>
+                                <div class="flex flex-wrap gap-2">
+                                    @foreach($jobOffer->skills as $skill)
+                                        <span class="px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-semibold border border-blue-100 shadow-sm hover:bg-blue-100 transition duration-200">
+                                            {{ $skill->name }}
+                                        </span>
+                                    @endforeach
+                                </div>
+                            </section>
+                        @endif
+
                         @if($jobOffer->requirements)
                             <section>
                                 <h2 class="text-2xl font-bold text-gray-900 mb-4 flex items-center">
