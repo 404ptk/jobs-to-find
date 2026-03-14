@@ -149,7 +149,7 @@
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <input type="number" id="salary_min" name="salary_min" value="{{ old('salary_min') }}"
-                                    step="0.01" min="0"
+                                    step="10" min="0"
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('salary_min') border-red-500 @enderror"
                                     placeholder="Minimum salary">
                                 @error('salary_min')
@@ -158,7 +158,7 @@
                             </div>
                             <div>
                                 <input type="number" id="salary_max" name="salary_max" value="{{ old('salary_max') }}"
-                                    step="0.01" min="0"
+                                    step="10" min="0"
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('salary_max') border-red-500 @enderror"
                                     placeholder="Maximum salary">
                                 @error('salary_max')
