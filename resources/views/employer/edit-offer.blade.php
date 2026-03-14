@@ -56,19 +56,7 @@
                         @enderror
                     </div>
 
-                    <div id="company_name_container"
-                        class="mb-6 {{ old('company_id', $jobOffer->company_id) ? 'hidden' : '' }}">
-                        <label for="company_name" class="block text-sm font-medium text-gray-700 mb-2">
-                            Company Name <span class="text-red-500">*</span>
-                        </label>
-                        <input type="text" id="company_name" name="company_name"
-                            value="{{ old('company_name', $jobOffer->company_name) }}"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('company_name') border-red-500 @enderror"
-                            placeholder="e.g. TechCorp Solutions" required>
-                        @error('company_name')
-                            <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
-                        @enderror
-                    </div>
+
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                         <div>
@@ -271,20 +259,8 @@
 
     <script>
         function handleCompanyChange(select) {
-            const container = document.getElementById('company_name_container');
-            const input = document.getElementById('company_name');
-
             if (select.value === 'create_new') {
                 window.location.href = "{{ route('companies.create') }}";
-                return;
-            }
-
-            if (select.value) {
-                container.classList.add('hidden');
-                input.removeAttribute('required');
-            } else {
-                container.classList.remove('hidden');
-                input.setAttribute('required', 'required');
             }
         }
 

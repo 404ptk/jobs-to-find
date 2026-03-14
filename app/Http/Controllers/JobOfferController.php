@@ -184,8 +184,7 @@ class JobOfferController extends Controller
             'title' => ['required', 'string', 'max:96', 'regex:/^[a-zA-Z0-9\s\-]+$/'],
             'description' => ['required', 'string', 'max:5000'],
             'requirements' => ['required', 'string', 'max:5000'],
-            'company_id' => ['nullable', 'exists:companies,id'],
-            'company_name' => ['required_without:company_id', 'nullable', 'string', 'max:96', 'regex:/^[a-zA-Z0-9\s\-]+$/'],
+            'company_id' => ['required', 'exists:companies,id'],
             'salary_min' => ['nullable', 'numeric', 'min:0'],
             'salary_max' => ['nullable', 'numeric', 'min:0', 'gte:salary_min'],
             'employment_type' => ['required', 'string', 'in:full-time,part-time,contract,internship'],
@@ -196,8 +195,6 @@ class JobOfferController extends Controller
             'skills.*' => ['exists:skills,id'],
         ], [
             'title.regex' => 'Title can only contain letters, numbers, spaces, and hyphens.',
-            'company_name.regex' => 'Company name can only contain letters, numbers, spaces, and hyphens.',
-            'company_name.required_without' => 'Please select a company or provide a company name.',
             'salary_max.gte' => 'Maximum salary must be greater than or equal to minimum salary.',
         ]);
 
@@ -258,8 +255,7 @@ class JobOfferController extends Controller
             'title' => ['required', 'string', 'max:96', 'regex:/^[a-zA-Z0-9\s\-]+$/'],
             'description' => ['required', 'string', 'max:5000'],
             'requirements' => ['required', 'string', 'max:5000'],
-            'company_id' => ['nullable', 'exists:companies,id'],
-            'company_name' => ['required_without:company_id', 'nullable', 'string', 'max:96', 'regex:/^[a-zA-Z0-9\s\-]+$/'],
+            'company_id' => ['required', 'exists:companies,id'],
             'salary_min' => ['nullable', 'numeric', 'min:0'],
             'salary_max' => ['nullable', 'numeric', 'min:0', 'gte:salary_min'],
             'employment_type' => ['required', 'string', 'in:full-time,part-time,contract,internship'],
@@ -268,8 +264,6 @@ class JobOfferController extends Controller
             'expires_at' => ['required', 'date', 'after:today'],
         ], [
             'title.regex' => 'Title can only contain letters, numbers, spaces, and hyphens.',
-            'company_name.regex' => 'Company name can only contain letters, numbers, spaces, and hyphens.',
-            'company_name.required_without' => 'Please select a company or provide a company name.',
             'salary_max.gte' => 'Maximum salary must be greater than or equal to minimum salary.',
         ]);
 
