@@ -14,7 +14,28 @@ class Category extends Model
         'name',
         'slug',
         'description',
+        'parent_id',
     ];
+
+    public function parent()
+    {
+        return $this->belongsTo(Category::class, 'parent_id');
+    }
+
+    public function children()
+    {
+        return $this->hasMany(Category::class, 'parent_id');
+    }
+
+    public function scopeIsParent($query)
+    {
+        return $query->whereNull('parent_id');
+    }
+
+    public function scopeIsChild($query)
+    {
+        return $query->whereNotNull('parent_id');
+    }
 
     public function jobOffers(): HasMany
     {

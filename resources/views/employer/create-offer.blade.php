@@ -69,16 +69,34 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                         <div>
+                            <label for="parent_category" class="block text-sm font-medium text-gray-700 mb-2">
+                                Main Category <span class="text-red-500">*</span>
+                            </label>
+                            <select id="parent_category" name="parent_category"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                required>
+                                <option value="">Select category</option>
+                                @foreach($parentCategories as $parent)
+                                    <option value="{{ $parent->id }}" {{ old('parent_category') == $parent->id ? 'selected' : '' }}>
+                                        {{ $parent->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div>
                             <label for="category_id" class="block text-sm font-medium text-gray-700 mb-2">
-                                Category <span class="text-red-500">*</span>
+                                Position <span class="text-red-500">*</span>
                             </label>
                             <select id="category_id" name="category_id"
                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('category_id') border-red-500 @enderror"
                                 required>
-                                <option value="">Select category</option>
-                                @foreach($categories as $category)
-                                    <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
-                                        {{ $category->name }}
+                                <option value="">Select position</option>
+                                @foreach($subCategories as $sub)
+                                    <option value="{{ $sub->id }}" 
+                                        data-parent="{{ $sub->parent_id }}"
+                                        {{ old('category_id') == $sub->id ? 'selected' : '' }}>
+                                        {{ $sub->name }}
                                     </option>
                                 @endforeach
                             </select>
@@ -318,6 +336,42 @@
             countrySelect.addEventListener('change', filterCities);
             if (countrySelect.value) {
                 filterCities();
+            }
+        }
+
+        const categorySelect = document.getElementById('parent_category');
+        const positionSelect = document.getElementById('category_id');
+        const positionOptions = Array.from(positionSelect.options);
+
+        function filterPositions() {
+            const selectedParentId = categorySelect.value;
+            const currentPositionId = positionSelect.value;
+            
+            positionSelect.innerHTML = '<option value="">Select position</option>';
+            
+            let positionStillAvailable = false;
+
+            positionOptions.forEach(option => {
+                if (option.value === "") return;
+                if (option.dataset.parent === selectedParentId) {
+                    const newOption = option.cloneNode(true);
+                    if (newOption.value === currentPositionId) {
+                        newOption.selected = true;
+                        positionStillAvailable = true;
+                    }
+                    positionSelect.appendChild(newOption);
+                }
+            });
+
+            if (!positionStillAvailable && currentPositionId !== "") {
+                positionSelect.value = "";
+            }
+        }
+
+        if (categorySelect && positionSelect) {
+            categorySelect.addEventListener('change', filterPositions);
+            if (categorySelect.value) {
+                filterPositions();
             }
         }
 

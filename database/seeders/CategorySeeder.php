@@ -13,49 +13,119 @@ class CategorySeeder extends Seeder
      */
     public function run(): void
     {
+        DB::table('categories')->truncate();
+
         $categories = [
-            [
-                'name' => 'IT & Software',
-                'slug' => 'it-software',
-                'description' => 'Software development, IT support, and technology positions'
+            'IT & Software' => [
+                'Frontend Developer',
+                'Backend Developer',
+                'Full Stack Developer',
+                'Mobile Developer',
+                'DevOps Engineer',
+                'QA Engineer',
+                'Data Scientist',
+                'Database Administrator',
+                'Project Manager (IT)',
+                'Architect',
+                'System Administrator',
+                'Embedded Developer',
+                'Cybersecurity',
+                'Game Developer',
+                'Technical Writer'
             ],
-            [
-                'name' => 'Marketing',
-                'slug' => 'marketing',
-                'description' => 'Digital marketing, content creation, and advertising roles'
+            'Marketing' => [
+                'Content Creator',
+                'SEO Specialist',
+                'Social Media Manager',
+                'Email Marketer',
+                'Brand Manager',
+                'Copywriter',
+                'Performance Marketer',
+                'Public Relations',
+                'Marketing Analyst',
+                'Events Coordinator'
             ],
-            [
-                'name' => 'Finance',
-                'slug' => 'finance',
-                'description' => 'Accounting, financial analysis, and banking positions'
+            'Finance' => [
+                'Accountant',
+                'Financial Analyst',
+                'Tax Advisor',
+                'Auditor',
+                'Investment Banker',
+                'Controller',
+                'Real Estate Analyst',
+                'Insurance Agent',
+                'Billing Specialist',
+                'Risk Manager'
             ],
-            [
-                'name' => 'Healthcare',
-                'slug' => 'healthcare',
-                'description' => 'Medical, nursing, and healthcare administration'
+            'Sales' => [
+                'Sales Representative',
+                'Account Manager',
+                'Business Development',
+                'Store Manager',
+                'E-commerce Manager',
+                'Telemarketer',
+                'Real Estate Agent',
+                'Logistics Specialist',
+                'Merchandiser',
+                'Support Sales'
             ],
-            [
-                'name' => 'Education',
-                'slug' => 'education',
-                'description' => 'Teaching, tutoring, and educational support roles'
+            'Customer Service' => [
+                'Customer Support',
+                'Call Center Agent',
+                'Technical Support',
+                'Support Manager',
+                'Guest Relations',
+                'Client Success Manager',
+                'Moderator',
+                'Concierge',
+                'Complaint Handler',
+                'Personal Assistant'
             ],
-            [
-                'name' => 'Sales',
-                'slug' => 'sales',
-                'description' => 'Sales representatives, account managers, and business development'
+            'Management' => [
+                'CEO / Director',
+                'Operations Manager',
+                'Human Resources',
+                'Team Leader',
+                'Product Manager',
+                'Office Manager',
+                'Business Analyst',
+                'Consultant',
+                'Strategy Manager',
+                'Branch Manager'
             ],
-            [
-                'name' => 'Customer Service',
-                'slug' => 'customer-service',
-                'description' => 'Customer support and service positions'
-            ],
-            [
-                'name' => 'Engineering',
-                'slug' => 'engineering',
-                'description' => 'Mechanical, electrical, and civil engineering roles'
-            ],
+            'Design & Creative' => [
+                'UI/UX Designer',
+                'Graphic Designer',
+                'Motion Designer',
+                'Video Editor',
+                'Illustrator',
+                'Architect / Interior Designer',
+                'Product Designer',
+                'UX Researcher',
+                'Art Director',
+                '3D Artist'
+            ]
         ];
 
-        DB::table('categories')->insert($categories);
+        foreach ($categories as $parentName => $children) {
+            $parentId = DB::table('categories')->insertGetId([
+                'name' => $parentName,
+                'slug' => \Illuminate\Support\Str::slug($parentName),
+                'description' => "Main category for $parentName",
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            foreach ($children as $childName) {
+                DB::table('categories')->insert([
+                    'name' => $childName,
+                    'slug' => \Illuminate\Support\Str::slug($childName),
+                    'description' => "Subcategory $childName for $parentName",
+                    'parent_id' => $parentId,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+        }
     }
 }

@@ -163,14 +163,15 @@ class JobOfferController extends Controller
             abort(403, 'Access denied. Only employers can create job offers.');
         }
 
-        $categories = \App\Models\Category::orderBy('name')->get();
         $locations = \App\Models\Location::orderBy('city')->get();
         $countries = \App\Models\Location::select('country')->distinct()->orderBy('country')->pluck('country');
+        $parentCategories = \App\Models\Category::isParent()->orderBy('name')->get();
+        $subCategories = \App\Models\Category::isChild()->orderBy('name')->get();
         $employmentTypes = ['full-time', 'part-time', 'contract', 'internship'];
         $companies = Auth::user()->companies;
         $skills = \App\Models\Skill::orderBy('name')->get();
 
-        return view('employer.create-offer', compact('categories', 'locations', 'countries', 'employmentTypes', 'companies', 'skills'));
+        return view('employer.create-offer', compact('locations', 'countries', 'parentCategories', 'subCategories', 'employmentTypes', 'companies', 'skills'));
     }
 
     public function store(Request $request)
@@ -231,13 +232,14 @@ class JobOfferController extends Controller
             abort(403, 'Access denied. You can only edit your own job offers.');
         }
 
-        $categories = \App\Models\Category::orderBy('name')->get();
         $locations = \App\Models\Location::orderBy('city')->get();
         $countries = \App\Models\Location::select('country')->distinct()->orderBy('country')->pluck('country');
+        $parentCategories = \App\Models\Category::isParent()->orderBy('name')->get();
+        $subCategories = \App\Models\Category::isChild()->orderBy('name')->get();
         $employmentTypes = ['full-time', 'part-time', 'contract', 'internship'];
         $companies = Auth::user()->companies;
 
-        return view('employer.edit-offer', compact('jobOffer', 'categories', 'locations', 'countries', 'employmentTypes', 'companies'));
+        return view('employer.edit-offer', compact('jobOffer', 'locations', 'countries', 'parentCategories', 'subCategories', 'employmentTypes', 'companies'));
     }
 
     public function update(Request $request, $id)

@@ -24,14 +24,21 @@ class JobOfferSeeder extends Seeder
         }
 
         $allSkills = \App\Models\Skill::all();
-        $allCategories = \App\Models\Category::all();
+        $allParentCategories = \App\Models\Category::isParent()->get();
+        $allSubCategories = \App\Models\Category::isChild()->get();
         $allLocations = \App\Models\Location::all();
 
         $remoteId = \App\Models\Location::where('city', 'Remote')->first()->id;
         $warsawId = \App\Models\Location::where('city', 'Warsaw')->where('country', 'Poland')->first()->id;
         $krakowId = \App\Models\Location::where('city', 'Krakow')->where('country', 'Poland')->first()->id;
 
-        if ($allSkills->isEmpty() || $allCategories->isEmpty() || $allLocations->isEmpty()) {
+        $fullStackId = \App\Models\Category::where('name', 'Full Stack Developer')->first()->id;
+        $frontendId = \App\Models\Category::where('name', 'Frontend Developer')->first()->id;
+        $contentCreatorId = \App\Models\Category::where('name', 'Content Creator')->first()->id;
+        $devOpsId = \App\Models\Category::where('name', 'DevOps Engineer')->first()->id;
+        $uiuxId = \App\Models\Category::where('name', 'UI/UX Designer')->first()->id;
+
+        if ($allSkills->isEmpty() || $allParentCategories->isEmpty() || $allSubCategories->isEmpty() || $allLocations->isEmpty()) {
             $this->command->error('Resources not found. Please run SkillSeeder, CategorySeeder, and LocationSeeder first.');
             return;
         }
@@ -53,7 +60,7 @@ class JobOfferSeeder extends Seeder
                     'salary_max' => 18000,
                     'currency' => 'EUR',
                     'employment_type' => 'full-time',
-                    'category_id' => 1, // IT & Software
+                    'category_id' => $fullStackId,
                     'location_id' => $warsawId,
                     'is_active' => true,
                     'is_approved' => true,
@@ -79,7 +86,7 @@ class JobOfferSeeder extends Seeder
                     'salary_max' => 7000,
                     'currency' => 'EUR',
                     'employment_type' => 'full-time',
-                    'category_id' => 1, // IT & Software
+                    'category_id' => $frontendId,
                     'location_id' => $remoteId,
                     'is_active' => true,
                     'is_approved' => true,
@@ -105,7 +112,7 @@ class JobOfferSeeder extends Seeder
                     'salary_max' => 4000,
                     'currency' => 'EUR',
                     'employment_type' => 'internship',
-                    'category_id' => 2, // Marketing
+                    'category_id' => $contentCreatorId,
                     'location_id' => $krakowId,
                     'is_active' => true,
                     'is_approved' => true,
@@ -134,7 +141,7 @@ class JobOfferSeeder extends Seeder
                     'salary_max' => 12000,
                     'currency' => 'EUR',
                     'employment_type' => 'full-time',
-                    'category_id' => 1, // IT & Software
+                    'category_id' => $devOpsId,
                     'location_id' => $remoteId,
                     'is_active' => true,
                     'is_approved' => false,
@@ -160,7 +167,7 @@ class JobOfferSeeder extends Seeder
                     'salary_max' => 9000,
                     'currency' => 'EUR',
                     'employment_type' => 'full-time',
-                    'category_id' => 3, // Design & Creative
+                    'category_id' => $uiuxId,
                     'location_id' => $remoteId,
                     'is_active' => true,
                     'is_approved' => false,
@@ -192,7 +199,7 @@ class JobOfferSeeder extends Seeder
             foreach ($employers as $emp) {
                 $offers = \App\Models\JobOffer::factory()->count(rand(2, 5))->create([
                     'user_id' => $emp->id,
-                    'category_id' => $allCategories->random()->id,
+                    'category_id' => $allSubCategories->random()->id,
                     'location_id' => $allLocations->random()->id,
                     'is_approved' => true,
                     'company_name' => fake()->company(),
@@ -206,7 +213,7 @@ class JobOfferSeeder extends Seeder
 
                 $pending = \App\Models\JobOffer::factory()->count(rand(0, 2))->create([
                     'user_id' => $emp->id,
-                    'category_id' => $allCategories->random()->id,
+                    'category_id' => $allSubCategories->random()->id,
                     'location_id' => $allLocations->random()->id,
                     'is_approved' => false,
                     'company_name' => fake()->company(),
@@ -230,7 +237,7 @@ class JobOfferSeeder extends Seeder
 
                 $offer = \App\Models\JobOffer::factory()->create([
                     'user_id' => $emp->id,
-                    'category_id' => $allCategories->random()->id,
+                    'category_id' => $allSubCategories->random()->id,
                     'location_id' => $allLocations->random()->id,
                     'is_approved' => true,
                     'company_name' => fake()->company(),
