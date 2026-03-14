@@ -13,7 +13,9 @@ class CategorySeeder extends Seeder
      */
     public function run(): void
     {
+        DB::statement('PRAGMA foreign_keys = OFF');
         DB::table('categories')->truncate();
+        DB::statement('PRAGMA foreign_keys = ON');
 
         $categories = [
             'IT & Software' => [
@@ -26,7 +28,7 @@ class CategorySeeder extends Seeder
                 'Data Scientist',
                 'Database Administrator',
                 'Project Manager (IT)',
-                'Architect',
+                'IT Architect',
                 'System Administrator',
                 'Embedded Developer',
                 'Cybersecurity',
@@ -87,7 +89,7 @@ class CategorySeeder extends Seeder
                 'Human Resources',
                 'Team Leader',
                 'Product Manager',
-                'Office Manager',
+                'Operations / Office Manager',
                 'Business Analyst',
                 'Consultant',
                 'Strategy Manager',
@@ -104,6 +106,102 @@ class CategorySeeder extends Seeder
                 'UX Researcher',
                 'Art Director',
                 '3D Artist'
+            ],
+            'Healthcare & Medical' => [
+                'Nurse',
+                'Doctor / Physician',
+                'Pharmacist',
+                'Physiotherapist',
+                'Medical Assistant',
+                'Dentist',
+                'Psychologist',
+                'Lab Technician',
+                'Paramedic',
+                'Veterinarian'
+            ],
+            'Education & Training' => [
+                'Teacher',
+                'Tutor / Instructor',
+                'Lecturer',
+                'Linguist / Translator',
+                'Education Consultant',
+                'Trainer',
+                'Childcare Provider',
+                'School Administrator',
+                'Researcher',
+                'Coach'
+            ],
+            'Engineering & Construction' => [
+                'Civil Engineer',
+                'Electrical Engineer',
+                'Mechanical Engineer',
+                'Structural Engineer',
+                'Construction Manager',
+                'Construction Architect',
+                'Site Supervisor',
+                'Surveyor',
+                'BIM Coordinator',
+                'Project Engineer'
+            ],
+            'Logistics & Transport' => [
+                'Driver (Truck/Van)',
+                'Logistics Coordinator',
+                'Warehouse Worker',
+                'Supply Chain Manager',
+                'Fleet Manager',
+                'Dispatcher',
+                'Freight Forwarder',
+                'Inventory Controller',
+                'Shipping Clerk',
+                'Delivery Specialist'
+            ],
+            'Human Resources (HR)' => [
+                'Recruiter',
+                'HR Manager',
+                'HR Specialist',
+                'Payroll Specialist',
+                'Compensation & Benefits',
+                'HR Coordinator',
+                'Trainer / L&D',
+                'Talent Acquisition',
+                'Employee Relations',
+                'Employer Branding'
+            ],
+            'Legal & Administrative' => [
+                'Lawyer / Attorney',
+                'Legal Advisor',
+                'Paralegal',
+                'Compliance Officer',
+                'Legal Administrative Assistant',
+                'Secretary / Receptionist',
+                'Legal Office Manager',
+                'Notary',
+                'Corporate Secretary',
+                'Data Protection Officer'
+            ],
+            'Hospitality & Tourism' => [
+                'Chef / Cook',
+                'Waiter / Waitress',
+                'Bartender',
+                'Hotel Manager',
+                'Receptionist',
+                'Event Planner',
+                'Travel Agent',
+                'Housekeeper',
+                'Barista',
+                'Tour Guide'
+            ],
+            'Media & Communication' => [
+                'Journalist',
+                'Editor',
+                'Photographer',
+                'Videographer',
+                'PR Specialist',
+                'Radio / TV Presenter',
+                'Social Media Specialist',
+                'Blogger / Vlogger',
+                'Communications Manager',
+                'Language Translator'
             ]
         ];
 

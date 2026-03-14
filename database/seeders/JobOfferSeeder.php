@@ -15,6 +15,8 @@ class JobOfferSeeder extends Seeder
      */
     public function run(): void
     {
+        DB::table('job_offers')->truncate();
+        DB::table('job_offer_skill')->truncate();
         $employer = User::where('username', 'employer_anna')->first();
         $employerTom = User::where('username', 'employer_tom')->first();
 
