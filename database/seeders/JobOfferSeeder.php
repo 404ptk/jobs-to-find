@@ -27,6 +27,10 @@ class JobOfferSeeder extends Seeder
         $allCategories = \App\Models\Category::all();
         $allLocations = \App\Models\Location::all();
 
+        $remoteId = \App\Models\Location::where('city', 'Remote')->first()->id;
+        $warsawId = \App\Models\Location::where('city', 'Warsaw')->where('country', 'Poland')->first()->id;
+        $krakowId = \App\Models\Location::where('city', 'Krakow')->where('country', 'Poland')->first()->id;
+
         if ($allSkills->isEmpty() || $allCategories->isEmpty() || $allLocations->isEmpty()) {
             $this->command->error('Resources not found. Please run SkillSeeder, CategorySeeder, and LocationSeeder first.');
             return;
@@ -50,7 +54,7 @@ class JobOfferSeeder extends Seeder
                     'currency' => 'EUR',
                     'employment_type' => 'full-time',
                     'category_id' => 1, // IT & Software
-                    'location_id' => 1, // Warsaw
+                    'location_id' => $warsawId,
                     'is_active' => true,
                     'is_approved' => true,
                     'expires_at' => Carbon::now()->addMonths(2),
@@ -76,7 +80,7 @@ class JobOfferSeeder extends Seeder
                     'currency' => 'EUR',
                     'employment_type' => 'full-time',
                     'category_id' => 1, // IT & Software
-                    'location_id' => 7, // Remote
+                    'location_id' => $remoteId,
                     'is_active' => true,
                     'is_approved' => true,
                     'expires_at' => Carbon::now()->addMonths(1),
@@ -102,7 +106,7 @@ class JobOfferSeeder extends Seeder
                     'currency' => 'EUR',
                     'employment_type' => 'internship',
                     'category_id' => 2, // Marketing
-                    'location_id' => 2, // Krakow
+                    'location_id' => $krakowId,
                     'is_active' => true,
                     'is_approved' => true,
                     'expires_at' => Carbon::now()->addMonths(1),
@@ -131,7 +135,7 @@ class JobOfferSeeder extends Seeder
                     'currency' => 'EUR',
                     'employment_type' => 'full-time',
                     'category_id' => 1, // IT & Software
-                    'location_id' => 7, // Remote
+                    'location_id' => $remoteId,
                     'is_active' => true,
                     'is_approved' => false,
                     'expires_at' => Carbon::now()->addMonths(2),
@@ -157,7 +161,7 @@ class JobOfferSeeder extends Seeder
                     'currency' => 'EUR',
                     'employment_type' => 'full-time',
                     'category_id' => 3, // Design & Creative
-                    'location_id' => 7, // Remote
+                    'location_id' => $remoteId,
                     'is_active' => true,
                     'is_approved' => false,
                     'expires_at' => Carbon::now()->addMonths(1),
