@@ -164,12 +164,13 @@ class JobOfferController extends Controller
         }
 
         $categories = \App\Models\Category::orderBy('name')->get();
-        $locations = \App\Models\Location::orderBy('country')->orderBy('city')->get();
+        $locations = \App\Models\Location::orderBy('city')->get();
+        $countries = \App\Models\Location::select('country')->distinct()->orderBy('country')->pluck('country');
         $employmentTypes = ['full-time', 'part-time', 'contract', 'internship'];
         $companies = Auth::user()->companies;
         $skills = \App\Models\Skill::orderBy('name')->get();
 
-        return view('employer.create-offer', compact('categories', 'locations', 'employmentTypes', 'companies', 'skills'));
+        return view('employer.create-offer', compact('categories', 'locations', 'countries', 'employmentTypes', 'companies', 'skills'));
     }
 
     public function store(Request $request)
@@ -231,11 +232,12 @@ class JobOfferController extends Controller
         }
 
         $categories = \App\Models\Category::orderBy('name')->get();
-        $locations = \App\Models\Location::orderBy('country')->orderBy('city')->get();
+        $locations = \App\Models\Location::orderBy('city')->get();
+        $countries = \App\Models\Location::select('country')->distinct()->orderBy('country')->pluck('country');
         $employmentTypes = ['full-time', 'part-time', 'contract', 'internship'];
         $companies = Auth::user()->companies;
 
-        return view('employer.edit-offer', compact('jobOffer', 'categories', 'locations', 'employmentTypes', 'companies'));
+        return view('employer.edit-offer', compact('jobOffer', 'categories', 'locations', 'countries', 'employmentTypes', 'companies'));
     }
 
     public function update(Request $request, $id)

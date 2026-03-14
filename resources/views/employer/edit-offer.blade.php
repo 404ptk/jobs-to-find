@@ -91,16 +91,34 @@
                         </div>
 
                         <div>
+                            <label for="country" class="block text-sm font-medium text-gray-700 mb-2">
+                                Country <span class="text-red-500">*</span>
+                            </label>
+                            <select id="country" name="country"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                required>
+                                <option value="">Select country</option>
+                                @foreach($countries as $country)
+                                    <option value="{{ $country }}" {{ old('country', $jobOffer->location->country) == $country ? 'selected' : '' }}>
+                                        {{ $country }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div>
                             <label for="location_id" class="block text-sm font-medium text-gray-700 mb-2">
-                                Location <span class="text-red-500">*</span>
+                                City <span class="text-red-500">*</span>
                             </label>
                             <select id="location_id" name="location_id"
                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('location_id') border-red-500 @enderror"
                                 required>
-                                <option value="">Select location</option>
+                                <option value="">Select city</option>
                                 @foreach($locations as $location)
-                                    <option value="{{ $location->id }}" {{ old('location_id', $jobOffer->location_id) == $location->id ? 'selected' : '' }}>
-                                        {{ $location->city }}, {{ $location->country }}
+                                    <option value="{{ $location->id }}" 
+                                        data-country="{{ $location->country }}"
+                                        {{ old('location_id', $jobOffer->location_id) == $location->id ? 'selected' : '' }}>
+                                        {{ $location->city }}
                                     </option>
                                 @endforeach
                             </select>
@@ -255,6 +273,42 @@
         document.addEventListener('DOMContentLoaded', function () {
             const select = document.getElementById('company_id');
             if (select) handleCompanyChange(select);
+
+            const countrySelect = document.getElementById('country');
+            const citySelect = document.getElementById('location_id');
+            const cityOptions = Array.from(citySelect.options);
+
+            function filterCities() {
+                const selectedCountry = countrySelect.value;
+                const currentCityId = citySelect.value;
+                
+                citySelect.innerHTML = '<option value="">Select city</option>';
+                
+                let cityStillAvailable = false;
+
+                cityOptions.forEach(option => {
+                    if (option.value === "") return;
+                    if (option.dataset.country === selectedCountry) {
+                        const newOption = option.cloneNode(true);
+                        if (newOption.value === currentCityId.toString()) {
+                            newOption.selected = true;
+                            cityStillAvailable = true;
+                        }
+                        citySelect.appendChild(newOption);
+                    }
+                });
+
+                if (!cityStillAvailable && currentCityId !== "") {
+                    citySelect.value = "";
+                }
+            }
+
+            if (countrySelect && citySelect) {
+                countrySelect.addEventListener('change', filterCities);
+                if (countrySelect.value) {
+                    filterCities();
+                }
+            }
         });
     </script>
 
