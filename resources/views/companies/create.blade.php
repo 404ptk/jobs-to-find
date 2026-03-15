@@ -40,11 +40,32 @@
             </div>
 
             <div class="col-span-2 md:col-span-1">
-              <label for="location" class="block text-sm font-semibold text-gray-700 mb-2">Location</label>
-              <input type="text" name="location" id="location" value="{{ old('location') }}" required
-                class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
-                placeholder="e.g. Warsaw, Poland">
-              @error('location') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+              <label for="country" class="block text-sm font-semibold text-gray-700 mb-2">Country</label>
+              <select id="country" name="country" required
+                class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
+                <option value="">Select country</option>
+                @foreach($countries as $country)
+                  <option value="{{ $country }}" {{ old('country') == $country ? 'selected' : '' }}>
+                    {{ $country }}
+                  </option>
+                @endforeach
+              </select>
+            </div>
+
+            <div class="col-span-2 md:col-span-1">
+              <label for="location_id" class="block text-sm font-semibold text-gray-700 mb-2">City</label>
+              <select id="location_id" name="location_id" required
+                class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition @error('location_id') border-red-500 @enderror">
+                <option value="">Select city</option>
+                @foreach($locations as $location)
+                  <option value="{{ $location->id }}" 
+                    data-country="{{ $location->country }}"
+                    {{ old('location_id') == $location->id ? 'selected' : '' }}>
+                    {{ $location->city }}
+                  </option>
+                @endforeach
+              </select>
+              @error('location_id') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
             </div>
 
             <div class="col-span-2 md:col-span-1">
@@ -87,4 +108,44 @@
       </form>
     </div>
   </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const countrySelect = document.getElementById('country');
+      const citySelect = document.getElementById('location_id');
+      const cityOptions = Array.from(citySelect.options);
+
+      function filterCities() {
+        const selectedCountry = countrySelect.value;
+        const currentCityId = citySelect.value;
+        
+        citySelect.innerHTML = '<option value="">Select city</option>';
+        
+        let cityStillAvailable = false;
+
+        cityOptions.forEach(option => {
+          if (option.value === "") return;
+          if (option.dataset.country === selectedCountry) {
+            const newOption = option.cloneNode(true);
+            if (newOption.value === currentCityId) {
+              newOption.selected = true;
+              cityStillAvailable = true;
+            }
+            citySelect.appendChild(newOption);
+          }
+        });
+
+        if (!cityStillAvailable && currentCityId !== "") {
+          citySelect.value = "";
+        }
+      }
+
+      if (countrySelect && citySelect) {
+        countrySelect.addEventListener('change', filterCities);
+        if (countrySelect.value) {
+          filterCities();
+        }
+      }
+    });
+  </script>
 @endsection

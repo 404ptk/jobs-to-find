@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Location;
 
 class CompanyController extends Controller
 {
@@ -17,7 +18,11 @@ class CompanyController extends Controller
         if (auth()->user()->companies()->count() >= 3) {
             return redirect()->route('companies.index')->with('error', 'You can only have up to 3 companies.');
         }
-        return view('companies.create');
+
+        $locations = Location::orderBy('city')->get();
+        $countries = Location::select('country')->distinct()->orderBy('country')->pluck('country');
+
+        return view('companies.create', compact('locations', 'countries'));
     }
 
     public function store(\Illuminate\Http\Request $request)
@@ -30,7 +35,7 @@ class CompanyController extends Controller
             'name' => 'required|string|max:255',
             'logo' => 'nullable|image|max:2048',
             'description' => 'required|string',
-            'location' => 'required|string|max:255',
+            'location_id' => 'required|exists:locations,id',
             'founded_at' => 'nullable|integer|min:1900|max:' . (date('Y') + 1),
             'nip' => 'required|string|max:20',
         ]);
@@ -49,7 +54,10 @@ class CompanyController extends Controller
     public function edit($id)
     {
         $company = auth()->user()->companies()->findOrFail($id);
-        return view('companies.edit', compact('company'));
+        $locations = Location::orderBy('city')->get();
+        $countries = Location::select('country')->distinct()->orderBy('country')->pluck('country');
+
+        return view('companies.edit', compact('company', 'locations', 'countries'));
     }
 
     public function update(\Illuminate\Http\Request $request, $id)
@@ -60,7 +68,7 @@ class CompanyController extends Controller
             'name' => 'required|string|max:255',
             'logo' => 'nullable|image|max:2048',
             'description' => 'required|string',
-            'location' => 'required|string|max:255',
+            'location_id' => 'required|exists:locations,id',
             'founded_at' => 'nullable|integer|min:1900|max:' . (date('Y') + 1),
             'nip' => 'required|string|max:20',
         ]);

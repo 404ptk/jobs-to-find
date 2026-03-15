@@ -13,7 +13,7 @@ class Company extends Model
         'name',
         'logo_path',
         'description',
-        'location',
+        'location_id',
         'founded_at',
         'nip',
     ];
@@ -30,5 +30,10 @@ class Company extends Model
     public function jobOffers(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(JobOffer::class);
+    }
+
+    public function location(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Location::class);
     }
 }
