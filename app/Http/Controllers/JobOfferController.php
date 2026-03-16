@@ -17,7 +17,7 @@ class JobOfferController extends Controller
             'country' => ['nullable', 'string', 'max:100'],
             'city' => ['nullable', 'string', 'max:100'],
             'category' => ['nullable', 'string'],
-            'employment_type' => ['nullable', 'string', 'in:full-time,part-time,contract,internship'],
+            'employment_type' => ['nullable', 'string', 'in:full-time,part-time,b2b,internship'],
             'sort' => ['nullable', 'string', 'in:newest,oldest,salary_high,salary_low'],
             'per_page' => ['nullable', 'integer', 'in:10,20,30'],
         ], [
@@ -167,7 +167,7 @@ class JobOfferController extends Controller
         $countries = \App\Models\Location::select('country')->distinct()->orderBy('country')->pluck('country');
         $parentCategories = \App\Models\Category::isParent()->orderBy('name')->get();
         $subCategories = \App\Models\Category::isChild()->orderBy('name')->get();
-        $employmentTypes = ['full-time', 'part-time', 'contract', 'internship'];
+        $employmentTypes = ['full-time', 'part-time', 'b2b', 'internship'];
         $companies = Auth::user()->companies;
         $skills = \App\Models\Skill::orderBy('name')->get();
 
@@ -187,7 +187,7 @@ class JobOfferController extends Controller
             'company_id' => ['required', 'exists:companies,id'],
             'salary_min' => ['nullable', 'numeric', 'min:0'],
             'salary_max' => ['nullable', 'numeric', 'min:0', 'gte:salary_min'],
-            'employment_type' => ['required', 'string', 'in:full-time,part-time,contract,internship'],
+            'employment_type' => ['required', 'string', 'in:full-time,part-time,b2b,internship'],
             'category_id' => ['required', 'exists:categories,id'],
             'location_id' => ['required', 'exists:locations,id'],
             'expires_at' => ['required', 'date', 'after:today'],
@@ -233,7 +233,7 @@ class JobOfferController extends Controller
         $countries = \App\Models\Location::select('country')->distinct()->orderBy('country')->pluck('country');
         $parentCategories = \App\Models\Category::isParent()->orderBy('name')->get();
         $subCategories = \App\Models\Category::isChild()->orderBy('name')->get();
-        $employmentTypes = ['full-time', 'part-time', 'contract', 'internship'];
+        $employmentTypes = ['full-time', 'part-time', 'b2b', 'internship'];
         $companies = Auth::user()->companies;
 
         return view('employer.edit-offer', compact('jobOffer', 'locations', 'countries', 'parentCategories', 'subCategories', 'employmentTypes', 'companies'));
@@ -258,7 +258,7 @@ class JobOfferController extends Controller
             'company_id' => ['required', 'exists:companies,id'],
             'salary_min' => ['nullable', 'numeric', 'min:0'],
             'salary_max' => ['nullable', 'numeric', 'min:0', 'gte:salary_min'],
-            'employment_type' => ['required', 'string', 'in:full-time,part-time,contract,internship'],
+            'employment_type' => ['required', 'string', 'in:full-time,part-time,b2b,internship'],
             'category_id' => ['required', 'exists:categories,id'],
             'location_id' => ['required', 'exists:locations,id'],
             'expires_at' => ['required', 'date', 'after:today'],

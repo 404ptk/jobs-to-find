@@ -80,7 +80,7 @@
                                 <option value="">All types</option>
                                 @foreach($employmentTypes as $type)
                                     <option value="{{ $type }}" {{ request('employment_type') == $type ? 'selected' : '' }}>
-                                        {{ ucfirst(str_replace('-', ' ', $type)) }}
+                                        {{ $type === 'b2b' ? 'B2B' : ucfirst(str_replace('-', ' ', $type)) }}
                                     </option>
                                 @endforeach
                             </select>

@@ -145,7 +145,7 @@
                                 <option value="">Select employment type</option>
                                 @foreach($employmentTypes as $type)
                                     <option value="{{ $type }}" {{ old('employment_type', $jobOffer->employment_type) == $type ? 'selected' : '' }}>
-                                        {{ ucwords(str_replace('-', ' ', $type)) }}
+                                        {{ $type === 'b2b' ? 'B2B' : ucwords(str_replace('-', ' ', $type)) }}
                                     </option>
                                 @endforeach
                             </select>

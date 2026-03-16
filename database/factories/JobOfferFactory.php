@@ -19,7 +19,7 @@ class JobOfferFactory extends Factory
      */
     public function definition(): array
     {
-        $employmentTypes = ['full-time', 'part-time', 'contract', 'freelance', 'internship'];
+        $employmentTypes = ['full-time', 'part-time', 'b2b', 'internship'];
         $salaryMin = fake()->numberBetween(3000, 8000);
         $salaryMax = $salaryMin + fake()->numberBetween(2000, 10000);
 

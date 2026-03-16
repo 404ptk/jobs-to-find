@@ -30,7 +30,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                         </svg>
-                        {{ ucfirst(str_replace('-', ' ', $jobOffer->employment_type)) }}
+                        {{ $jobOffer->employment_type === 'b2b' ? 'B2B' : ucfirst(str_replace('-', ' ', $jobOffer->employment_type)) }}
                     </div>
 
                     @if($jobOffer->salary_min || $jobOffer->salary_max)
@@ -206,7 +206,7 @@
                             <div>
                                 <p class="text-sm text-gray-600 mb-1">Employment Type</p>
                                 <p class="font-medium text-gray-900">
-                                    {{ ucfirst(str_replace('-', ' ', $jobOffer->employment_type)) }}
+                                    {{ $jobOffer->employment_type === 'b2b' ? 'B2B' : ucfirst(str_replace('-', ' ', $jobOffer->employment_type)) }}
                                 </p>
                             </div>
                             <div>
@@ -361,12 +361,13 @@
                                     {{ $existingApplication->created_at->format('F j, Y') }}
                                 </p>
                                 <div class="mt-4 text-center">
-                                    <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium
-                                                                                                                @if($existingApplication->status === 'pending') bg-yellow-100 text-yellow-800
-                                                                                                                @elseif($existingApplication->status === 'reviewed') bg-blue-100 text-blue-800
-                                                                                                                @elseif($existingApplication->status === 'accepted') bg-green-100 text-green-800
-                                                                                                                @elseif($existingApplication->status === 'rejected') bg-red-100 text-red-800
-                                                                                                                @endif">
+                                    <span
+                                        class="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium
+                                                                                                                                        @if($existingApplication->status === 'pending') bg-yellow-100 text-yellow-800
+                                                                                                                                        @elseif($existingApplication->status === 'reviewed') bg-blue-100 text-blue-800
+                                                                                                                                        @elseif($existingApplication->status === 'accepted') bg-green-100 text-green-800
+                                                                                                                                        @elseif($existingApplication->status === 'rejected') bg-red-100 text-red-800
+                                                                                                                                        @endif">
                                         Status: {{ ucfirst($existingApplication->status) }}
                                     </span>
                                 </div>
@@ -444,7 +445,7 @@
                         <div>
                             <p class="text-sm text-gray-600 mb-1">Employment Type</p>
                             <p class="font-medium text-gray-900">
-                                {{ ucfirst(str_replace('-', ' ', $jobOffer->employment_type)) }}
+                                {{ $jobOffer->employment_type === 'b2b' ? 'B2B' : ucfirst(str_replace('-', ' ', $jobOffer->employment_type)) }}
                             </p>
                         </div>
                         <div>
