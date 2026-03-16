@@ -70,11 +70,18 @@
                                 </div>
                                 <div class="bg-white/10 rounded-lg px-4 py-3">
                                     <p class="text-xs text-blue-100 uppercase">NIP</p>
-                                    <p class="text-sm font-semibold truncate">{{ $company->nip }}</p>
+                                    <button type="button"
+                                        class="text-xl font-bold truncate text-left hover:opacity-90 transition cursor-pointer"
+                                        data-nip-reveal="true"
+                                        data-nip="{{ $company->nip }}"
+                                        aria-label="Click to reveal NIP">
+                                        *****
+                                    </button>
+                                    <p class="text-[10px] text-blue-100 mt-1 uppercase tracking-wide">Click to reveal</p>
                                 </div>
                                 <div class="bg-white/10 rounded-lg px-4 py-3">
                                     <p class="text-xs text-blue-100 uppercase">Owner</p>
-                                    <p class="text-sm font-semibold truncate">{{ $company->user->username ?? 'N/A' }}</p>
+                                    <p class="text-xl font-bold truncate">{{ trim(($company->user->first_name ?? '') . ' ' . ($company->user->last_name ?? '')) ?: ($company->user->username ?? 'N/A') }}</p>
                                 </div>
                             </div>
                         </div>
@@ -124,4 +131,21 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const revealButtons = document.querySelectorAll('[data-nip-reveal="true"]');
+            revealButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    this.textContent = this.dataset.nip || 'N/A';
+                    this.classList.remove('cursor-pointer');
+
+                    const hint = this.parentElement.querySelector('p');
+                    if (hint) {
+                        hint.remove();
+                    }
+                }, { once: true });
+            });
+        });
+    </script>
 @endsection
