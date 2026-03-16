@@ -44,6 +44,7 @@ Route::get('/', function () {
 Route::get('/search', [JobOfferController::class, 'search'])->name('search');
 
 Route::get('/job/{id}', [JobOfferController::class, 'show'])->name('job.show');
+Route::get('/companies/{id}', [CompanyController::class, 'show'])->whereNumber('id')->name('companies.show');
 
 Route::get('/login', function () {
     return view('auth.login');

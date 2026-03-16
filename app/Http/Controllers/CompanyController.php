@@ -7,6 +7,28 @@ use App\Models\Location;
 
 class CompanyController extends Controller
 {
+    public function show($id)
+    {
+        $company = \App\Models\Company::with(['location', 'user'])
+            ->withCount([
+                'jobOffers as total_offers_count',
+                'jobOffers as active_offers_count' => function ($q) {
+                    $q->where('is_active', true)->where('is_approved', true);
+                },
+            ])
+            ->findOrFail($id);
+
+        $offers = $company->jobOffers()
+            ->with(['location', 'category'])
+            ->where('is_active', true)
+            ->where('is_approved', true)
+            ->latest()
+            ->paginate(6)
+            ->withQueryString();
+
+        return view('companies.company-details', compact('company', 'offers'));
+    }
+
     public function index()
     {
         $companies = auth()->user()->companies;

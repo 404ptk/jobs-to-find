@@ -443,9 +443,15 @@
                                     @endif
                                 </div>
                             @endif
-                            <a href="{{ route('search', ['search' => $jobOffer->company_name]) }}" class="text-sm text-blue-600 hover:text-blue-700 font-medium mt-4 inline-block transition">
-                                View all jobs from this company &rarr;
-                            </a>
+                            @if($jobOffer->company)
+                                <a href="{{ route('companies.show', $jobOffer->company->id) }}" class="text-sm text-blue-600 hover:text-blue-700 font-medium mt-4 inline-block transition">
+                                    View company profile &rarr;
+                                </a>
+                            @else
+                                <a href="{{ route('search', ['search' => $jobOffer->company_name]) }}" class="text-sm text-blue-600 hover:text-blue-700 font-medium mt-4 inline-block transition">
+                                    View all jobs from this company &rarr;
+                                </a>
+                            @endif
                         </div>
 
                         <div class="bg-gray-50 rounded-lg p-6">

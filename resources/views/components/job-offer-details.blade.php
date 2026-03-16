@@ -291,10 +291,17 @@
                         @endif
 
                         <div class="flex flex-col gap-2">
-                            <a href="{{ route('search', ['search' => $jobOffer->company_name]) }}"
-                                class="text-sm text-blue-600 hover:text-blue-700 font-medium transition flex items-center">
-                                View all jobs from this company &rarr;
-                            </a>
+                            @if($jobOffer->company)
+                                <a href="{{ route('companies.show', $jobOffer->company->id) }}"
+                                    class="text-sm text-blue-600 hover:text-blue-700 font-medium transition flex items-center">
+                                    View company profile &rarr;
+                                </a>
+                            @else
+                                <a href="{{ route('search', ['search' => $jobOffer->company_name]) }}"
+                                    class="text-sm text-blue-600 hover:text-blue-700 font-medium transition flex items-center">
+                                    View all jobs from this company &rarr;
+                                </a>
+                            @endif
 
                             @if($jobOffer->company_website)
                                 <a href="{{ $jobOffer->company_website }}" target="_blank"
@@ -545,10 +552,17 @@
                     @endif
 
                     <div class="flex flex-col gap-2">
-                        <a href="{{ route('search', ['search' => $jobOffer->company_name]) }}"
-                            class="text-sm text-blue-600 hover:text-blue-700 font-medium transition flex items-center">
-                            View all jobs from this company &rarr;
-                        </a>
+                        @if($jobOffer->company)
+                            <a href="{{ route('companies.show', $jobOffer->company->id) }}"
+                                class="text-sm text-blue-600 hover:text-blue-700 font-medium transition flex items-center">
+                                View company profile &rarr;
+                            </a>
+                        @else
+                            <a href="{{ route('search', ['search' => $jobOffer->company_name]) }}"
+                                class="text-sm text-blue-600 hover:text-blue-700 font-medium transition flex items-center">
+                                View all jobs from this company &rarr;
+                            </a>
+                        @endif
 
                         @if($jobOffer->company_website)
                             <a href="{{ $jobOffer->company_website }}" target="_blank"
