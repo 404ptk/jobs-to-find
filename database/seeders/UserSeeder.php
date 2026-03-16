@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use App\Models\Skill;
 use App\Models\User;
+use App\Models\Company;
+use App\Models\Location;
 
 class UserSeeder extends Seeder
 {
@@ -161,5 +163,24 @@ class UserSeeder extends Seeder
                 $user->skills()->attach(is_array($randomSkills) ? $randomSkills : [$randomSkills]);
             }
         }
+
+        $allEmployers = User::where('account_type', 'employer')->get();
+        $defaultLocationId = Location::query()->value('id');
+        foreach ($allEmployers as $employer) {
+            if ($employer->companies()->count() > 0) {
+                continue;
+            }
+
+            Company::create([
+                'user_id' => $employer->id,
+                'name' => fake()->company(),
+                'description' => fake()->paragraph(3),
+                'location_id' => $defaultLocationId,
+                'founded_at' => fake()->numberBetween(1980, (int) now()->format('Y')),
+                'nip' => (string) fake()->numerify('##########'),
+            ]);
+        }
+
+        $this->command->info('Company profiles created for all seeded employers.');
     }
 }

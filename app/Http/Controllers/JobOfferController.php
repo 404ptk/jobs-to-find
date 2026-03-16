@@ -7,6 +7,7 @@ use App\Models\JobOffer;
 use App\Models\Category;
 use App\Models\Location;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class JobOfferController extends Controller
 {
@@ -163,6 +164,11 @@ class JobOfferController extends Controller
             abort(403, 'Access denied. Only employers can create job offers.');
         }
 
+        if (Auth::user()->companies()->count() === 0) {
+            return redirect()->route('companies.create')
+                ->with('error', 'Create a company profile first before posting a job offer.');
+        }
+
         $locations = \App\Models\Location::orderBy('city')->get();
         $countries = \App\Models\Location::select('country')->distinct()->orderBy('country')->pluck('country');
         $parentCategories = \App\Models\Category::isParent()->orderBy('name')->get();
@@ -184,7 +190,7 @@ class JobOfferController extends Controller
             'title' => ['required', 'string', 'max:96', 'regex:/^[a-zA-Z0-9\s\-]+$/'],
             'description' => ['required', 'string', 'max:5000'],
             'requirements' => ['required', 'string', 'max:5000'],
-            'company_id' => ['required', 'exists:companies,id'],
+            'company_id' => ['required', Rule::exists('companies', 'id')->where(fn($q) => $q->where('user_id', Auth::id()))],
             'salary_min' => ['nullable', 'numeric', 'min:0'],
             'salary_max' => ['nullable', 'numeric', 'min:0', 'gte:salary_min'],
             'employment_type' => ['required', 'string', 'in:full-time,part-time,b2b,internship'],
@@ -195,6 +201,7 @@ class JobOfferController extends Controller
             'skills.*' => ['exists:skills,id'],
         ], [
             'title.regex' => 'Title can only contain letters, numbers, spaces, and hyphens.',
+            'company_id.exists' => 'Please select one of your company profiles.',
             'salary_max.gte' => 'Maximum salary must be greater than or equal to minimum salary.',
         ]);
 

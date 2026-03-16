@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use App\Models\Company;
 use App\Models\User;
 use Carbon\Carbon;
 
@@ -24,6 +25,24 @@ class JobOfferSeeder extends Seeder
             $this->command->error('Users not found. Please run UserSeeder first.');
             return;
         }
+
+        $annaCompany = $employer->companies()->first() ?: Company::create([
+            'user_id' => $employer->id,
+            'name' => 'TechVision Solutions',
+            'description' => fake()->paragraph(3),
+            'location_id' => \App\Models\Location::query()->value('id'),
+            'founded_at' => fake()->numberBetween(1980, (int) now()->format('Y')),
+            'nip' => (string) fake()->numerify('##########'),
+        ]);
+
+        $tomCompany = $employerTom->companies()->first() ?: Company::create([
+            'user_id' => $employerTom->id,
+            'name' => 'CloudTech Innovations',
+            'description' => fake()->paragraph(3),
+            'location_id' => \App\Models\Location::query()->value('id'),
+            'founded_at' => fake()->numberBetween(1980, (int) now()->format('Y')),
+            'nip' => (string) fake()->numerify('##########'),
+        ]);
 
         $allSkills = \App\Models\Skill::all();
         $allParentCategories = \App\Models\Category::isParent()->get();
@@ -182,12 +201,16 @@ class JobOfferSeeder extends Seeder
         ];
 
         foreach ($jobOffers as $offerData) {
+            $offerData['data']['company_id'] = $annaCompany->id;
+            $offerData['data']['company_name'] = $annaCompany->name;
             $offer = \App\Models\JobOffer::create($offerData['data']);
             $skillIds = $allSkills->whereIn('name', $offerData['skills'])->pluck('id');
             $offer->skills()->attach($skillIds);
         }
 
         foreach ($pendingOffers as $offerData) {
+            $offerData['data']['company_id'] = $tomCompany->id;
+            $offerData['data']['company_name'] = $tomCompany->name;
             $offer = \App\Models\JobOffer::create($offerData['data']);
             $skillIds = $allSkills->whereIn('name', $offerData['skills'])->pluck('id');
             $offer->skills()->attach($skillIds);
@@ -199,12 +222,22 @@ class JobOfferSeeder extends Seeder
 
         if ($employers->count() > 0) {
             foreach ($employers as $emp) {
+                $employerCompany = $emp->companies()->inRandomOrder()->first() ?: Company::create([
+                    'user_id' => $emp->id,
+                    'name' => fake()->company(),
+                    'description' => fake()->paragraph(3),
+                    'location_id' => $allLocations->random()->id,
+                    'founded_at' => fake()->numberBetween(1980, (int) now()->format('Y')),
+                    'nip' => (string) fake()->numerify('##########'),
+                ]);
+
                 $offers = \App\Models\JobOffer::factory()->count(rand(2, 5))->create([
                     'user_id' => $emp->id,
+                    'company_id' => $employerCompany->id,
+                    'company_name' => $employerCompany->name,
                     'category_id' => $allSubCategories->random()->id,
                     'location_id' => $allLocations->random()->id,
                     'is_approved' => true,
-                    'company_name' => fake()->company(),
                 ]);
 
                 foreach ($offers as $offer) {
@@ -215,10 +248,11 @@ class JobOfferSeeder extends Seeder
 
                 $pending = \App\Models\JobOffer::factory()->count(rand(0, 2))->create([
                     'user_id' => $emp->id,
+                    'company_id' => $employerCompany->id,
+                    'company_name' => $employerCompany->name,
                     'category_id' => $allSubCategories->random()->id,
                     'location_id' => $allLocations->random()->id,
                     'is_approved' => false,
-                    'company_name' => fake()->company(),
                 ]);
 
                 foreach ($pending as $offer) {
@@ -236,13 +270,22 @@ class JobOfferSeeder extends Seeder
             for ($i = 0; $i < 30; $i++) {
                 $randomDate = now()->subMonths(rand(1, 11))->subDays(rand(0, 27));
                 $emp = $allEmployers->random();
+                $employerCompany = $emp->companies()->inRandomOrder()->first() ?: Company::create([
+                    'user_id' => $emp->id,
+                    'name' => fake()->company(),
+                    'description' => fake()->paragraph(3),
+                    'location_id' => $allLocations->random()->id,
+                    'founded_at' => fake()->numberBetween(1980, (int) now()->format('Y')),
+                    'nip' => (string) fake()->numerify('##########'),
+                ]);
 
                 $offer = \App\Models\JobOffer::factory()->create([
                     'user_id' => $emp->id,
+                    'company_id' => $employerCompany->id,
+                    'company_name' => $employerCompany->name,
                     'category_id' => $allSubCategories->random()->id,
                     'location_id' => $allLocations->random()->id,
                     'is_approved' => true,
-                    'company_name' => fake()->company(),
                     'created_at' => $randomDate,
                     'updated_at' => $randomDate,
                     'expires_at' => $randomDate->copy()->addMonths(rand(1, 3)),

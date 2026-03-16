@@ -249,7 +249,19 @@
 
                     <div class="bg-gray-50 rounded-lg p-6 mb-6">
                         <h3 class="text-lg font-bold text-gray-900 mb-4">About Company</h3>
-                        <p class="font-medium text-gray-900 mb-2">{{ $jobOffer->company_name }}</p>
+                        <div class="flex items-center gap-3 mb-3">
+                            @if($jobOffer->company && $jobOffer->company->logo_path)
+                                <img src="{{ asset('storage/' . $jobOffer->company->logo_path) }}"
+                                    alt="{{ $jobOffer->company->name }}" class="w-10 h-10 rounded-lg object-cover border border-gray-100">
+                            @else
+                                <div class="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center border border-gray-200">
+                                    <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                                    </svg>
+                                </div>
+                            @endif
+                            <p class="font-medium text-gray-900">{{ $jobOffer->company_name }}</p>
+                        </div>
                         @if($jobOffer->company)
                             <p class="text-sm text-gray-600 mb-4">{{ $jobOffer->company->description }}</p>
                             <div class="text-sm text-gray-600 space-y-2 mb-4">
@@ -260,7 +272,11 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                                     </svg>
-                                    {{ $jobOffer->company->location }}
+                                    @if($jobOffer->company->location)
+                                        {{ $jobOffer->company->location->city }}, {{ $jobOffer->company->location->country }}
+                                    @else
+                                        Location not specified
+                                    @endif
                                 </div>
                                 @if($jobOffer->company->founded_at)
                                     <div class="flex items-center">
@@ -363,11 +379,11 @@
                                 <div class="mt-4 text-center">
                                     <span
                                         class="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium
-                                                                                                                                        @if($existingApplication->status === 'pending') bg-yellow-100 text-yellow-800
-                                                                                                                                        @elseif($existingApplication->status === 'reviewed') bg-blue-100 text-blue-800
-                                                                                                                                        @elseif($existingApplication->status === 'accepted') bg-green-100 text-green-800
-                                                                                                                                        @elseif($existingApplication->status === 'rejected') bg-red-100 text-red-800
-                                                                                                                                        @endif">
+                                                                                                                                                    @if($existingApplication->status === 'pending') bg-yellow-100 text-yellow-800
+                                                                                                                                                    @elseif($existingApplication->status === 'reviewed') bg-blue-100 text-blue-800
+                                                                                                                                                    @elseif($existingApplication->status === 'accepted') bg-green-100 text-green-800
+                                                                                                                                                    @elseif($existingApplication->status === 'rejected') bg-red-100 text-red-800
+                                                                                                                                                    @endif">
                                         Status: {{ ucfirst($existingApplication->status) }}
                                     </span>
                                 </div>
@@ -487,7 +503,19 @@
 
                 <div class="bg-gray-50 rounded-lg p-6">
                     <h3 class="text-lg font-bold text-gray-900 mb-4">About Company</h3>
-                    <p class="font-medium text-gray-900 mb-2">{{ $jobOffer->company_name }}</p>
+                    <div class="flex items-center gap-3 mb-3">
+                        @if($jobOffer->company && $jobOffer->company->logo_path)
+                            <img src="{{ asset('storage/' . $jobOffer->company->logo_path) }}"
+                                alt="{{ $jobOffer->company->name }}" class="w-10 h-10 rounded-lg object-cover border border-gray-100">
+                        @else
+                            <div class="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center border border-gray-200">
+                                <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                                </svg>
+                            </div>
+                        @endif
+                        <p class="font-medium text-gray-900">{{ $jobOffer->company_name }}</p>
+                    </div>
                     @if($jobOffer->company)
                         <p class="text-sm text-gray-600 mb-4">{{ $jobOffer->company->description }}</p>
                         <div class="text-sm text-gray-600 space-y-2 mb-4">
@@ -498,7 +526,11 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                                 </svg>
-                                {{ $jobOffer->company->location }}
+                                @if($jobOffer->company->location)
+                                    {{ $jobOffer->company->location->city }}, {{ $jobOffer->company->location->country }}
+                                @else
+                                    Location not specified
+                                @endif
                             </div>
                             @if($jobOffer->company->founded_at)
                                 <div class="flex items-center">
