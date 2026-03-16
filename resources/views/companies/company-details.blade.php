@@ -70,14 +70,16 @@
                                 </div>
                                 <div class="bg-white/10 rounded-lg px-4 py-3">
                                     <p class="text-xs text-blue-100 uppercase">NIP</p>
-                                    <button type="button"
-                                        class="text-xl font-bold truncate text-left hover:opacity-90 transition cursor-pointer"
-                                        data-nip-reveal="true"
-                                        data-nip="{{ $company->nip }}"
-                                        aria-label="Click to reveal NIP">
-                                        *****
-                                    </button>
-                                    <p class="text-[10px] text-blue-100 mt-1 uppercase tracking-wide">Click to reveal</p>
+                                    <div class="mt-1 flex items-center gap-2">
+                                        <button type="button"
+                                            class="text-xl font-bold truncate text-left hover:opacity-90 transition cursor-pointer"
+                                            data-nip-reveal="true"
+                                            data-nip="{{ $company->nip }}"
+                                            aria-label="Click to reveal NIP">
+                                            *****
+                                        </button>
+                                        <p class="nip-reveal-hint text-[10px] text-blue-100 uppercase tracking-wide">(Click to reveal)</p>
+                                    </div>
                                 </div>
                                 <div class="bg-white/10 rounded-lg px-4 py-3">
                                     <p class="text-xs text-blue-100 uppercase">Owner</p>
@@ -140,7 +142,7 @@
                     this.textContent = this.dataset.nip || 'N/A';
                     this.classList.remove('cursor-pointer');
 
-                    const hint = this.parentElement.querySelector('p');
+                    const hint = this.parentElement.querySelector('.nip-reveal-hint');
                     if (hint) {
                         hint.remove();
                     }
