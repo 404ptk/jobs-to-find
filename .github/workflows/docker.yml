@@ -62,8 +62,11 @@ jobs:
       - name: Check application status
         run: docker compose exec -T app curl -v http://localhost:8000/
 
+      - name: Install dev dependencies (for tests)
+        run: docker compose exec -T app composer install --no-interaction --prefer-dist
+
       - name: Run PHPUnit tests
-        run: docker compose exec -T app php artisan test
+        run: docker compose exec -T app ./vendor/bin/phpunit --colors=always --stop-on-failure
 
       - name: Check code style (Laravel Pint)
         run: docker compose exec -T app ./vendor/bin/pint --test
