@@ -51,8 +51,8 @@ COPY . .
 RUN rm -f bootstrap/cache/*.php
 COPY --from=node-build /app/public/build ./public/build
 
-RUN mkdir -p storage/logs storage/framework/sessions storage/framework/views storage/framework/cache \
-    && chown -R www-data:www-data storage bootstrap/cache public
+RUN mkdir -p bootstrap/cache storage/logs storage/framework/sessions storage/framework/views storage/framework/cache \
+    && chown -R www-data:www-data bootstrap/cache storage public
 
 EXPOSE 8000
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
