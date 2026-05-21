@@ -15,7 +15,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      packages: write
 
     steps:
       - name: Checkout repository
@@ -30,8 +29,8 @@ jobs:
           context: .
           file: ./Dockerfile
           push: false
-          cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache
-          cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache,mode=max
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
 
   test:
@@ -43,16 +42,16 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build Docker image for testing
-        run: docker-compose build
+        run: docker compose build
 
       - name: Start containers
-        run: docker-compose up -d
+        run: docker compose up -d
 
       - name: Wait for app to be ready
         run: |
           echo "Waiting for application to be ready..."
           for i in {1..30}; do
-            if docker-compose exec -T app curl -f http://localhost/health >/dev/null 2>&1; then
+            if docker compose exec -T app curl -f http://localhost/health >/dev/null 2>&1; then
               echo "Application is ready!"
               break
             fi
@@ -61,25 +60,25 @@ jobs:
           done
 
       - name: Check application status
-        run: docker-compose exec -T app curl -v http://localhost/
+        run: docker compose exec -T app curl -v http://localhost/
 
       - name: Run PHPUnit tests
-        run: docker-compose exec -T app php artisan test
+        run: docker compose exec -T app php artisan test
 
       - name: Check code style (Laravel Pint)
-        run: docker-compose exec -T app ./vendor/bin/pint --test
+        run: docker compose exec -T app ./vendor/bin/pint --test
 
       - name: View logs on failure
         if: failure()
         run: |
           echo "=== Docker compose logs ==="
-          docker-compose logs
+          docker compose logs
           echo "=== App logs ==="
-          docker-compose exec -T app cat storage/logs/laravel.log || echo "Log file not found"
+          docker compose exec -T app cat storage/logs/laravel.log || echo "Log file not found"
 
       - name: Stop containers
         if: always()
-        run: docker-compose down -v
+        run: docker compose down -v
 
   push:
     needs: [build, test]
