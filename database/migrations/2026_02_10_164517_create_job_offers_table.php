@@ -24,7 +24,7 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
             $table->date('expires_at')->nullable();
             $table->timestamps();
-            
+
             $table->index('title');
             $table->index('is_active');
             $table->index('category_id');

@@ -2,9 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
 use App\Models\Skill;
+use Illuminate\Database\Seeder;
 
 class SkillSeeder extends Seeder
 {
@@ -433,7 +432,7 @@ class SkillSeeder extends Seeder
             'Quality Control',
             'Receptionist Skills',
             'Retail Sales',
-            'Cashiering'
+            'Cashiering',
         ];
 
         foreach ($skills as $skill) {

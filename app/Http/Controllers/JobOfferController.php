@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\JobOffer;
 use App\Models\Category;
+use App\Models\JobOffer;
 use App\Models\Location;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
@@ -29,33 +29,33 @@ class JobOfferController extends Controller
             ->where('is_active', true)
             ->where('is_approved', true);
 
-        if (!empty($validated['search'])) {
+        if (! empty($validated['search'])) {
             $query->where(function ($q) use ($validated) {
-                $q->where('title', 'LIKE', '%' . $validated['search'] . '%')
-                    ->orWhere('description', 'LIKE', '%' . $validated['search'] . '%')
-                    ->orWhere('company_name', 'LIKE', '%' . $validated['search'] . '%');
+                $q->where('title', 'LIKE', '%'.$validated['search'].'%')
+                    ->orWhere('description', 'LIKE', '%'.$validated['search'].'%')
+                    ->orWhere('company_name', 'LIKE', '%'.$validated['search'].'%');
             });
         }
 
-        if (!empty($validated['country'])) {
+        if (! empty($validated['country'])) {
             $query->whereHas('location', function ($q) use ($validated) {
                 $q->where('country', $validated['country']);
             });
         }
 
-        if (!empty($validated['city'])) {
+        if (! empty($validated['city'])) {
             $query->whereHas('location', function ($q) use ($validated) {
                 $q->where('city', $validated['city']);
             });
         }
 
-        if (!empty($validated['category'])) {
+        if (! empty($validated['category'])) {
             $query->whereHas('category', function ($q) use ($validated) {
                 $q->where('slug', $validated['category']);
             });
         }
 
-        if (!empty($validated['employment_type'])) {
+        if (! empty($validated['employment_type'])) {
             $query->where('employment_type', $validated['employment_type']);
         }
 
@@ -112,9 +112,9 @@ class JobOfferController extends Controller
             ->where('is_active', true)
             ->findOrFail($id);
 
-        if (!$jobOffer->is_approved) {
+        if (! $jobOffer->is_approved) {
             if (
-                !Auth::check() ||
+                ! Auth::check() ||
                 (Auth::user()->account_type !== 'admin' && Auth::id() !== $jobOffer->user_id)
             ) {
                 abort(403, 'This job offer is pending approval and cannot be viewed at this time.');
@@ -190,7 +190,7 @@ class JobOfferController extends Controller
             'title' => ['required', 'string', 'max:96', 'regex:/^[a-zA-Z0-9\s\-]+$/'],
             'description' => ['required', 'string', 'max:5000'],
             'requirements' => ['required', 'string', 'max:5000'],
-            'company_id' => ['required', Rule::exists('companies', 'id')->where(fn($q) => $q->where('user_id', Auth::id()))],
+            'company_id' => ['required', Rule::exists('companies', 'id')->where(fn ($q) => $q->where('user_id', Auth::id()))],
             'salary_min' => ['nullable', 'numeric', 'min:0'],
             'salary_max' => ['nullable', 'numeric', 'min:0', 'gte:salary_min'],
             'employment_type' => ['required', 'string', 'in:full-time,part-time,b2b,internship'],
@@ -205,7 +205,7 @@ class JobOfferController extends Controller
             'salary_max.gte' => 'Maximum salary must be greater than or equal to minimum salary.',
         ]);
 
-        if (!empty($validated['company_id'])) {
+        if (! empty($validated['company_id'])) {
             $company = \App\Models\Company::findOrFail($validated['company_id']);
             $validated['company_name'] = $company->name;
         }
@@ -274,7 +274,7 @@ class JobOfferController extends Controller
             'salary_max.gte' => 'Maximum salary must be greater than or equal to minimum salary.',
         ]);
 
-        if (!empty($validated['company_id'])) {
+        if (! empty($validated['company_id'])) {
             $company = \App\Models\Company::findOrFail($validated['company_id']);
             $validated['company_name'] = $company->name;
         }

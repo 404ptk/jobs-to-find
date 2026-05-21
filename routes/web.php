@@ -1,15 +1,15 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\JobOfferController;
-use App\Http\Controllers\UserController;
 use App\Http\Controllers\ApplicationController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\JobOfferController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\NotificationController;
-use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\UserController;
 use App\Models\Category;
 use App\Models\Location;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     $categories = Category::whereHas('jobOffers', function ($q) {
@@ -81,7 +81,7 @@ Route::get('/profile', function () {
     return view('auth.profile', [
         'user' => $user,
         'availableSkills' => $availableSkills,
-        'applicationStats' => $stats
+        'applicationStats' => $stats,
     ]);
 })->middleware('auth')->name('profile');
 
@@ -125,6 +125,7 @@ Route::get('/favorites', function () {
         ->with(['category', 'location'])
         ->orderBy('favorites.created_at', 'desc')
         ->paginate(10);
+
     return view('job-seeker.favorites', compact('favorites'));
 })->middleware('auth')->name('favorites');
 
@@ -135,6 +136,7 @@ Route::post('/favorites/toggle/{jobOffer}', function (\App\Models\JobOffer $jobO
     $user = Auth::user();
     $result = $user->favoriteOffers()->toggle($jobOffer->id);
     $isFavorited = in_array($jobOffer->id, $result['attached']);
+
     return response()->json([
         'favorited' => $isFavorited,
         'message' => $isFavorited ? 'Added to favorites' : 'Removed from favorites',

@@ -25,7 +25,7 @@ class UserFactory extends Factory
     {
         $firstName = fake()->firstName();
         $lastName = fake()->lastName();
-        $username = strtolower($firstName . '.' . $lastName . '.' . fake()->numberBetween(1, 999));
+        $username = strtolower($firstName.'.'.$lastName.'.'.fake()->numberBetween(1, 999));
 
         return [
             'username' => $username,

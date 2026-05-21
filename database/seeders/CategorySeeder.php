@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -33,7 +32,7 @@ class CategorySeeder extends Seeder
                 'Embedded Developer',
                 'Cybersecurity',
                 'Game Developer',
-                'Technical Writer'
+                'Technical Writer',
             ],
             'Marketing' => [
                 'Content Creator',
@@ -45,7 +44,7 @@ class CategorySeeder extends Seeder
                 'Performance Marketer',
                 'Public Relations',
                 'Marketing Analyst',
-                'Events Coordinator'
+                'Events Coordinator',
             ],
             'Finance' => [
                 'Accountant',
@@ -57,7 +56,7 @@ class CategorySeeder extends Seeder
                 'Real Estate Analyst',
                 'Insurance Agent',
                 'Billing Specialist',
-                'Risk Manager'
+                'Risk Manager',
             ],
             'Sales' => [
                 'Sales Representative',
@@ -69,7 +68,7 @@ class CategorySeeder extends Seeder
                 'Real Estate Agent',
                 'Logistics Specialist',
                 'Merchandiser',
-                'Support Sales'
+                'Support Sales',
             ],
             'Customer Service' => [
                 'Customer Support',
@@ -81,7 +80,7 @@ class CategorySeeder extends Seeder
                 'Moderator',
                 'Concierge',
                 'Complaint Handler',
-                'Personal Assistant'
+                'Personal Assistant',
             ],
             'Management' => [
                 'CEO / Director',
@@ -93,7 +92,7 @@ class CategorySeeder extends Seeder
                 'Business Analyst',
                 'Consultant',
                 'Strategy Manager',
-                'Branch Manager'
+                'Branch Manager',
             ],
             'Design & Creative' => [
                 'UI/UX Designer',
@@ -105,7 +104,7 @@ class CategorySeeder extends Seeder
                 'Product Designer',
                 'UX Researcher',
                 'Art Director',
-                '3D Artist'
+                '3D Artist',
             ],
             'Healthcare & Medical' => [
                 'Nurse',
@@ -117,7 +116,7 @@ class CategorySeeder extends Seeder
                 'Psychologist',
                 'Lab Technician',
                 'Paramedic',
-                'Veterinarian'
+                'Veterinarian',
             ],
             'Education & Training' => [
                 'Teacher',
@@ -129,7 +128,7 @@ class CategorySeeder extends Seeder
                 'Childcare Provider',
                 'School Administrator',
                 'Researcher',
-                'Coach'
+                'Coach',
             ],
             'Engineering & Construction' => [
                 'Civil Engineer',
@@ -141,7 +140,7 @@ class CategorySeeder extends Seeder
                 'Site Supervisor',
                 'Surveyor',
                 'BIM Coordinator',
-                'Project Engineer'
+                'Project Engineer',
             ],
             'Logistics & Transport' => [
                 'Driver (Truck/Van)',
@@ -153,7 +152,7 @@ class CategorySeeder extends Seeder
                 'Freight Forwarder',
                 'Inventory Controller',
                 'Shipping Clerk',
-                'Delivery Specialist'
+                'Delivery Specialist',
             ],
             'Human Resources (HR)' => [
                 'Recruiter',
@@ -165,7 +164,7 @@ class CategorySeeder extends Seeder
                 'Trainer / L&D',
                 'Talent Acquisition',
                 'Employee Relations',
-                'Employer Branding'
+                'Employer Branding',
             ],
             'Legal & Administrative' => [
                 'Lawyer / Attorney',
@@ -177,7 +176,7 @@ class CategorySeeder extends Seeder
                 'Legal Office Manager',
                 'Notary',
                 'Corporate Secretary',
-                'Data Protection Officer'
+                'Data Protection Officer',
             ],
             'Hospitality & Tourism' => [
                 'Chef / Cook',
@@ -189,7 +188,7 @@ class CategorySeeder extends Seeder
                 'Travel Agent',
                 'Housekeeper',
                 'Barista',
-                'Tour Guide'
+                'Tour Guide',
             ],
             'Media & Communication' => [
                 'Journalist',
@@ -201,8 +200,8 @@ class CategorySeeder extends Seeder
                 'Social Media Specialist',
                 'Blogger / Vlogger',
                 'Communications Manager',
-                'Language Translator'
-            ]
+                'Language Translator',
+            ],
         ];
 
         foreach ($categories as $parentName => $children) {

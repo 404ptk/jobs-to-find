@@ -2,14 +2,14 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
-use App\Models\User;
-use App\Models\JobOffer;
 use App\Models\Category;
+use App\Models\JobOffer;
 use App\Models\Location;
+use App\Models\User;
 use App\Notifications\JobOfferApprovedNotification;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
+use Tests\TestCase;
 
 class NotificationTest extends TestCase
 {

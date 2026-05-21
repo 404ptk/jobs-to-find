@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('country')->default('Polska');
             $table->string('region')->nullable();
             $table->timestamps();
-            
+
             $table->index(['city', 'country']);
         });
     }

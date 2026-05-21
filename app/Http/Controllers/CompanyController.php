@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Location;
 
 class CompanyController extends Controller
@@ -32,6 +31,7 @@ class CompanyController extends Controller
     public function index()
     {
         $companies = auth()->user()->companies;
+
         return view('companies.index', compact('companies'));
     }
 
@@ -58,7 +58,7 @@ class CompanyController extends Controller
             'logo' => 'nullable|image|max:2048',
             'description' => 'required|string',
             'location_id' => 'required|exists:locations,id',
-            'founded_at' => 'nullable|integer|min:1900|max:' . (date('Y') + 1),
+            'founded_at' => 'nullable|integer|min:1900|max:'.(date('Y') + 1),
             'nip' => 'required|string|max:20',
         ]);
 
@@ -91,7 +91,7 @@ class CompanyController extends Controller
             'logo' => 'nullable|image|max:2048',
             'description' => 'required|string',
             'location_id' => 'required|exists:locations,id',
-            'founded_at' => 'nullable|integer|min:1900|max:' . (date('Y') + 1),
+            'founded_at' => 'nullable|integer|min:1900|max:'.(date('Y') + 1),
             'nip' => 'required|string|max:20',
         ]);
 

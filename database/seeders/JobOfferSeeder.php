@@ -2,12 +2,11 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 use App\Models\Company;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class JobOfferSeeder extends Seeder
 {
@@ -21,8 +20,9 @@ class JobOfferSeeder extends Seeder
         $employer = User::where('username', 'employer_anna')->first();
         $employerTom = User::where('username', 'employer_tom')->first();
 
-        if (!$employer || !$employerTom) {
+        if (! $employer || ! $employerTom) {
             $this->command->error('Users not found. Please run UserSeeder first.');
+
             return;
         }
 
@@ -61,6 +61,7 @@ class JobOfferSeeder extends Seeder
 
         if ($allSkills->isEmpty() || $allParentCategories->isEmpty() || $allSubCategories->isEmpty() || $allLocations->isEmpty()) {
             $this->command->error('Resources not found. Please run SkillSeeder, CategorySeeder, and LocationSeeder first.');
+
             return;
         }
 
@@ -89,7 +90,7 @@ class JobOfferSeeder extends Seeder
                     'created_at' => now(),
                     'updated_at' => now(),
                 ],
-                'skills' => ['PHP', 'Laravel', 'JavaScript', 'React', 'SQL']
+                'skills' => ['PHP', 'Laravel', 'JavaScript', 'React', 'SQL'],
             ],
             [
                 'data' => [
@@ -115,7 +116,7 @@ class JobOfferSeeder extends Seeder
                     'created_at' => now(),
                     'updated_at' => now(),
                 ],
-                'skills' => ['HTML', 'CSS', 'JavaScript', 'React']
+                'skills' => ['HTML', 'CSS', 'JavaScript', 'React'],
             ],
             [
                 'data' => [
@@ -141,7 +142,7 @@ class JobOfferSeeder extends Seeder
                     'created_at' => now(),
                     'updated_at' => now(),
                 ],
-                'skills' => ['Communication', 'Teamwork', 'Creativity']
+                'skills' => ['Communication', 'Teamwork', 'Creativity'],
             ],
         ];
 
@@ -170,7 +171,7 @@ class JobOfferSeeder extends Seeder
                     'created_at' => now(),
                     'updated_at' => now(),
                 ],
-                'skills' => ['Docker', 'Kubernetes', 'AWS', 'Linux', 'Jenkins']
+                'skills' => ['Docker', 'Kubernetes', 'AWS', 'Linux', 'Jenkins'],
             ],
             [
                 'data' => [
@@ -196,7 +197,7 @@ class JobOfferSeeder extends Seeder
                     'created_at' => now(),
                     'updated_at' => now(),
                 ],
-                'skills' => ['UI/UX Design', 'Figma', 'Adobe XD', 'Photoshop']
+                'skills' => ['UI/UX Design', 'Figma', 'Adobe XD', 'Photoshop'],
             ],
         ];
 

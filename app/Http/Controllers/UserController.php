@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
@@ -34,7 +33,7 @@ class UserController extends Controller
             $canView = false;
         }
 
-        if (!$canView) {
+        if (! $canView) {
             abort(403, 'You are not authorized to view this profile.');
         }
 

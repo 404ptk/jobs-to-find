@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\Application;
 use App\Models\JobOffer;
 use App\Models\User;
-use App\Models\Application;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
@@ -148,6 +148,7 @@ class AdminController extends Controller
     public function offerPartial($id)
     {
         $jobOffer = JobOffer::with(['category', 'location', 'user', 'company'])->findOrFail($id);
+
         return view('components.job-offer-details', compact('jobOffer'));
     }
 
@@ -180,19 +181,19 @@ class AdminController extends Controller
             ->where('created_at', '>=', now()->subMonths(11)->startOfMonth())
             ->groupByRaw("strftime('%Y', created_at), strftime('%m', created_at)")
             ->get()
-            ->keyBy(fn($item) => $item->year . '-' . $item->month);
+            ->keyBy(fn ($item) => $item->year.'-'.$item->month);
 
         $usersRaw = User::selectRaw("strftime('%Y', created_at) as year, CAST(strftime('%m', created_at) AS INTEGER) as month, COUNT(*) as total")
             ->where('created_at', '>=', now()->subMonths(11)->startOfMonth())
             ->groupByRaw("strftime('%Y', created_at), strftime('%m', created_at)")
             ->get()
-            ->keyBy(fn($item) => $item->year . '-' . $item->month);
+            ->keyBy(fn ($item) => $item->year.'-'.$item->month);
 
         $applicationsRaw = Application::selectRaw("strftime('%Y', created_at) as year, CAST(strftime('%m', created_at) AS INTEGER) as month, COUNT(*) as total")
             ->where('created_at', '>=', now()->subMonths(11)->startOfMonth())
             ->groupByRaw("strftime('%Y', created_at), strftime('%m', created_at)")
             ->get()
-            ->keyBy(fn($item) => $item->year . '-' . $item->month);
+            ->keyBy(fn ($item) => $item->year.'-'.$item->month);
 
         $labels = [];
         $offersData = [];
@@ -200,7 +201,7 @@ class AdminController extends Controller
         $applicationsData = [];
 
         foreach ($months as $date) {
-            $key = $date->year . '-' . $date->month;
+            $key = $date->year.'-'.$date->month;
             $labels[] = $date->translatedFormat('M Y');
             $offersData[] = $offersRaw[$key]->total ?? 0;
             $usersData[] = $usersRaw[$key]->total ?? 0;

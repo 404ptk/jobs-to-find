@@ -26,6 +26,7 @@ class ApplicationController extends Controller
                 if ($request->wantsJson()) {
                     return response()->json(['success' => false, 'message' => 'You have already applied to this position.'], 400);
                 }
+
                 return redirect()->back()->with('error', 'You have already applied to this position.');
             }
 
@@ -54,13 +55,14 @@ class ApplicationController extends Controller
             if ($request->wantsJson()) {
                 return response()->json(['success' => true, 'message' => 'Your application has been submitted successfully!']);
             }
+
             return redirect()->back()->with('success', 'Your application has been submitted successfully!');
         } catch (\Illuminate\Validation\ValidationException $e) {
             if ($request->wantsJson()) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Validation failed. Please check your inputs.',
-                    'errors' => $e->errors()
+                    'errors' => $e->errors(),
                 ], 422);
             }
             throw $e;
@@ -68,6 +70,7 @@ class ApplicationController extends Controller
             if ($request->wantsJson()) {
                 return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
             }
+
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
@@ -120,7 +123,7 @@ class ApplicationController extends Controller
             ->where('user_id', Auth::id())
             ->firstOrFail();
 
-        if (!$application->cv_path) {
+        if (! $application->cv_path) {
             abort(404, 'No CV attached to this application.');
         }
 
@@ -128,7 +131,7 @@ class ApplicationController extends Controller
             $application->update(['status' => 'reviewed']);
         }
 
-        return response()->download(storage_path('app/public/' . $application->cv_path));
+        return response()->download(storage_path('app/public/'.$application->cv_path));
     }
 
     public function accept($applicationId)

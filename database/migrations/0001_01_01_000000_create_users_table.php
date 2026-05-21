@@ -26,7 +26,7 @@ return new class extends Migration
             $table->string('cv_path')->nullable();
             $table->rememberToken();
             $table->timestamps();
-            
+
             $table->index('account_type');
             $table->index('is_student');
         });
