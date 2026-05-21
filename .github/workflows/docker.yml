@@ -51,7 +51,7 @@ jobs:
         run: |
           echo "Waiting for application to be ready..."
           for i in {1..30}; do
-            if docker compose exec -T app curl -f http://localhost/health >/dev/null 2>&1; then
+            if docker compose exec -T app curl -f http://localhost:8000/ >/dev/null 2>&1; then
               echo "Application is ready!"
               break
             fi
@@ -60,7 +60,7 @@ jobs:
           done
 
       - name: Check application status
-        run: docker compose exec -T app curl -v http://localhost/
+        run: docker compose exec -T app curl -v http://localhost:8000/
 
       - name: Run PHPUnit tests
         run: docker compose exec -T app php artisan test
