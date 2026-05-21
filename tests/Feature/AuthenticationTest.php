@@ -6,6 +6,7 @@ use Tests\TestCase;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class AuthenticationTest extends TestCase
 {
@@ -13,7 +14,10 @@ class AuthenticationTest extends TestCase
 
   public function test_user_can_register_as_job_seeker()
   {
-    $response = $this->post('/register', [
+    $token = Str::random(40);
+
+    $response = $this->withSession(['_token' => $token])->post('/register', [
+      '_token' => $token,
       'username' => 'johndoe',
       'first_name' => 'John',
       'last_name' => 'Doe',
@@ -38,7 +42,10 @@ class AuthenticationTest extends TestCase
       'password' => Hash::make('password123')
     ]);
 
-    $response = $this->post('/login', [
+    $token = Str::random(40);
+
+    $response = $this->withSession(['_token' => $token])->post('/login', [
+      '_token' => $token,
       'login' => 'test@example.com',
       'password' => 'password123'
     ]);
@@ -54,7 +61,10 @@ class AuthenticationTest extends TestCase
       'password' => Hash::make('password123')
     ]);
 
-    $response = $this->post('/login', [
+    $token = Str::random(40);
+
+    $response = $this->withSession(['_token' => $token])->post('/login', [
+      '_token' => $token,
       'login' => 'test@example.com',
       'password' => 'wrongpassword'
     ]);
@@ -67,7 +77,11 @@ class AuthenticationTest extends TestCase
   {
     $user = User::factory()->create();
 
-    $response = $this->actingAs($user)->post(route('logout'));
+    $token = Str::random(40);
+
+    $response = $this->actingAs($user)->withSession(['_token' => $token])->post(route('logout'), [
+      '_token' => $token,
+    ]);
 
     $response->assertRedirect('/');
     $this->assertGuest();
