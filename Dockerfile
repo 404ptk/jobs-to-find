@@ -34,10 +34,14 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
+    git \
     curl \
+    unzip \
     sqlite3 \
+    libzip-dev \
     libsqlite3-0 \
     libonig5 \
+    && docker-php-ext-install -j$(nproc) zip \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=php-deps /usr/local/lib/php/extensions /usr/local/lib/php/extensions

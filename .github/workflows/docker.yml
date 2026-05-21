@@ -63,7 +63,7 @@ jobs:
         run: docker compose exec -T app curl -v http://localhost:8000/
 
       - name: Install dev dependencies (for tests)
-        run: docker compose exec -T app composer install --no-interaction --prefer-dist
+        run: docker compose exec -T app composer install --no-interaction --prefer-dist --no-scripts --no-progress
 
       - name: Run PHPUnit tests
         run: docker compose exec -T app ./vendor/bin/phpunit --colors=always --stop-on-failure
