@@ -1,0 +1,34 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: jobstofind-app
+    restart: unless-stopped
+    working_dir: /app
+    environment:
+      APP_NAME: JobsToFind
+      APP_ENV: local
+      APP_DEBUG: "true"
+      APP_URL: http://localhost
+      DB_CONNECTION: sqlite
+      DB_DATABASE: /app/database/database.sqlite
+      SESSION_DRIVER: file
+      QUEUE_CONNECTION: sync
+      CACHE_STORE: file
+      LOG_CHANNEL: stack
+      LOG_LEVEL: info
+    ports:
+      - "8000:8000"
+    networks:
+      - jobstofind
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+networks:
+  jobstofind:
+    driver: bridge

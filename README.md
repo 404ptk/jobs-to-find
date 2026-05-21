@@ -306,6 +306,29 @@ Internal messaging system between users.
 
 ## Installation
 
+### Option 1: Docker (Recommended) 🐳
+
+The fastest way to get the project running without installing dependencies locally.
+
+**Requirements:**
+- Docker Desktop - https://www.docker.com/products/docker-desktop
+
+**Quick Start:**
+```bash
+git clone https://github.com/404ptk/jobs-to-find.git
+cd jobs-to-find
+chmod +x start-docker.sh
+./start-docker.sh
+```
+
+Then open **http://localhost** in your browser!
+
+For more Docker commands and documentation, see [DOCKER.md](DOCKER.md).
+
+---
+
+### Option 2: Local Installation
+
 ### Requirements
 
 - PHP >= 8.2
